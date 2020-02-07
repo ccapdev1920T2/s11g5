@@ -121,4 +121,5 @@ console.log(document.getElementById('timer').getAttribute('width'));
 //end of event listeners
 oneMin.style.transform = 'rotate(51.42deg)';
 sixMin.style.transform = 'rotate(308.57deg)';
+$('#currentspeaker').text(" Pending...");
 displayTime(0);

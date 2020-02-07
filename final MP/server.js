@@ -25,8 +25,12 @@ app.get('/register', function(req,res){
   res.render('index')
 })
 
-app.get('/timer', function(req,res){
-  res.render('timer')
+app.get('/roundroom', function(req,res){
+  var context = {
+    title: "da room",
+    roomno:"g402",
+  }
+  res.render('roundroom', context)
 })
 
 app.get('/testtimer', function(req,res){

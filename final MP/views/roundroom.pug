@@ -1,0 +1,205 @@
+extends layout/layout.pug
+
+block variables
+
+append stylesheets
+  link(href='/assets/css/debate-timer.css', rel='stylesheet', type='text/css')
+  link(href='http://www.cssscript.com/wp-includes/css/sticky.css', rel='stylesheet', type='text/css')
+
+block content
+  .container-fluid
+    .d-sm-flex.justify-content-between.align-items-center.mb-4
+      h3.text-dark.mb-0 Room #{roomno}
+      a.btn.btn-primary.btn-sm.d-none.d-sm-inline-block(role='button', href='#')
+        i.fas.fa-download.fa-sm.text-white-50
+        |  Generate Report
+    .row
+      .col-md-6.col-xl-3.mb-4
+        .card.shadow.border-left-primary.py-2
+          .card-body
+            .row.align-items-center.no-gutters
+              .col.mr-2
+                .text-uppercase.text-primary.font-weight-bold.text-xs.mb-1
+                  span Earnings (monthly)
+                .text-dark.font-weight-bold.h5.mb-0
+                  span $40,000
+              .col-auto
+                i.fas.fa-calendar.fa-2x.text-gray-300
+      .col-md-6.col-xl-3.mb-4
+        .card.shadow.border-left-success.py-2
+          .card-body
+            .row.align-items-center.no-gutters
+              .col.mr-2
+                .text-uppercase.text-success.font-weight-bold.text-xs.mb-1
+                  span Earnings (annual)
+                .text-dark.font-weight-bold.h5.mb-0
+                  span $215,000
+              .col-auto
+                i.fas.fa-dollar-sign.fa-2x.text-gray-300
+      .col-md-6.col-xl-3.mb-4
+        .card.shadow.border-left-info.py-2
+          .card-body
+            .row.align-items-center.no-gutters
+              .col.mr-2
+                .text-uppercase.text-info.font-weight-bold.text-xs.mb-1
+                  span Tasks
+                .row.no-gutters.align-items-center
+                  .col-auto
+                    .text-dark.font-weight-bold.h5.mb-0.mr-3
+                      span 50%
+                  .col
+                    .progress.progress-sm
+                      .progress-bar.bg-info(aria-valuenow='50', aria-valuemin='0', aria-valuemax='100', style='width: 50%;')
+                        span.sr-only 50%
+              .col-auto
+                i.fas.fa-clipboard-list.fa-2x.text-gray-300
+      .col-md-6.col-xl-3.mb-4
+        .card.shadow.border-left-warning.py-2
+          .card-body
+            .row.align-items-center.no-gutters
+              .col.mr-2
+                .text-uppercase.text-warning.font-weight-bold.text-xs.mb-1
+                  span Pending Requests
+                .text-dark.font-weight-bold.h5.mb-0
+                  span 18
+              .col-auto
+                i.fas.fa-comments.fa-2x.text-gray-300
+    .row
+      .col-lg-5.col-xl-4
+        .card.shadow.mb-4
+          .card-header.d-flex.justify-content-between.align-items-center
+            h6.text-primary.font-weight-bold.m-0 Timer
+            .dropdown.no-arrow
+              button.btn.btn-link.btn-sm.dropdown-toggle(data-toggle='dropdown', aria-expanded='false', type='button')
+                i.fas.fa-ellipsis-v.text-gray-400
+              .dropdown-menu.shadow.dropdown-menu-right.animated--fade-in(role='menu')
+                p.text-center.dropdown-header dropdown header:
+                a.dropdown-item(role='presentation', href='#')  Action
+                a.dropdown-item(role='presentation', href='#')  Another action
+                .dropdown-divider
+                a.dropdown-item(role='presentation', href='#')  Something else here
+          .card-body.justify-content-center
+            include roundroom/timer.pug
+      .col-lg-7.col-xl-8
+        .card.shadow.mb-4
+          .card-header.d-flex.justify-content-between.align-items-center
+            h6.text-primary.font-weight-bold.m-0 Earnings Overview
+            .dropdown.no-arrow
+              button.btn.btn-link.btn-sm.dropdown-toggle(data-toggle='dropdown', aria-expanded='false', type='button')
+                i.fas.fa-ellipsis-v.text-gray-400
+              .dropdown-menu.shadow.dropdown-menu-right.animated--fade-in(role='menu')
+                p.text-center.dropdown-header dropdown header:
+                a.dropdown-item(role='presentation', href='#')  Action
+                a.dropdown-item(role='presentation', href='#')  Another action
+                .dropdown-divider
+                a.dropdown-item(role='presentation', href='#')  Something else here
+          .card-body
+            .chart-area
+              canvas(data-bs-chart='{"type":"line","data":{"labels":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"],"datasets":[{"label":"Earnings","fill":true,"data":["0","10000","5000","15000","10000","20000","15000","25000"],"backgroundColor":"rgba(78, 115, 223, 0.05)","borderColor":"rgba(78, 115, 223, 1)"}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{},"scales":{"xAxes":[{"gridLines":{"color":"rgb(234, 236, 244)","zeroLineColor":"rgb(234, 236, 244)","drawBorder":false,"drawTicks":false,"borderDash":["2"],"zeroLineBorderDash":["2"],"drawOnChartArea":false},"ticks":{"fontColor":"#858796","padding":20}}],"yAxes":[{"gridLines":{"color":"rgb(234, 236, 244)","zeroLineColor":"rgb(234, 236, 244)","drawBorder":false,"drawTicks":false,"borderDash":["2"],"zeroLineBorderDash":["2"]},"ticks":{"fontColor":"#858796","padding":20}}]}}}')
+    .row
+      .col-lg-6.mb-4
+        .card.shadow.mb-4
+          .card-header.py-3
+            h6.text-primary.font-weight-bold.m-0 Projects
+          .card-body
+            h4.small.font-weight-bold
+              | Server migration
+              span.float-right 20%
+            .progress.mb-4
+              .progress-bar.bg-danger(aria-valuenow='20', aria-valuemin='0', aria-valuemax='100', style='width: 20%;')
+                span.sr-only 20%
+            h4.small.font-weight-bold
+              | Sales tracking
+              span.float-right 40%
+            .progress.mb-4
+              .progress-bar.bg-warning(aria-valuenow='40', aria-valuemin='0', aria-valuemax='100', style='width: 40%;')
+                span.sr-only 40%
+            h4.small.font-weight-bold
+              | Customer Database
+              span.float-right 60%
+            .progress.mb-4
+              .progress-bar.bg-primary(aria-valuenow='60', aria-valuemin='0', aria-valuemax='100', style='width: 60%;')
+                span.sr-only 60%
+            h4.small.font-weight-bold
+              | Payout Details
+              span.float-right 80%
+            .progress.mb-4
+              .progress-bar.bg-info(aria-valuenow='80', aria-valuemin='0', aria-valuemax='100', style='width: 80%;')
+                span.sr-only 80%
+            h4.small.font-weight-bold
+              | Account setup
+              span.float-right Complete!
+            .progress.mb-4
+              .progress-bar.bg-success(aria-valuenow='100', aria-valuemin='0', aria-valuemax='100', style='width: 100%;')
+                span.sr-only 100%
+        .card.shadow.mb-4
+          .card-header.py-3
+            h6.text-primary.font-weight-bold.m-0 Todo List
+          ul.list-group.list-group-flush
+            li.list-group-item
+              .row.align-items-center.no-gutters
+                .col.mr-2
+                  h6.mb-0
+                    strong Lunch meeting
+                  span.text-xs 10:30 AM
+                .col-auto
+                  .custom-control.custom-checkbox
+                    input#formCheck-1.custom-control-input(type='checkbox')
+                    label.custom-control-label(for='formCheck-1')
+            li.list-group-item
+              .row.align-items-center.no-gutters
+                .col.mr-2
+                  h6.mb-0
+                    strong Lunch meeting
+                  span.text-xs 11:30 AM
+                .col-auto
+                  .custom-control.custom-checkbox
+                    input#formCheck-2.custom-control-input(type='checkbox')
+                    label.custom-control-label(for='formCheck-2')
+            li.list-group-item
+              .row.align-items-center.no-gutters
+                .col.mr-2
+                  h6.mb-0
+                    strong Lunch meeting
+                  span.text-xs 12:30 AM
+                .col-auto
+                  .custom-control.custom-checkbox
+                    input#formCheck-3.custom-control-input(type='checkbox')
+                    label.custom-control-label(for='formCheck-3')
+      .col
+        .row
+          .col-lg-6.mb-4
+            .card.text-white.bg-primary.shadow
+              .card-body
+                p.m-0 Primary
+                p.text-white-50.small.m-0 #4e73df
+          .col-lg-6.mb-4
+            .card.text-white.bg-success.shadow
+              .card-body
+                p.m-0 Success
+                p.text-white-50.small.m-0 #1cc88a
+          .col-lg-6.mb-4
+            .card.text-white.bg-info.shadow
+              .card-body
+                p.m-0 Info
+                p.text-white-50.small.m-0 #36b9cc
+          .col-lg-6.mb-4
+            .card.text-white.bg-warning.shadow
+              .card-body
+                p.m-0 Warning
+                p.text-white-50.small.m-0 #f6c23e
+          .col-lg-6.mb-4
+            .card.text-white.bg-danger.shadow
+              .card-body
+                p.m-0 Danger
+                p.text-white-50.small.m-0 #e74a3b
+          .col-lg-6.mb-4
+            .card.text-white.bg-secondary.shadow
+              .card-body
+                p.m-0 Secondary
+                p.text-white-50.small.m-0 #858796
+
+
+append scripts
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js")
+  script(src="/assets/js/testdebatetimer.js")

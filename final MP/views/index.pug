@@ -4,10 +4,10 @@ html
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
     title Dashboard - Brand
-    style
-      include assets/bootstrap/css/bootstrap.min.css
-    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')
-    link(rel='stylesheet', href='https://use.fontawesome.com/releases/v5.7.1/css/all.css')
+    block stylesheets
+      link(rel='stylesheet', href='assets/bootstrap/css/bootstrap.min.css')
+      link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')
+      link(rel='stylesheet', href='https://use.fontawesome.com/releases/v5.7.1/css/all.css')
   body#page-top
     #wrapper
       nav.navbar.navbar-dark.align-items-start.sidebar.sidebar-dark.accordion.bg-gradient-primary.p-0
@@ -198,6 +198,21 @@ html
                       .col-auto
                         i.fas.fa-comments.fa-2x.text-gray-300
             .row
+              .col-lg-5.col-xl-4
+                .card.shadow.mb-4
+                  .card-header.d-flex.justify-content-between.align-items-center
+                    h6.text-primary.font-weight-bold.m-0 Revenue Sources
+                    .dropdown.no-arrow
+                      button.btn.btn-link.btn-sm.dropdown-toggle(data-toggle='dropdown', aria-expanded='false', type='button')
+                        i.fas.fa-ellipsis-v.text-gray-400
+                      .dropdown-menu.shadow.dropdown-menu-right.animated--fade-in(role='menu')
+                        p.text-center.dropdown-header dropdown header:
+                        a.dropdown-item(role='presentation', href='#')  Action
+                        a.dropdown-item(role='presentation', href='#')  Another action
+                        .dropdown-divider
+                        a.dropdown-item(role='presentation', href='#')  Something else here
+                  .card-body.justify-content-center
+                    block timer
               .col-lg-7.col-xl-8
                 .card.shadow.mb-4
                   .card-header.d-flex.justify-content-between.align-items-center
@@ -214,32 +229,6 @@ html
                   .card-body
                     .chart-area
                       canvas(data-bs-chart='{"type":"line","data":{"labels":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"],"datasets":[{"label":"Earnings","fill":true,"data":["0","10000","5000","15000","10000","20000","15000","25000"],"backgroundColor":"rgba(78, 115, 223, 0.05)","borderColor":"rgba(78, 115, 223, 1)"}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{},"scales":{"xAxes":[{"gridLines":{"color":"rgb(234, 236, 244)","zeroLineColor":"rgb(234, 236, 244)","drawBorder":false,"drawTicks":false,"borderDash":["2"],"zeroLineBorderDash":["2"],"drawOnChartArea":false},"ticks":{"fontColor":"#858796","padding":20}}],"yAxes":[{"gridLines":{"color":"rgb(234, 236, 244)","zeroLineColor":"rgb(234, 236, 244)","drawBorder":false,"drawTicks":false,"borderDash":["2"],"zeroLineBorderDash":["2"]},"ticks":{"fontColor":"#858796","padding":20}}]}}}')
-              .col-lg-5.col-xl-4
-                .card.shadow.mb-4
-                  .card-header.d-flex.justify-content-between.align-items-center
-                    h6.text-primary.font-weight-bold.m-0 Revenue Sources
-                    .dropdown.no-arrow
-                      button.btn.btn-link.btn-sm.dropdown-toggle(data-toggle='dropdown', aria-expanded='false', type='button')
-                        i.fas.fa-ellipsis-v.text-gray-400
-                      .dropdown-menu.shadow.dropdown-menu-right.animated--fade-in(role='menu')
-                        p.text-center.dropdown-header dropdown header:
-                        a.dropdown-item(role='presentation', href='#')  Action
-                        a.dropdown-item(role='presentation', href='#')  Another action
-                        .dropdown-divider
-                        a.dropdown-item(role='presentation', href='#')  Something else here
-                  .card-body
-                    .chart-area
-                      canvas(data-bs-chart='{"type":"doughnut","data":{"labels":["Direct","Social","Referral"],"datasets":[{"label":"","backgroundColor":["#4e73df","#1cc88a","#36b9cc"],"borderColor":["#ffffff","#ffffff","#ffffff"],"data":["50","30","15"]}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{}}}')
-                    .text-center.small.mt-4
-                      span.mr-2
-                        i.fas.fa-circle.text-primary
-                        |  Direct
-                      span.mr-2
-                        i.fas.fa-circle.text-success
-                        |  Social
-                      span.mr-2
-                        i.fas.fa-circle.text-info
-                        |  Refferal
             .row
               .col-lg-6.mb-4
                 .card.shadow.mb-4
@@ -348,9 +337,10 @@ html
               span Copyright © Brand 2019
       a.border.rounded.d-inline.scroll-to-top(href='#page-top')
         i.fas.fa-angle-up
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js')
-    script(src='assets/js/bs-init.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js')
-    script(src='assets/js/theme.js')
+    block scripts
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js')
+      script(src='assets/js/bs-init.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js')
+      script(src='assets/js/theme.js')
