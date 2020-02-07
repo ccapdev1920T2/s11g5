@@ -1,0 +1,55 @@
+<button id="wow">Wow</button>
+<button id="start">Start</button>
+<p id="output"></p>
+<div id="received"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
+<script>
+  var socket = io();
+
+  window.onload = () => { socket.emit('connect to room', 1) };
+
+  var triggerdate;
+  var started = false;
+  var elapsed;
+  var interval;
+  var button = document.getElementById('wow');
+  var start = document.getElementById('start');
+  var received = document.getElementById('received');
+  var output = document.getElementById('output');
+
+  socket.on('test timer', function(timerdata){
+    date = timerdata['date'];
+  });
+
+  socket.on('joined', function(){
+    console.log('succesfully joined room');
+  });
+
+  button.onclick = () => {
+    socket.emit('test timer', {'date':new Date(), 'go':false});
+  }
+
+  var outdate = null;
+  function update(){
+    let now = new Date();
+    outdate = new Date(elapsed + now.getTime() - triggerdate.getTime()); //need gettime since elapsed is stored in ms
+    output.innerHTML = outdate.getMinutes() + ":" + outdate.getSeconds();
+  }
+
+  //turn this shit into socket.on event
+  start.onclick = () => {
+    triggerdate = new Date();
+    elapsed = (outdate) ? outdate.getTime() : 3000;
+    console.log(triggerdate)
+    if (started){
+      clearInterval(interval);
+      interval = null;
+      started = false;
+    }
+    else {
+      interval = setInterval( update, 500 );
+      started = true;
+    }
+  }
+</script>

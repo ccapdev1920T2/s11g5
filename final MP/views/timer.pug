@@ -1,0 +1,37 @@
+extends layout.pug
+
+append stylesheets
+  include assets/css/debate-timer.css
+  link(href='http://www.cssscript.com/wp-includes/css/sticky.css', rel='stylesheet', type='text/css')
+
+block content
+  .timer-box
+    .setters
+      .minutes-set
+        button(data-setter='minutes-plus') +
+        button(data-setter='minutes-minus') -
+      .seconds-set
+        button(data-setter='seconds-plus') +
+        button(data-setter='seconds-minus') -
+    .circle
+      svg#timer(width='300', viewBox='0 0 220 220', xmlns='http://www.w3.org/2000/svg')
+        g(transform='translate(110,110)')
+          circle.e-c-base(r='100')
+          g(transform='rotate(-90)')
+            g#e-1min
+              circle.e-c-marker(cx='100', cy='0', r='5')
+            g#e-6min
+              circle.e-c-marker(cx='100', cy='0', r='5')
+            circle.e-c-progress(r='100')
+            g#e-pointer
+              circle.e-c-pointer(cx='100', cy='0', r='6')
+    .controlls
+      .display-remain-time 00:30
+      button#pause.play
+  #clicks
+
+append cdns
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js")
+
+append scripts
+  include assets/js/testdebatetimer.js

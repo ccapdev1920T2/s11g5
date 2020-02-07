@@ -1,0 +1,356 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
+    title Dashboard - Brand
+    style
+      include assets/bootstrap/css/bootstrap.min.css
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')
+    link(rel='stylesheet', href='https://use.fontawesome.com/releases/v5.7.1/css/all.css')
+  body#page-top
+    #wrapper
+      nav.navbar.navbar-dark.align-items-start.sidebar.sidebar-dark.accordion.bg-gradient-primary.p-0
+        .container-fluid.d-flex.flex-column.p-0
+          a.navbar-brand.d-flex.justify-content-center.align-items-center.sidebar-brand.m-0(href='#')
+            .sidebar-brand-icon.rotate-n-15
+              i.fas.fa-laugh-wink
+            .sidebar-brand-text.mx-3
+              span Brand
+          hr.sidebar-divider.my-0
+          ul#accordionSidebar.nav.navbar-nav.text-light
+            li.nav-item(role='presentation')
+              a.nav-link.active(href='index.html')
+                i.fas.fa-tachometer-alt
+                span Dashboard
+          .text-center.d-none.d-md-inline
+            button#sidebarToggle.btn.rounded-circle.border-0(type='button')
+      #content-wrapper.d-flex.flex-column
+        #content
+          nav.navbar.navbar-light.navbar-expand.bg-white.shadow.mb-4.topbar.static-top
+            .container-fluid
+              button#sidebarToggleTop.btn.btn-link.d-md-none.rounded-circle.mr-3(type='button')
+                i.fas.fa-bars
+              form.form-inline.d-none.d-sm-inline-block.mr-auto.ml-md-3.my-2.my-md-0.mw-100.navbar-search
+                .input-group
+                  input.bg-light.form-control.border-0.small(type='text', placeholder='Search for ...')
+                  .input-group-append
+                    button.btn.btn-primary.py-0(type='button')
+                      i.fas.fa-search
+              ul.nav.navbar-nav.flex-nowrap.ml-auto
+                li.nav-item.dropdown.d-sm-none.no-arrow
+                  a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
+                    i.fas.fa-search
+                  .dropdown-menu.dropdown-menu-right.p-3.animated--grow-in(role='menu', aria-labelledby='searchDropdown')
+                    form.form-inline.mr-auto.navbar-search.w-100
+                      .input-group
+                        input.bg-light.form-control.border-0.small(type='text', placeholder='Search for ...')
+                        .input-group-append
+                          button.btn.btn-primary.py-0(type='button')
+                            i.fas.fa-search
+                li.nav-item.dropdown.no-arrow.mx-1(role='presentation')
+                  .nav-item.dropdown.no-arrow
+                    a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
+                      span.badge.badge-danger.badge-counter 3+
+                      i.fas.fa-bell.fa-fw
+                    .dropdown-menu.dropdown-menu-right.dropdown-list.dropdown-menu-right.animated--grow-in(role='menu')
+                      h6.dropdown-header alerts center
+                      a.d-flex.align-items-center.dropdown-item(href='#')
+                        .mr-3
+                          .bg-primary.icon-circle
+                            i.fas.fa-file-alt.text-white
+                        div
+                          span.small.text-gray-500 December 12, 2019
+                          p A new monthly report is ready to download!
+                      a.d-flex.align-items-center.dropdown-item(href='#')
+                        .mr-3
+                          .bg-success.icon-circle
+                            i.fas.fa-donate.text-white
+                        div
+                          span.small.text-gray-500 December 7, 2019
+                          p $290.29 has been deposited into your account!
+                      a.d-flex.align-items-center.dropdown-item(href='#')
+                        .mr-3
+                          .bg-warning.icon-circle
+                            i.fas.fa-exclamation-triangle.text-white
+                        div
+                          span.small.text-gray-500 December 2, 2019
+                          p Spending Alert: We've noticed unusually high spending for your account.
+                      a.text-center.dropdown-item.small.text-gray-500(href='#') Show All Alerts
+                li.nav-item.dropdown.no-arrow.mx-1(role='presentation')
+                  .nav-item.dropdown.no-arrow
+                    a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
+                      i.fas.fa-envelope.fa-fw
+                      span.badge.badge-danger.badge-counter 7
+                    .dropdown-menu.dropdown-menu-right.dropdown-list.dropdown-menu-right.animated--grow-in(role='menu')
+                      h6.dropdown-header alerts center
+                      a.d-flex.align-items-center.dropdown-item(href='#')
+                        .dropdown-list-image.mr-3
+                          img.rounded-circle(src='assets/img/avatars/avatar4.jpeg')
+                          .bg-success.status-indicator
+                        .font-weight-bold
+                          .text-truncate
+                            span Hi there! I am wondering if you can help me with a problem I've been having.
+                          p.small.text-gray-500.mb-0 Emily Fowler - 58m
+                      a.d-flex.align-items-center.dropdown-item(href='#')
+                        .dropdown-list-image.mr-3
+                          img.rounded-circle(src='assets/img/avatars/avatar2.jpeg')
+                          .status-indicator
+                        .font-weight-bold
+                          .text-truncate
+                            span I have the photos that you ordered last month!
+                          p.small.text-gray-500.mb-0 Jae Chun - 1d
+                      a.d-flex.align-items-center.dropdown-item(href='#')
+                        .dropdown-list-image.mr-3
+                          img.rounded-circle(src='assets/img/avatars/avatar3.jpeg')
+                          .bg-warning.status-indicator
+                        .font-weight-bold
+                          .text-truncate
+                            span
+                              | Last month's report looks great, I am very happy with the progress so far, keep up the good work!
+                          p.small.text-gray-500.mb-0 Morgan Alvarez - 2d
+                      a.d-flex.align-items-center.dropdown-item(href='#')
+                        .dropdown-list-image.mr-3
+                          img.rounded-circle(src='assets/img/avatars/avatar5.jpeg')
+                          .bg-success.status-indicator
+                        .font-weight-bold
+                          .text-truncate
+                            span
+                              | Am I a good boy? The reason I ask is because someone told me that people say this to all dogs, even if they aren't good...
+                          p.small.text-gray-500.mb-0 Chicken the Dog · 2w
+                      a.text-center.dropdown-item.small.text-gray-500(href='#') Show All Alerts
+                  .shadow.dropdown-list.dropdown-menu.dropdown-menu-right(aria-labelledby='alertsDropdown')
+                .d-none.d-sm-block.topbar-divider
+                li.nav-item.dropdown.no-arrow(role='presentation')
+                  .nav-item.dropdown.no-arrow
+                    a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
+                      span.d-none.d-lg-inline.mr-2.text-gray-600.small Valerie Luna
+                      img.border.rounded-circle.img-profile(src='assets/img/avatars/avatar1.jpeg')
+                    .dropdown-menu.shadow.dropdown-menu-right.animated--grow-in(role='menu')
+                      a.dropdown-item(role='presentation', href='#')
+                        i.fas.fa-user.fa-sm.fa-fw.mr-2.text-gray-400
+                        |  Profile
+                      a.dropdown-item(role='presentation', href='#')
+                        i.fas.fa-cogs.fa-sm.fa-fw.mr-2.text-gray-400
+                        |  Settings
+                      a.dropdown-item(role='presentation', href='#')
+                        i.fas.fa-list.fa-sm.fa-fw.mr-2.text-gray-400
+                        |  Activity log
+                      .dropdown-divider
+                      a.dropdown-item(role='presentation', href='#')
+                        i.fas.fa-sign-out-alt.fa-sm.fa-fw.mr-2.text-gray-400
+                        |  Logout
+          .container-fluid
+            .d-sm-flex.justify-content-between.align-items-center.mb-4
+              h3.text-dark.mb-0 Dashboard
+              a.btn.btn-primary.btn-sm.d-none.d-sm-inline-block(role='button', href='#')
+                i.fas.fa-download.fa-sm.text-white-50
+                |  Generate Report
+            .row
+              .col-md-6.col-xl-3.mb-4
+                .card.shadow.border-left-primary.py-2
+                  .card-body
+                    .row.align-items-center.no-gutters
+                      .col.mr-2
+                        .text-uppercase.text-primary.font-weight-bold.text-xs.mb-1
+                          span Earnings (monthly)
+                        .text-dark.font-weight-bold.h5.mb-0
+                          span $40,000
+                      .col-auto
+                        i.fas.fa-calendar.fa-2x.text-gray-300
+              .col-md-6.col-xl-3.mb-4
+                .card.shadow.border-left-success.py-2
+                  .card-body
+                    .row.align-items-center.no-gutters
+                      .col.mr-2
+                        .text-uppercase.text-success.font-weight-bold.text-xs.mb-1
+                          span Earnings (annual)
+                        .text-dark.font-weight-bold.h5.mb-0
+                          span $215,000
+                      .col-auto
+                        i.fas.fa-dollar-sign.fa-2x.text-gray-300
+              .col-md-6.col-xl-3.mb-4
+                .card.shadow.border-left-info.py-2
+                  .card-body
+                    .row.align-items-center.no-gutters
+                      .col.mr-2
+                        .text-uppercase.text-info.font-weight-bold.text-xs.mb-1
+                          span Tasks
+                        .row.no-gutters.align-items-center
+                          .col-auto
+                            .text-dark.font-weight-bold.h5.mb-0.mr-3
+                              span 50%
+                          .col
+                            .progress.progress-sm
+                              .progress-bar.bg-info(aria-valuenow='50', aria-valuemin='0', aria-valuemax='100', style='width: 50%;')
+                                span.sr-only 50%
+                      .col-auto
+                        i.fas.fa-clipboard-list.fa-2x.text-gray-300
+              .col-md-6.col-xl-3.mb-4
+                .card.shadow.border-left-warning.py-2
+                  .card-body
+                    .row.align-items-center.no-gutters
+                      .col.mr-2
+                        .text-uppercase.text-warning.font-weight-bold.text-xs.mb-1
+                          span Pending Requests
+                        .text-dark.font-weight-bold.h5.mb-0
+                          span 18
+                      .col-auto
+                        i.fas.fa-comments.fa-2x.text-gray-300
+            .row
+              .col-lg-7.col-xl-8
+                .card.shadow.mb-4
+                  .card-header.d-flex.justify-content-between.align-items-center
+                    h6.text-primary.font-weight-bold.m-0 Earnings Overview
+                    .dropdown.no-arrow
+                      button.btn.btn-link.btn-sm.dropdown-toggle(data-toggle='dropdown', aria-expanded='false', type='button')
+                        i.fas.fa-ellipsis-v.text-gray-400
+                      .dropdown-menu.shadow.dropdown-menu-right.animated--fade-in(role='menu')
+                        p.text-center.dropdown-header dropdown header:
+                        a.dropdown-item(role='presentation', href='#')  Action
+                        a.dropdown-item(role='presentation', href='#')  Another action
+                        .dropdown-divider
+                        a.dropdown-item(role='presentation', href='#')  Something else here
+                  .card-body
+                    .chart-area
+                      canvas(data-bs-chart='{"type":"line","data":{"labels":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"],"datasets":[{"label":"Earnings","fill":true,"data":["0","10000","5000","15000","10000","20000","15000","25000"],"backgroundColor":"rgba(78, 115, 223, 0.05)","borderColor":"rgba(78, 115, 223, 1)"}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{},"scales":{"xAxes":[{"gridLines":{"color":"rgb(234, 236, 244)","zeroLineColor":"rgb(234, 236, 244)","drawBorder":false,"drawTicks":false,"borderDash":["2"],"zeroLineBorderDash":["2"],"drawOnChartArea":false},"ticks":{"fontColor":"#858796","padding":20}}],"yAxes":[{"gridLines":{"color":"rgb(234, 236, 244)","zeroLineColor":"rgb(234, 236, 244)","drawBorder":false,"drawTicks":false,"borderDash":["2"],"zeroLineBorderDash":["2"]},"ticks":{"fontColor":"#858796","padding":20}}]}}}')
+              .col-lg-5.col-xl-4
+                .card.shadow.mb-4
+                  .card-header.d-flex.justify-content-between.align-items-center
+                    h6.text-primary.font-weight-bold.m-0 Revenue Sources
+                    .dropdown.no-arrow
+                      button.btn.btn-link.btn-sm.dropdown-toggle(data-toggle='dropdown', aria-expanded='false', type='button')
+                        i.fas.fa-ellipsis-v.text-gray-400
+                      .dropdown-menu.shadow.dropdown-menu-right.animated--fade-in(role='menu')
+                        p.text-center.dropdown-header dropdown header:
+                        a.dropdown-item(role='presentation', href='#')  Action
+                        a.dropdown-item(role='presentation', href='#')  Another action
+                        .dropdown-divider
+                        a.dropdown-item(role='presentation', href='#')  Something else here
+                  .card-body
+                    .chart-area
+                      canvas(data-bs-chart='{"type":"doughnut","data":{"labels":["Direct","Social","Referral"],"datasets":[{"label":"","backgroundColor":["#4e73df","#1cc88a","#36b9cc"],"borderColor":["#ffffff","#ffffff","#ffffff"],"data":["50","30","15"]}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{}}}')
+                    .text-center.small.mt-4
+                      span.mr-2
+                        i.fas.fa-circle.text-primary
+                        |  Direct
+                      span.mr-2
+                        i.fas.fa-circle.text-success
+                        |  Social
+                      span.mr-2
+                        i.fas.fa-circle.text-info
+                        |  Refferal
+            .row
+              .col-lg-6.mb-4
+                .card.shadow.mb-4
+                  .card-header.py-3
+                    h6.text-primary.font-weight-bold.m-0 Projects
+                  .card-body
+                    h4.small.font-weight-bold
+                      | Server migration
+                      span.float-right 20%
+                    .progress.mb-4
+                      .progress-bar.bg-danger(aria-valuenow='20', aria-valuemin='0', aria-valuemax='100', style='width: 20%;')
+                        span.sr-only 20%
+                    h4.small.font-weight-bold
+                      | Sales tracking
+                      span.float-right 40%
+                    .progress.mb-4
+                      .progress-bar.bg-warning(aria-valuenow='40', aria-valuemin='0', aria-valuemax='100', style='width: 40%;')
+                        span.sr-only 40%
+                    h4.small.font-weight-bold
+                      | Customer Database
+                      span.float-right 60%
+                    .progress.mb-4
+                      .progress-bar.bg-primary(aria-valuenow='60', aria-valuemin='0', aria-valuemax='100', style='width: 60%;')
+                        span.sr-only 60%
+                    h4.small.font-weight-bold
+                      | Payout Details
+                      span.float-right 80%
+                    .progress.mb-4
+                      .progress-bar.bg-info(aria-valuenow='80', aria-valuemin='0', aria-valuemax='100', style='width: 80%;')
+                        span.sr-only 80%
+                    h4.small.font-weight-bold
+                      | Account setup
+                      span.float-right Complete!
+                    .progress.mb-4
+                      .progress-bar.bg-success(aria-valuenow='100', aria-valuemin='0', aria-valuemax='100', style='width: 100%;')
+                        span.sr-only 100%
+                .card.shadow.mb-4
+                  .card-header.py-3
+                    h6.text-primary.font-weight-bold.m-0 Todo List
+                  ul.list-group.list-group-flush
+                    li.list-group-item
+                      .row.align-items-center.no-gutters
+                        .col.mr-2
+                          h6.mb-0
+                            strong Lunch meeting
+                          span.text-xs 10:30 AM
+                        .col-auto
+                          .custom-control.custom-checkbox
+                            input#formCheck-1.custom-control-input(type='checkbox')
+                            label.custom-control-label(for='formCheck-1')
+                    li.list-group-item
+                      .row.align-items-center.no-gutters
+                        .col.mr-2
+                          h6.mb-0
+                            strong Lunch meeting
+                          span.text-xs 11:30 AM
+                        .col-auto
+                          .custom-control.custom-checkbox
+                            input#formCheck-2.custom-control-input(type='checkbox')
+                            label.custom-control-label(for='formCheck-2')
+                    li.list-group-item
+                      .row.align-items-center.no-gutters
+                        .col.mr-2
+                          h6.mb-0
+                            strong Lunch meeting
+                          span.text-xs 12:30 AM
+                        .col-auto
+                          .custom-control.custom-checkbox
+                            input#formCheck-3.custom-control-input(type='checkbox')
+                            label.custom-control-label(for='formCheck-3')
+              .col
+                .row
+                  .col-lg-6.mb-4
+                    .card.text-white.bg-primary.shadow
+                      .card-body
+                        p.m-0 Primary
+                        p.text-white-50.small.m-0 #4e73df
+                  .col-lg-6.mb-4
+                    .card.text-white.bg-success.shadow
+                      .card-body
+                        p.m-0 Success
+                        p.text-white-50.small.m-0 #1cc88a
+                  .col-lg-6.mb-4
+                    .card.text-white.bg-info.shadow
+                      .card-body
+                        p.m-0 Info
+                        p.text-white-50.small.m-0 #36b9cc
+                  .col-lg-6.mb-4
+                    .card.text-white.bg-warning.shadow
+                      .card-body
+                        p.m-0 Warning
+                        p.text-white-50.small.m-0 #f6c23e
+                  .col-lg-6.mb-4
+                    .card.text-white.bg-danger.shadow
+                      .card-body
+                        p.m-0 Danger
+                        p.text-white-50.small.m-0 #e74a3b
+                  .col-lg-6.mb-4
+                    .card.text-white.bg-secondary.shadow
+                      .card-body
+                        p.m-0 Secondary
+                        p.text-white-50.small.m-0 #858796
+        footer.bg-white.sticky-footer
+          .container.my-auto
+            .text-center.my-auto.copyright
+              span Copyright © Brand 2019
+      a.border.rounded.d-inline.scroll-to-top(href='#page-top')
+        i.fas.fa-angle-up
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js')
+    script(src='assets/js/bs-init.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js')
+    script(src='assets/js/theme.js')
