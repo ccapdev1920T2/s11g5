@@ -10,6 +10,8 @@ var pug = require('pug')
 //port server will receive requests from
 var port = process.env.PORT || 3000
 
+
+
 app.set('view engine', 'pug') // sets pug as view engine
 app.set('views', './views') //sets view directory
 app.use(express.static("./views"))
@@ -29,6 +31,7 @@ app.get('/roundroom', function(req,res){
   var context = {
     title: "da room",
     roomno:"g402",
+    user: {name: "Guest"}
   }
   res.render('roundroom', context)
 })
