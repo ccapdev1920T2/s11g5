@@ -29,9 +29,15 @@ app.get('/register', function(req,res){
 
 app.get('/roundroom', function(req,res){
   var context = {
-    title: "da room",
-    roomno:"g402",
-    user: {name: "Guest"}
+    title: "RoundRoom - " + "g306b",
+    roomno:"g306b",
+    user: {name: "User"},
+    pm:"Sean Pe",
+    dpm:"Marc Gonzales",
+    gw:"Bernice Betito",
+    lo:"Pe Sean",
+    dlo:"Gonzales Marc",
+    ow:"Betito Bernice",
   }
   res.render('roundroom', context)
 })
@@ -60,7 +66,7 @@ io.on('connection', function(socket){
   });
 
   var elapsed, started;
-    socket.on('timer event', function(timerdata){
+  socket.on('timer event', function(timerdata){
     io.emit('timer event', timerdata);
     elapsed, started = timerdata['elapsed'], timerdata['started']
     console.log('server: ' + timerdata['elapsed'] + timerdata['started'])
