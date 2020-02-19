@@ -20,10 +20,11 @@ button[data-setter]:hover { opacity: 0.5; }
   margin: 0 auto;
 }
 
-.setters {
+.speaker {
   position: absolute;
-  left: 85px;
-  top: 75px;
+  top: 25%;
+  text-align: center;
+  min-width:100%;
 }
 
 .minutes-set {
@@ -35,9 +36,9 @@ button[data-setter]:hover { opacity: 0.5; }
 
 .controlls {
   position: absolute;
-  left: 75px;
-  top: 105px;
+  top: 34%;
   text-align: center;
+  min-width:100%;
 }
 
 .display-remain-time {
@@ -107,4 +108,6 @@ button[data-setter]:hover { opacity: 0.5; }
   transition: opacity 0.5s;
 }
 
+
+#timer { display:block; margin:auto }
 #e-pointer { transition: transform 0.5s, stroke 0.5s; }

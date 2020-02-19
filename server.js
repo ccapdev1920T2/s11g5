@@ -1,26 +1,37 @@
-//express handles url routing and serving files
-var express = require('express')
-var app = express()
-//http needed for running server
-var http = require('http').Server(app)
-//socket.io for live client-server interactions
-var io = require('socket.io')(http)
-//pug templating language so html can be divided into blocks
-var pug = require('pug')
-//port server will receive requests from
-var port = process.env.PORT || 3000
-
+const express = require('express') //express handles url routing and serving files
+const app = express()
+const http = require('http').Server(app) //http needed for running server
+const io = require('socket.io')(http) //socket.io for live client-server interactions
+const pug = require('pug') //pug templating language so html can be divided into blocks
+const port = process.env.PORT || 3000 //port server will receive requests from
 
 
 app.set('view engine', 'pug') // sets pug as view engine
 app.set('views', './views') //sets view directory
-app.use(express.static("./views"))
+app.use(express.static("./views")) //static_root
 
 
-/* Static get requests, simply serve files */
+/* Static get routes */
 app.get('/', function(req, res){
-  var context = {title: 'Oh Dang', message:'owow!', inside:"im in!"}
+  var context = {
+    title: "RoundRoom - " + "g306b",
+    motion: "THBT that the Philippines should acquire military aid and a loan to develop and occupy the resources owned within the South China Sea",
+    roomno:"g306b",
+    gov: "DLSU Team A",
+    opp: "DLSU Team A Converse",
+    user: {name: "Sean Pe"},
+    pm:"Sean Pe",
+    dpm:"Marc Gonzales",
+    gw:"Bernice Betito",
+    lo:"Pe Sean",
+    dlo:"Gonzales Marc",
+    ow:"Betito Bernice",
+  }
   res.render('index', context)
+});
+
+app.get('/index', function(req, res){
+  res.render('index', context);
 });
 
 app.get('/register', function(req,res){
