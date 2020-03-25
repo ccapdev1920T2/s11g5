@@ -1,0 +1,101 @@
+extends layout/base.pug
+
+
+block content
+  .d-sm-flex.justify-content-between.align-items-center.mb-4
+    h3.text-dark.mb-0 Room: #{roomNO}
+    p Status: #{status}
+  .row
+    .col-lg-6.col-xl-3.mb-4
+      .card.shadow.mb-4
+        .card-header.py-3
+          h6.text-primary.font-weight-bold.m-0 #{gov.teamname}
+          span Government
+        ul.list-group.list-group-flush
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-5
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar1.jpeg')
+              .col.mr-2
+                h6.mb-0
+                  strong #{gov.first}
+                span.text-xs Prime Minister
+          li.list-group-item.currentspeaker.waiting
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-5
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar3.jpeg')
+              .col.mr-2
+                h6.mb-0
+                  strong #{gov.second}
+                span.text-xs Deputy Prime Minister
+          li.list-group-item
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-5
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar2.jpeg')
+              .col.mr-2
+                h6.mb-0
+                  strong #{gov.third}
+                span.text-xs Government Whip
+    .col-lg-6.mb-4
+      .card.shadow.mb-4
+        .card-header.py-3
+          h6.text-primary.font-weight-bold.m-0 Timer
+        .card-body#roundtimer
+          .h3.text-center #{motion}
+          .timer-box.justify-content-center
+            .speaker
+              .h4 DPM: Marc Gonzalez
+            .circle.justify-content-center
+              svg#timer(width='300' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg')
+                g(transform='translate(110,110)')
+                  circle.e-c-base(r='100')
+                  g(transform='rotate(-90)')
+                    g#e-1min
+                      circle.e-c-marker(cx='100' cy='0' r='5')
+                    g#e-6min
+                      circle.e-c-marker(cx='100' cy='0' r='5')
+                    circle.e-c-progress(r='100')
+                    g#e-pointer
+                      circle.e-c-pointer(cx='100' cy='0' r='6')
+            .controlls
+              .display-remain-time 00:30
+              button.play#pause
+          #progress
+            h4.small.font-weight-bold
+              | Current Speaker: DPM
+              span#currentspeaker
+              span.float-right 3/7
+            .progress.mb-4
+              .progress-bar.bg-success(aria-valuenow='20' aria-valuemin='0' aria-valuemax='100' style='width: 20%;')
+          a.card-link#fullscreen(href='#')
+            i.fas.fa-expand.fa-fw#fsBtn
+    .col-lg-6.col-xl-3.mb-4
+      .card.shadow.mb-4
+        .card-header.py-3
+          h6.text-primary.font-weight-bold.m-0 #{opp.teamname}
+          span Opposition
+        ul.list-group.list-group-flush
+          li.list-group-item
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-5
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar1.jpeg')
+              .col.mr-2
+                h6.mb-0
+                  strong #{opp.first}
+                span.text-xs Leader of Opposition
+          li.list-group-item
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-5
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar3.jpeg')
+              .col.mr-2
+                h6.mb-0
+                  strong #{opp.second}
+                span.text-xs Deputy Leader of Opposition
+          li.list-group-item
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-5
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar2.jpeg')
+              .col.mr-2
+                h6.mb-0
+                  strong #{opp.third}
+                span.text-xs Opposition Whip

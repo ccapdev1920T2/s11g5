@@ -2,7 +2,7 @@
   "name": "tabmaster",
   "version": "1.0.0",
   "description": "website hosting for debate tournaments",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

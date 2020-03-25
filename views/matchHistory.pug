@@ -1,0 +1,125 @@
+extends layout/base.pug
+
+block content
+  h3.text-center.text-dark.mb-4 Match History
+  .card.shadow
+    .card-header.py-3
+      p.text-primary.m-0.font-weight-bold Match History for John
+    .card-body
+      .row
+        .col-md-6.text-nowrap
+          #dataTable_length.dataTables_length(aria-controls='dataTable')
+            label
+              | Show Items 
+              select.form-control.form-control-sm.custom-select.custom-select-sm
+                option(value='10' selected) 10
+                option(value='25') 25
+                option(value='50') 50
+                option(value='100') 100
+              |  
+        .col-md-6
+          .text-md-right.dataTables_filter#dataTable_filter
+            label
+              input.form-control.form-control-sm(type='search' aria-controls='dataTable' placeholder='Search')
+      .table-responsive.table.mt-2#dataTable(role='grid' aria-describedby='dataTable_info')
+        table.table.dataTable.my-0#dataTable
+          thead
+            tr
+              th Round ID
+              th Room
+              th Motion
+              th Gov
+              th Opp 
+              th Gov Score
+              th Opp Score
+              th Winner
+          tbody
+            tr
+              td
+                a(href='roundroomStatistics.html') 640
+              td G306B
+              td This House would impose a BBC-style impartiality requirement on all news platforms.
+              td.border-left-danger
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
+                | ADMU A
+              td.border-left-success
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
+                | DLSU B
+              td 213
+              td 234
+              td Opp
+            tr
+              td
+                a(href='roundroomStatistics.html') 571
+              td G306B
+              td This House supports the rapid global elimination of both tariff and non-tariff barriers to free trade.
+              td.border-left-danger
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
+                | ADMU B
+              td.border-left-success
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
+                | DLSU A
+              td 212
+              td 222
+              td Opp
+            tr
+              td
+                a(href='roundroomStatistics.html') 341
+              td G306B
+              td This House would allow children to sue their parents for religious indoctrination.
+              td.border-left-success
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
+                | DLSU C
+              td.border-left-danger
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
+                | ADMU C
+              td 222
+              td 210
+              td Gov
+            tr
+              td
+                a(href='roundroomStatistics.html') 340
+              td G306A
+              td This House would abolish the Olympic Games.
+              td.border-left-success
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
+                | DLSU D
+              td.border-left-danger
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
+                | ADMU A
+              td 240
+              td 235
+              td Gov
+            tr
+              td
+                a(href='roundroomStatistics.html') 339
+              td G304A
+              td In liberal democracies, This House would implement a Social Credit System.
+              td.border-left-success
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
+                | DLSU A
+              td.border-left-danger
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
+                | ADMU B
+              td 223
+              td 217
+              td Gov
+            tr
+              td
+                a(href='roundroomStatistics.html') 302
+              td G301
+              td This House believes that the feminist movement should support the narrative that "beauty does not matter" over the narrative that "all bodies are beautiful".
+              td.border-left-danger
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
+                | DLSU E
+              td.border-left-success
+                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
+                | ADMU A
+              td 221
+              td 245
+              td Opp
+          tfoot
+            tr
+      .row
+        .col-md-6.align-self-center
+          p#dataTable_info.dataTables_info(role='status' aria-live='polite') Showing 1 to 6 of 6
