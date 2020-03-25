@@ -1,111 +1,47 @@
-extends layout/layout.pug
-
-block variables
-
-append stylesheets
-  link(href='/assets/css/debate-timer.css', rel='stylesheet', type='text/css')
-  link(href='http://www.cssscript.com/wp-includes/css/sticky.css', rel='stylesheet', type='text/css')
-  link(href='/assets/css/fullscreen.css', rel='stylesheet', type='text/css')
-
-block content
-  .container-fluid
-    .d-sm-flex.justify-content-between.align-items-center.mb-4
-      h3.text-dark.mb-0 Room #{roomno}
-    .row
-      .col-lg-6.col-xl-3.mb-4
-        .card.shadow.mb-4
-          .card-header.py-3
-            h6.text-primary.font-weight-bold.m-0 #{gov}
-            span Government
-          ul.list-group.list-group-flush
-            li.list-group-item
-              .row.align-items-center.no-gutters
-                .col-xl-3
-                  img.border.rounded-circle.img-profile(src="/assets/img/avatars/avatar1.jpeg")
-                .col.mr-2
-                  h6.mb-0
-                    strong #{pm}
-                  span.text-xs Prime Minister
-                .col-auto
-                  .custom-control.custom-checkbox
-                    input#formCheck-1.custom-control-input(type="checkbox")
-                    label.custom-control-label(for="formCheck-1")
-            li.list-group-item
-              .row.align-items-center.no-gutters
-                .col-xl-3
-                  img.border.rounded-circle.img-profile(src="/assets/img/avatars/avatar1.jpeg")
-                .col.mr-2
-                  h6.mb-0
-                    strong #{dpm}
-                  span.text-xs Deputy Prime Minister
-                .col-auto
-                  .custom-control.custom-checkbox
-                    input#formCheck-2.custom-control-input(type="checkbox")
-                    label.custom-control-label(for="formCheck-2")
-            li.list-group-item
-              .row.align-items-center.no-gutters
-                .col-xl-3
-                  img.border.rounded-circle.img-profile(src="/assets/img/avatars/avatar1.jpeg")
-                .col.mr-2
-                  h6.mb-0
-                    strong #{gw}
-                  span.text-xs Government Whip
-                .col-auto
-                  .custom-control.custom-checkbox
-                    input#formCheck-3.custom-control-input(type="checkbox")
-                    label.custom-control-label(for="formCheck-3")
-      .col-lg-6.mb-4
-        .card.shadow.mb-4
-          .card-header.py-3
-            h6.text-primary.font-weight-bold.m-0 Timer
-          #roundtimer.card-body
-            include roundroom/timer.pug
-            a#fullscreen.card-link(href="#")
-              i#fsBtn.fas.fa-expand.fa-fw
-      .col-lg-6.col-xl-3.mb-4
-        .card.shadow.mb-4
-          .card-header.py-3
-            h6.text-primary.font-weight-bold.m-0 #{opp}
-            span Opposition
-          ul.list-group.list-group-flush
-            li.list-group-item
-              .row.align-items-center.no-gutters
-                .col-xl-3
-                  img.border.rounded-circle.img-profile(src="/assets/img/avatars/avatar1.jpeg")
-                .col.mr-2
-                  h6.mb-0
-                    strong #{lo}
-                  span.text-xs Leader of Opposition
-                .col-auto
-                  .custom-control.custom-checkbox
-                    input#formCheck-1.custom-control-input(type="checkbox")
-                    label.custom-control-label(for="formCheck-1")
-            li.list-group-item
-              .row.align-items-center.no-gutters
-                .col-xl-3
-                  img.border.rounded-circle.img-profile(src="/assets/img/avatars/avatar1.jpeg")
-                .col.mr-2
-                  h6.mb-0
-                    strong #{dlo}
-                  span.text-xs Deputy Leader of Opposition
-                .col-auto
-                  .custom-control.custom-checkbox
-                    input#formCheck-2.custom-control-input(type="checkbox")
-                    label.custom-control-label(for="formCheck-2")
-            li.list-group-item
-              .row.align-items-center.no-gutters
-                .col-xl-3
-                  img.border.rounded-circle.img-profile(src="/assets/img/avatars/avatar1.jpeg")
-                .col.mr-2
-                  h6.mb-0
-                    strong #{ow}
-                  span.text-xs Opposition Whip
-                .col-auto
-                  .custom-control.custom-checkbox
-                    input#formCheck-3.custom-control-input(type="checkbox")
-                    label.custom-control-label(for="formCheck-3")
-
-append scripts
-  script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js")
-  script(src="/assets/js/testdebatetimer.js")
-  script(src="/assets/js/fullscreen.js")
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1,shrink-to-fit=no')
+    title TabCore
+    link(rel='stylesheet' href='/assets/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Adamina')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Oswald')
+    link(rel='stylesheet' href='/assets/fonts/fontawesome-all.min.css')
+    link(rel='stylesheet' href='/assets/fonts/font-awesome.min.css')
+  body(style='font-family: Oswald, sans-serif;')
+    nav.navbar.navbar-light.navbar-expand-md(style='font-family: Oswald, sans-serif;color: #4e73df;background-color: #4e73df;')
+      .container-fluid
+        a.navbar-brand.d-flex.justify-content-center.align-items-center.sidebar-brand.m-0(href='/')
+          .sidebar-brand-icon.rotate-n-15
+            i.fas.fa-balance-scale(style='font-size: 46px;color: rgba(255,255,255,0.9);')
+          .sidebar-brand-text.mx-3
+            span(style='font-size: 44px;color: rgba(255,255,255,0.9);') TABCORE
+        button.navbar-toggler(data-toggle='collapse' data-target='#navcol-1')
+          span.sr-only Toggle navigation
+          span.navbar-toggler-icon
+        .collapse.navbar-collapse.text-right.d-xl-flex.justify-content-xl-end#navcol-1(style='font-size: 25px;')
+          ul.nav.navbar-nav
+            li.nav-item(role='presentation')
+            li.nav-item(role='presentation')
+              a.nav-link.border-white(href='/login' style='color: rgba(255,255,255,0.5);') Login
+            li.nav-item(role='presentation')
+              a.nav-link(href='/register' style='color: rgba(255,255,255,0.5);') Register
+            li.nav-item(role='presentation')
+    section
+      .container(style='margin-top: 89px;')
+        h1.text-center THE EASIEST WAY TO KEEP YOUR DEBATE ROUNDS COORDINATED
+        h3.text-center See the motion, the timer, and check-in to make your debate rounds easier.
+        .row(style='margin-top: 65px;margin-bottom: 45px;')
+          .col.text-center
+            i.fa.fa-clock-o(style='font-size: 48px;')
+            h5 Concurrent Timer and Round Room
+            p(style='margin-top: 26px;') Manage debates with a synchronized timer and check-in feature.
+          .col.text-center
+            i.fa.fa-pie-chart(style='font-size: 48px;')
+            h5 Statistics
+            p(style='margin-top: 26px;') Keep track of your performance within rounds to improve.
+          .col.text-center
+            i.fa.fa-gavel(style='font-size: 48px;')
+            h5 Easy Adjudication
+            p(style='margin-top: 26px;') Easily adj a round after hosting one.
+        a.text-center.d-xl-flex.justify-content-xl-center.btn.btn-primary(href='/register') Create an Account

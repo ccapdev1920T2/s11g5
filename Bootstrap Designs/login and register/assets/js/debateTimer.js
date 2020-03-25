@@ -1,4 +1,4 @@
-var socket = io();
+
 
 //output stuff
 let progressBar = document.querySelector('.e-c-progress');
@@ -12,6 +12,7 @@ const nopoi = "#4e73df";
 const poi = "#1cc88a";
 const timeup = "red";
 const almost = "#f6c23e";
+var ding = document.getElementById("ding");
 
 progressBar.style.strokeDasharray = length;
 
@@ -23,6 +24,9 @@ function update(value, timePercent) {
 
 	toggleColor = (value < 60) ? nopoi : poi;
 	toggleColor = (value >= 420-60) ? almost : toggleColor;
+
+	if (value == 60 || value == 420-60 || value >= 435)
+		ding.play();
 
 	if (value >= 60 )
 		oneMin.style.opacity = 0;
@@ -87,6 +91,7 @@ function pauseTimer () {
 	triggerdate = new Date();
 
 	if (started){
+        $(".currentspeaker").addClass("waiting").removeClass("speaking");
 		clearInterval(intervalWatch);
 		interval = null;
 		started = false;
@@ -94,6 +99,7 @@ function pauseTimer () {
 		pauseBtn.classList.add('play');
 	}
 	else {
+        $(".currentspeaker").addClass("speaking").removeClass("waiting");
 		intervalWatch = setInterval( tick, 500 );
 		started = true;
 		pauseBtn.classList.remove('play');
@@ -107,14 +113,9 @@ function pauseTimer () {
 pauseBtn.addEventListener('click', click);
 
 function click(){
-	socket.emit('timer event', {'elapsed':elapsed, 'started':started});
+	pauseTimer();
 }
 
-socket.on('timer event', function(timerdata){
-	elapsed, paused = timerdata['elapsed'], timerdata['paused'];
-	pauseTimer();
-	// elapsed, started = timerdata['elapsed'], timerdata['started'];
-});
 
 console.log(document.getElementById('timer').getAttribute('width'));
 
