@@ -1,7 +1,85 @@
 extends layout/base.pug
 
 block content
-  h3.text-center.text-dark.mb-4 Match History
+  .row
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-primary.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-primary.font-weight-bold.text-xs.mb-1
+                span Last debate
+              .text-dark.font-weight-bold.h5.mb-0
+                span March 2, 2020
+            .col-auto
+              i.fas.fa-calendar.fa-2x.text-gray-300
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-success.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-success.font-weight-bold.text-xs.mb-1
+                span Average speaks
+              .text-dark.font-weight-bold.h5.mb-0
+                span 73.5
+            .col-auto
+              i.fas.fa-microphone.fa-2x.text-gray-300
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-info.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-info.font-weight-bold.text-xs.mb-1
+                span Win/Loss ratio
+              .row.no-gutters.align-items-center
+                .col-auto
+                  .text-dark.font-weight-bold.h5.mb-0.mr-3
+                    span 50%
+                .col
+                  .progress.progress-sm
+                    .progress-bar.bg-info(aria-valuenow='50' aria-valuemin='0' aria-valuemax='100' style='width: 50%;')
+                      span.sr-only 50%
+            .col-auto
+              i.fas.fa-trophy.fa-2x.text-gray-300
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-warning.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-warning.font-weight-bold.text-xs.mb-1
+                span Debates
+              .text-dark.font-weight-bold.h5.mb-0
+                span 5
+            .col-auto
+              i.fas.fa-comments.fa-2x.text-gray-300
+  .row
+    .col-lg-7.col-xl-8
+      .card.shadow.mb-4
+        .card-header.d-flex.justify-content-between.align-items-center
+          h6.text-primary.font-weight-bold.m-0 Performance Overview
+        .card-body
+          .chart-area
+            .chartjs-size-monitor
+              .chartjs-size-monitor-expand
+                div
+              .chartjs-size-monitor-shrink
+                div
+            canvas.chartjs-render-monitor(data-bs-chart='{"type":"line","data":{"labels":["January 6, 2020", "February 18, 2020", "February 22, 2020", "March 1, 2020","March 2, 2020"],"datasets":[{"label":"Score","fill":true,"data":["80","72","69","73","81"],"backgroundColor":"rgba(78, 115, 223, 0.05)","borderColor":"rgba(78, 115, 223, 1)"}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{},"scales":{"xAxes":[{"gridLines":{"color":"rgb(234, 236, 244)","zeroLineColor":"rgb(234, 236, 244)","drawBorder":false,"drawTicks":false,"borderDash":["2"],"zeroLineBorderDash":["2"],"drawOnChartArea":false},"ticks":{"fontColor":"#858796","padding":20}}],"yAxes":[{"gridLines":{"color":"rgb(234, 236, 244)","zeroLineColor":"rgb(234, 236, 244)","drawBorder":false,"drawTicks":false,"borderDash":["2"],"zeroLineBorderDash":["2"]},"ticks":{"fontColor":"#858796","padding":20}}]}}}' style='display: block; width: 699px; height: 320px;' width='699' height='320')
+    .col-lg-5.col-xl-4
+      .card.shadow.mb-4
+        .card-header.d-flex.justify-content-between.align-items-center
+          h6.text-primary.font-weight-bold.m-0 Win/Loss Ratio
+        .card-body
+          .chart-area
+            canvas(data-bs-chart='{"type":"doughnut","data":{"labels":["Wins","Losses"],"datasets":[{"label":"","backgroundColor":["#4e73df","#1cc88a","#36b9cc"],"borderColor":["#ffffff","#ffffff","#ffffff"],"data":["50","50"]}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{}}}')
+          .text-center.small.mt-4
+            span.mr-2
+              i.fas.fa-circle.text-primary
+              |  Wins
+            span.mr-2
+              i.fas.fa-circle.text-success
+              |  Losses
+
   .card.shadow
     .card-header.py-3
       p.text-primary.m-0.font-weight-bold Match History for John
@@ -33,93 +111,24 @@ block content
               th Gov Score
               th Opp Score
               th Winner
+              th Your Role
+              th Your Score
           tbody
-            tr
-              td
-                a(href='roundroomStatistics.html') 640
-              td G306B
-              td This House would impose a BBC-style impartiality requirement on all news platforms.
-              td.border-left-danger
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
-                | ADMU A
-              td.border-left-success
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
-                | DLSU B
-              td 213
-              td 234
-              td Opp
-            tr
-              td
-                a(href='roundroomStatistics.html') 571
-              td G306B
-              td This House supports the rapid global elimination of both tariff and non-tariff barriers to free trade.
-              td.border-left-danger
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
-                | ADMU B
-              td.border-left-success
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
-                | DLSU A
-              td 212
-              td 222
-              td Opp
-            tr
-              td
-                a(href='roundroomStatistics.html') 341
-              td G306B
-              td This House would allow children to sue their parents for religious indoctrination.
-              td.border-left-success
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
-                | DLSU C
-              td.border-left-danger
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
-                | ADMU C
-              td 222
-              td 210
-              td Gov
-            tr
-              td
-                a(href='roundroomStatistics.html') 340
-              td G306A
-              td This House would abolish the Olympic Games.
-              td.border-left-success
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
-                | DLSU D
-              td.border-left-danger
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
-                | ADMU A
-              td 240
-              td 235
-              td Gov
-            tr
-              td
-                a(href='roundroomStatistics.html') 339
-              td G304A
-              td In liberal democracies, This House would implement a Social Credit System.
-              td.border-left-success
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
-                | DLSU A
-              td.border-left-danger
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
-                | ADMU B
-              td 223
-              td 217
-              td Gov
-            tr
-              td
-                a(href='roundroomStatistics.html') 302
-              td G301
-              td This House believes that the feminist movement should support the narrative that "beauty does not matter" over the narrative that "all bodies are beautiful".
-              td.border-left-danger
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/dlsulogo.png')
-                | DLSU E
-              td.border-left-success
-                img.rounded-circle.mr-2(width='30' height='30' src='assets/img/admu-logo.png')
-                | ADMU A
-              td 221
-              td 245
-              td Opp
-          tfoot
-            tr
+            each match in matches
+              tr
+                td
+                  a(href='roundroomStatistics.html') #{match.roundID}
+                td G306B
+                td #{match.motion}
+                td(class=(match.winner === "Gov" ? "border-left-success" : "border-left-danger"))
+                  | #{match.gov}
+                td(class=(match.winner === "Opp" ? "border-left-success" : "border-left-danger"))
+                  | #{match.opp}
+                td #{match.govscore}
+                td #{match.oppscore}
+                td #{match.winner}
+                td #{match.role}
+                td #{match.rolescore}
       .row
         .col-md-6.align-self-center
           p#dataTable_info.dataTables_info(role='status' aria-live='polite') Showing 1 to 6 of 6

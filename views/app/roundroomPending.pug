@@ -3,7 +3,7 @@ extends layout/base.pug
 block content
   .d-sm-flex.justify-content-between.align-items-center.mb-4
     h3.text-dark.mb-0 Room G306B:
-    p Status: Waiting for 1 more debater(s) to join...
+    p#status Status: Waiting for 1 more debater(s) to join...
   .row
     .col-lg-6.col-xl-3.mb-4
       .card.shadow.mb-4
@@ -15,7 +15,7 @@ block content
             .row.align-items-center.no-gutters
               .col-auto.col-xl-5
                 a#join1(href='#')
-                  img.border.rounded-circle.img-profile#pmImg(src='assets/img/OCR-A_char_Plus_Sign.png')
+                  img.border.rounded-circle.img-profile#pmImg(src='/assets/img/OCR-A_char_Plus_Sign.png')
               .col.mr-2
                 h6.mb-0
                   strong Join...
@@ -23,7 +23,7 @@ block content
           li.list-group-item.border-left-success
             .row.align-items-center.no-gutters
               .col-auto.col-xl-5
-                img.border.rounded-circle.img-profile(src='assets/img/avatars/avatar1.jpeg')
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar1.jpeg')
               .col.mr-2
                 h6.mb-0
                   strong Marc Gonzalez
@@ -31,7 +31,7 @@ block content
           li.list-group-item.border-left-success
             .row.align-items-center.no-gutters
               .col-auto.col-xl-5
-                img.border.rounded-circle.img-profile(src='assets/img/avatars/avatar2.jpeg')
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar2.jpeg')
               .col.mr-2
                 h6.mb-0
                   strong Bernice Betito
@@ -44,9 +44,9 @@ block content
           h5 THBT that the Philippines should acquire military aid and a loan to develop and occupy the resources owned within the South China Sea.
           .row
             .col.text-right
-              a.btn.btn-success(href='roundroomOngoing.html') Start!
+              a.btn.btn-success(href='/roundroomOngoing') Start!
             .col.text-left
-              a.text-white.btn.btn-danger(href='cancelround.html') Cancel
+              a.text-white.btn.btn-danger(href='/cancelround') Cancel
     .col-lg-6.col-xl-3.mb-4
       .card.shadow.mb-4
         .card-header.py-3
@@ -56,7 +56,7 @@ block content
           li.list-group-item.border-left-success
             .row.align-items-center.no-gutters
               .col-auto.col-xl-5
-                img.border.rounded-circle.img-profile(src='assets/img/avatars/avatar3.jpeg')
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar3.jpeg')
               .col.mr-2
                 h6.mb-0
                   strong Pe Sean
@@ -64,7 +64,7 @@ block content
           li.list-group-item.border-left-success
             .row.align-items-center.no-gutters
               .col-auto.col-xl-5
-                img.border.rounded-circle.img-profile(src='assets/img/avatars/avatar4.jpeg')
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar4.jpeg')
               .col.mr-2
                 h6.mb-0
                   strong Gonzalez Marc
@@ -72,7 +72,7 @@ block content
           li.list-group-item.border-left-success
             .row.align-items-center.no-gutters
               .col-auto.col-xl-5
-                img.border.rounded-circle.img-profile(src='assets/img/avatars/avatar2.jpeg')
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar2.jpeg')
               .col.mr-2
                 h6.mb-0
                   strong Join

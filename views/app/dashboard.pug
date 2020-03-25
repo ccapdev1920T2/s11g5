@@ -1,5 +1,6 @@
 extends layout/base.pug
 
+
 block content
   .d-sm-flex.justify-content-between.align-items-center.mb-4
     h3.text-dark.mb-0 Hi John! Here's your Dashboard
@@ -12,7 +13,7 @@ block content
               .text-uppercase.text-primary.font-weight-bold.text-xs.mb-1
                 span Last debate
               .text-dark.font-weight-bold.h5.mb-0
-                span March 2, 2020
+                span #{dateoflast}
             .col-auto
               i.fas.fa-calendar.fa-2x.text-gray-300
     .col-md-6.col-xl-3.mb-4
@@ -23,7 +24,7 @@ block content
               .text-uppercase.text-success.font-weight-bold.text-xs.mb-1
                 span Average speaks
               .text-dark.font-weight-bold.h5.mb-0
-                span 73.5
+                span #{avg}
             .col-auto
               i.fas.fa-microphone.fa-2x.text-gray-300
     .col-md-6.col-xl-3.mb-4
@@ -36,11 +37,11 @@ block content
               .row.no-gutters.align-items-center
                 .col-auto
                   .text-dark.font-weight-bold.h5.mb-0.mr-3
-                    span 50%
+                    span #{wlratio}%
                 .col
                   .progress.progress-sm
-                    .progress-bar.bg-info(aria-valuenow='50' aria-valuemin='0' aria-valuemax='100' style='width: 50%;')
-                      span.sr-only 50%
+                    .progress-bar.bg-info(aria-valuenow=wlratio aria-valuemin='0' aria-valuemax='100' style='width: ' + wlratio + '%;')
+                      span.sr-only #{wlratio}%
             .col-auto
               i.fas.fa-trophy.fa-2x.text-gray-300
     .col-md-6.col-xl-3.mb-4
@@ -51,7 +52,7 @@ block content
               .text-uppercase.text-warning.font-weight-bold.text-xs.mb-1
                 span Debates
               .text-dark.font-weight-bold.h5.mb-0
-                span 5
+                span #{numdebates}
             .col-auto
               i.fas.fa-comments.fa-2x.text-gray-300
   .row
@@ -60,28 +61,28 @@ block content
         .col-md-6.col-xl-5.mb-4
           .card.shadow.border-top-success.py-2
             .card-body.text-center
-              a.card-link(href='startround.html')
+              a.card-link(href='/startround')
                 i.fa.fa-plus(style='font-size: 59px;')
               h1.text-center(style='font-size: 30px;') New Round
         .col-md-6.col-xl-5.mb-4
           .card.shadow.border-top-success.py-2
             .card-body.text-center
-              a.card-link(href='matchHistory.html')
-                i.fa.fa-table(style='font-size: 59px;')
-              h1.text-center(style='font-size: 30px;') Match History
+              a.card-link(href='/currentround')
+                i.fa.fa-microphone(style='font-size: 59px;')
+              h1.text-center(style='font-size: 30px;') Current Round
       .row.d-xl-flex.justify-content-xl-center
         .col-md-6.col-xl-5.mb-4
           .card.shadow.border-top-success.py-2
             .card-body.text-center
-              a.card-link(href='searchround.html')
+              a.card-link(href='/searchround')
                 i.fa.fa-search(style='font-size: 59px;')
               h1.text-center(style='font-size: 30px;') Round Stats
         .col-md-6.col-xl-5.mb-4
           .card.shadow.border-top-success.py-2
             .card-body.text-center
-              a.card-link(href='profileSettings.html')
-                i.fa.fa-gear(style='font-size: 59px;')
-              h1.text-center(style='font-size: 30px;') Settings
+              a.card-link(href='/matchHistory')
+                i.fa.fa-table(style='font-size: 59px;')
+              h1.text-center(style='font-size: 30px;') Match History
     .col-lg-5.col-xl-4
       .card.shadow.mb-4
         .card-header.d-flex.justify-content-between.align-items-center
