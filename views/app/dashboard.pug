@@ -1,0 +1,102 @@
+extends layout/base.pug
+
+
+block content
+  .d-sm-flex.justify-content-between.align-items-center.mb-4
+    h3.text-dark.mb-0 Hi John! Here's your Dashboard
+  .row
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-primary.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-primary.font-weight-bold.text-xs.mb-1
+                span Last debate
+              .text-dark.font-weight-bold.h5.mb-0
+                span #{dateoflast}
+            .col-auto
+              i.fas.fa-calendar.fa-2x.text-gray-300
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-success.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-success.font-weight-bold.text-xs.mb-1
+                span Average speaks
+              .text-dark.font-weight-bold.h5.mb-0
+                span #{avg}
+            .col-auto
+              i.fas.fa-microphone.fa-2x.text-gray-300
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-info.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-info.font-weight-bold.text-xs.mb-1
+                span Win/Loss ratio
+              .row.no-gutters.align-items-center
+                .col-auto
+                  .text-dark.font-weight-bold.h5.mb-0.mr-3
+                    span #{wlratio}%
+                .col
+                  .progress.progress-sm
+                    .progress-bar.bg-info(aria-valuenow=wlratio aria-valuemin='0' aria-valuemax='100' style='width: ' + wlratio + '%;')
+                      span.sr-only #{wlratio}%
+            .col-auto
+              i.fas.fa-trophy.fa-2x.text-gray-300
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-warning.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-warning.font-weight-bold.text-xs.mb-1
+                span Debates
+              .text-dark.font-weight-bold.h5.mb-0
+                span #{numdebates}
+            .col-auto
+              i.fas.fa-comments.fa-2x.text-gray-300
+  .row
+    .col-lg-7.col-xl-8(style='padding-top: 43px;')
+      .row.d-xl-flex.justify-content-xl-center
+        .col-md-6.col-xl-5.mb-4
+          .card.shadow.border-top-success.py-2
+            .card-body.text-center
+              a.card-link(href='/startround')
+                i.fa.fa-plus(style='font-size: 59px;')
+              h1.text-center(style='font-size: 30px;') New Round
+        .col-md-6.col-xl-5.mb-4
+          .card.shadow.border-top-success.py-2
+            .card-body.text-center
+              a.card-link(href='/currentround')
+                i.fa.fa-microphone(style='font-size: 59px;')
+              h1.text-center(style='font-size: 30px;') Current Round
+      .row.d-xl-flex.justify-content-xl-center
+        .col-md-6.col-xl-5.mb-4
+          .card.shadow.border-top-success.py-2
+            .card-body.text-center
+              a.card-link(href='/searchround')
+                i.fa.fa-search(style='font-size: 59px;')
+              h1.text-center(style='font-size: 30px;') Round Stats
+        .col-md-6.col-xl-5.mb-4
+          .card.shadow.border-top-success.py-2
+            .card-body.text-center
+              a.card-link(href='/matchHistory')
+                i.fa.fa-table(style='font-size: 59px;')
+              h1.text-center(style='font-size: 30px;') Match History
+    .col-lg-5.col-xl-4
+      .card.shadow.mb-4
+        .card-header.d-flex.justify-content-between.align-items-center
+          h6.text-primary.font-weight-bold.m-0 Win/Loss Ratio
+          .dropdown.no-arrow
+            button.btn.btn-link.btn-sm.dropdown-toggle(data-toggle='dropdown' aria-expanded='false' type='button')
+              i.fas.fa-ellipsis-v.text-gray-400
+        .card-body
+          .chart-area
+            canvas(data-bs-chart='{"type":"doughnut","data":{"labels":["Wins","Losses"],"datasets":[{"label":"","backgroundColor":["#4e73df","#1cc88a","#36b9cc"],"borderColor":["#ffffff","#ffffff","#ffffff"],"data":["50","50"]}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{}}}')
+          .text-center.small.mt-4
+            span.mr-2
+              i.fas.fa-circle.text-primary
+              |  Wins
+            span.mr-2
+              i.fas.fa-circle.text-success
+              |  Losses

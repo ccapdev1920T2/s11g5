@@ -1,0 +1,150 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1,shrink-to-fit=no')
+    title  #{pagename} | TabCore
+    link(rel='stylesheet' href='/assets/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Adamina')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Oswald')
+    link(rel='stylesheet' href='/assets/fonts/fontawesome-all.min.css')
+    link(rel='stylesheet' href='/assets/fonts/font-awesome.min.css')
+    link(rel='stylesheet' href='/assets/fonts/line-awesome.min.css')
+    link(rel='stylesheet' href='/assets/fonts/fontawesome5-overrides.min.css')
+    link(rel='stylesheet' href='/assets/css/debateTimer.css')
+    link(rel='stylesheet' href='/assets/css/fullscreen.css')
+    link(rel='stylesheet' href='/assets/css/login.css')
+    link(rel='stylesheet' href='/assets/css/theme.css')
+  body#page-top(style='font-family: Oswald, sans-serif;')
+    #wrapper
+      nav.navbar.navbar-dark.align-items-start.sidebar.sidebar-dark.accordion.bg-gradient-primary.p-0(style='font-family: Oswald, sans-serif;')
+        .container-fluid.d-flex.flex-column.p-0
+          a.navbar-brand.d-flex.justify-content-center.align-items-center.sidebar-brand.m-0(href='index.html')
+            .sidebar-brand-icon.rotate-n-15
+              i.fas.fa-balance-scale
+            .sidebar-brand-text.mx-3
+              span Tabcore
+          hr.sidebar-divider.my-0
+          ul.nav.navbar-nav.text-light#accordionSidebar
+            li.nav-item(role='presentation')
+              a.nav-link(href='/dashboard', class=(cur === "dashboard" ? "active" : undefined))
+                i.fas.fa-tachometer-alt
+                span Dashboard
+            li.nav-item(role='presentation')
+              a.nav-link(href='/roundroom/123', class=(cur === "roundroom" ? "active" : undefined))
+                i.fa.fa-microphone
+                span Current Round
+            li.nav-item(role='presentation')  
+              a.nav-link(href='/roundroomPending', class=(cur === "join" ? "active" : undefined))
+                i.fa.fa-envelope-open-o
+                span Join a Round
+            li.nav-item(role='presentation')
+              a.nav-link(href='/startRound', class=(cur === "startRound" ? "active" : undefined))
+                i.fa.fa-plus-circle
+                span Start a New Round
+            li.nav-item(role='presentation')
+              a.nav-link(href='/matchHistory', class=(cur === "matchHistory" ? "active" : undefined))
+                i.fa.fa-table
+                span Match History
+            li.nav-item(role='presentation')
+              a.nav-link(href='/searchround', class=(cur === "searchround" ? "active" : undefined))
+                i.fa.fa-search
+                span Find a Round
+            li.nav-item(role='presentation', class=(cur === "settings" ? "active" : undefined))
+              a.nav-link(href='/settings')
+                i.fas.fa-wrench
+                span Profile Settings
+          .text-center.d-none.d-md-inline
+      .d-flex.flex-column#content-wrapper
+        #content
+          nav.navbar.navbar-light.navbar-expand.bg-white.shadow.mb-4.topbar.static-top
+            .container-fluid
+              button.btn.btn-link.d-md-none.rounded-circle.mr-3#sidebarToggleTop(type='button')
+                i.fas.fa-bars
+              ul.nav.navbar-nav.flex-nowrap.ml-auto
+                li.nav-item.dropdown.d-sm-none.no-arrow
+                  a.dropdown-toggle.nav-link(data-toggle='dropdown' aria-expanded='false' href='#')
+                    i.fas.fa-search
+                  .dropdown-menu.dropdown-menu-right.p-3.animated--grow-in(role='menu' aria-labelledby='searchDropdown')
+                    form.form-inline.mr-auto.navbar-search.w-100
+                      .input-group
+                        input.bg-light.form-control.border-0.small(type='text' placeholder='Search for ...')
+                        .input-group-append
+                          button.btn.btn-primary.py-0(type='button')
+                            i.fas.fa-search
+                li.nav-item.dropdown.no-arrow.mx-1(role='presentation')
+                  .nav-item.dropdown.no-arrow
+                    a.dropdown-toggle.nav-link(data-toggle='dropdown' aria-expanded='false' href='#')
+                      i.fas.fa-envelope.fa-fw
+                      span.badge.badge-danger.badge-counter 1
+                    .dropdown-menu.dropdown-menu-right.dropdown-list.dropdown-menu-right.animated--grow-in(role='menu')
+                      h6.dropdown-header Invite center
+                      a.d-flex.align-items-center.dropdown-item(href='roundroomPending.html')
+                        .dropdown-list-image.mr-3
+                          img.rounded-circle(src='/assets/img/avatars/avatar4.jpeg')
+                        .font-weight-bold
+                          .text-truncate
+                            span Join my debate round!
+                          p.small.text-gray-500.mb-0 Bernice Betito - 58m
+                      a.d-flex.align-items-center.dropdown-item(href='roundroomPending.html')
+                        .dropdown-list-image.mr-3
+                          img.rounded-circle(src='/assets/img/avatars/avatar4.jpeg')
+                        .font-weight-bold
+                          .text-truncate
+                            span.text-muted Join my debate round!
+                          p.small.text-gray-500.mb-0 Bernice Betito - 2d
+                      a.d-flex.align-items-center.dropdown-item(href='roundroomPending.html')
+                        .dropdown-list-image.mr-3
+                          img.rounded-circle(src='/assets/img/avatars/avatar4.jpeg')
+                        .font-weight-bold
+                          .text-truncate
+                            span.text-muted Join my debate round!
+                          p.small.text-gray-500.mb-0 Bernice Betito - 2d
+                      a.d-flex.align-items-center.dropdown-item(href='roundroomPending.html')
+                        .dropdown-list-image.mr-3
+                          img.rounded-circle(src='/assets/img/avatars/avatar4.jpeg')
+                        .font-weight-bold
+                          .text-truncate
+                            span.text-muted Join my debate round!
+                          p.small.text-gray-500.mb-0 Bernice Betito - 1w
+                      a.d-flex.align-items-center.dropdown-item(href='roundroomPending.html')
+                        .dropdown-list-image.mr-3
+                          img.rounded-circle(src='/assets/img/avatars/avatar4.jpeg')
+                        .font-weight-bold
+                          .text-truncate
+                            span.text-muted Join my debate round!
+                          p.small.text-gray-500.mb-0 Bernice Betito - 4w
+                  .shadow.dropdown-list.dropdown-menu.dropdown-menu-right(aria-labelledby='alertsDropdown')
+                .d-none.d-sm-block.topbar-divider
+                li.nav-item.dropdown.no-arrow(role='presentation')
+                  .nav-item.dropdown.no-arrow
+                    a.dropdown-toggle.nav-link(data-toggle='dropdown' aria-expanded='false' href='#')
+                      span.d-none.d-lg-inline.mr-2.text-gray-600.small john.smith
+                      img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar5.jpeg')
+                    .dropdown-menu.shadow.dropdown-menu-right.animated--grow-in(role='menu')
+                      a.dropdown-item(role='presentation' href='index.html')
+                        i.fas.fa-user.fa-sm.fa-fw.mr-2.text-gray-400
+                        |  Profile
+                      a.dropdown-item(role='presentation' href='profileSettings.html')
+                        i.fas.fa-cogs.fa-sm.fa-fw.mr-2.text-gray-400
+                        |  Settings
+                      .dropdown-divider
+          .container-fluid
+            block content
+        footer.bg-white.sticky-footer
+          .container.my-auto
+            .text-center.my-auto.copyright
+              span Copyright © Brand 2020
+      a.border.rounded.d-inline.scroll-to-top(href='#page-top')
+        i.fas.fa-angle-up
+    script(src='/assets/js/jquery.min.js')
+    script(src='/assets/bootstrap/js/bootstrap.min.js')
+    script(src='/assets/js/chart.min.js')
+    script(src='/assets/js/bs-init.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='/assets/js/debateTimer.js')
+    script(src='/assets/js/fullscreen.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js')
+    script(src='/assets/js/joinRound.js')
+    script(src='/assets/js/theme.js')

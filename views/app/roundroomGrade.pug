@@ -1,0 +1,98 @@
+extends layout/base
+
+block content
+  .d-sm-flex.justify-content-between.align-items-center.mb-4
+    h3.text-dark.mb-0 Room #{roomNO}
+    p Status: Waiting for Adjudicator to score...
+  h3.text-center #{motion}
+  .row.text-left.d-xl-flex.justify-content-xl-center
+    .col-lg-6.col-xl-5.mb-4
+      .card.shadow.mb-4
+        .card-header.py-3
+          h6.text-primary.font-weight-bold.m-0 #{gov.teamname}
+          span Government
+        ul.list-group.list-group-flush
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-2
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar1.jpeg')
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{gov.first}
+                span.text-xs Prime Minister
+              .col-xl-5
+                .form-group
+                  label Score: 
+                  input(type='number' placeholder)
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-2
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar3.jpeg')
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{gov.second}
+                span.text-xs Deputy Prime Minister
+              .col-xl-5
+                .form-group
+                  label Score: 
+                  input(type='number')
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-2
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar4.jpeg')
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{gov.third}
+                span.text-xs Government Whip
+              .col-xl-5
+                .form-group
+                  label Score: 
+                  input(type='number')
+    .col-lg-6.col-xl-5.mb-4
+      .card.shadow.mb-4
+        .card-header.py-3
+          h6.text-primary.font-weight-bold.m-0 #{opp.teamname}
+          span Opposition
+        ul.list-group.list-group-flush
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-2
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar1.jpeg')
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{opp.first}
+                span.text-xs Leader of Opposition
+              .col-xl-5
+                .form-group
+                  label Score: 
+                  input(type='number')
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-2
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar3.jpeg')
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{opp.second}
+                span.text-xs Deputy Leader of Opposition
+              .col-xl-5
+                .form-group
+                  label Score: 
+                  input(type='number')
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-auto.col-xl-2
+                img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar4.jpeg')
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{opp.third}
+                span.text-xs Opposition Whip
+              .col-xl-5
+                .form-group
+                  label Score: 
+                  input(type='number')
+  .row
+    .col.text-center
+      .form-group.d-xl-flex.flex-column.align-items-xl-center
+        label Comments:
+        textarea(style='width: 641px;height: 109px;font-size: 16px;')
+      a.btn.btn-primary(href='roundroomStatistics.html') Submit Result
