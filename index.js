@@ -30,6 +30,8 @@ app.get('/login', function(req,res){
   res.render('login')
 })
 
+/*app.post*/
+
 app.get('/dashboard', function(req, res){
   context = {
     pagename: "Dashboard",
@@ -59,7 +61,7 @@ app.get('/nocurrent', function(req,res){
 
 
 
-app.get('/roundroom/:roundID', (req, res) => {
+app.get('/roundroom/:roundID', (req, res) => { 
   var context = {
     pagename: "Room " + "G406B",
     cur: "roundroom",
