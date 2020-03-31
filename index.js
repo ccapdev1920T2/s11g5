@@ -5,9 +5,12 @@ const io = require('socket.io')(http) //socket.io for live client-server interac
 const pug = require('pug') //pug templating language so html can be divided into blocks
 const port = process.env.PORT || 5000 //port server will receive requests from
 const mongoose = require('mongoose')
-require("dotenv").config()
+const dbConfig = require('./config/database.js')
+const bodyParser = require('body-parser')
 
-mongoose.connect(process.env.ATLAS_URI, {useNewUrlParser: true, useUnifiedTopology: true});
+app.use(bodyParser.json())
+
+mongoose.connect(dbConfig.url, {useNewUrlParser: true, useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
@@ -25,6 +28,7 @@ app.get('/', function(req, res){
 app.get('/register', function(req,res){
   res.render('register')
 })
+
 
 app.get('/login', function(req,res){
   res.render('login')
@@ -48,13 +52,17 @@ app.get('/cancelround', function(req, res){
 })
 
 app.get('/currentround', function(req, res){
-  res.redirect('/roundroom/' + "12333")
+  res.redirect('/roundroom/' + "")
   res.redirect('/nocurrent')
 })
 
 app.get('/nocurrent', function(req,res){
   message = "You have no current round",
-  res.render('app/message')
+  res.render('app/message', message)
+})
+
+app.get('/roundroomStats', (req,res) => {
+  res.render('app/roundroomStats')
 })
 
 
