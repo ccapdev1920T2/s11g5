@@ -1,3 +1,3 @@
-require('dotenv').config()
+var configDB = require('./config/database.js');
 
-console.log(process.env.MONGO_URI)
+console.log(configDB.url)
