@@ -3,32 +3,35 @@ const app = express()
 const http = require('http').Server(app) //http needed for running server
 const io = require('socket.io')(http) //socket.io for live client-server interactions
 const pug = require('pug') //pug templating language so html can be divided into blocks
-const port = process.env.PORT || 5000 //port server will receive requests from
-const mongoose = require('mongoose')
-require("dotenv").config()
+const port = process.env.PORT || 8000 //port server will receive requests from
 
-mongoose.connect(process.env.ATLAS_URI, {useNewUrlParser: true, useUnifiedTopology: true});
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+//backend stuff
+const mongoose = require ('mongoose');
+const passport = require ('passport');
+const flash = require ('connect-flash');
 
+const morgan       = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser   = require('body-parser');
+const session      = require('express-session');
+
+const configDB = require('./config/database.js');
+
+// configuration
+// connect to our database "url to be changed"
+mongoose.connect(configDB.url, {useUnifiedTopology: true, useNewUrlParser: true});
+
+// pass passport for configuration
+require('./config/passport')(passport);
+
+//middleware for front-end
 app.set('view engine', 'pug') // sets pug as view engine
 app.set('views', __dirname + '/views') //sets view directory
 app.use('/assets', express.static(__dirname + "/views/assets")) //static_root
 
-
-/* Static view routes */
+/* ===============Routes============== */
 // please note that in each view, the "cur" variable is for the navbar. usage: name of route
-app.get('/', function(req, res){
-  res.render('index')
-});
-
-app.get('/register', function(req,res){
-  res.render('register')
-})
-
-app.get('/login', function(req,res){
-  res.render('login')
-})
+require('./routes/authentication.js')(app, passport)
 
 /*app.post*/
 
@@ -61,7 +64,7 @@ app.get('/nocurrent', function(req,res){
 
 
 
-app.get('/roundroom/:roundID', (req, res) => { 
+app.get('/roundroom/:roundID', (req, res) => {
   var context = {
     pagename: "Room " + "G406B",
     cur: "roundroom",

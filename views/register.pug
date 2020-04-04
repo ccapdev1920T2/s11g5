@@ -40,19 +40,20 @@ html
               .p-5
                 .text-center
                   h4.text-dark.mb-4 Create an Account!
-                form.user
+                  h5.text-danger.mb-4#errormessage
+                form.user#daForm
                   .form-group.row
                     .col-sm-6.mb-3.mb-sm-0
-                      input.form-control.form-control-user#exampleFirstName(type='text' placeholder='First Name' name='first_name')
+                      input.form-control.form-control-user#firstname(type='text' placeholder='First Name' name='first_name')
                     .col-sm-6
-                      input.form-control.form-control-user#exampleFirstName(type='text' placeholder='Last Name' name='last_name')
+                      input.form-control.form-control-user#lastname(type='text' placeholder='Last Name' name='last_name')
                   .form-group
-                    input.form-control.form-control-user#exampleInputEmail(type='email' aria-describedby='emailHelp' placeholder='Email Address' name='email')
+                    input.form-control.form-control-user#email(type='email' aria-describedby='emailHelp' placeholder='Email Address' name='email')
                   .form-group.row
                     .col-sm-6.mb-3.mb-sm-0
-                      input.form-control.form-control-user#examplePasswordInput(type='password' placeholder='Password' name='password')
+                      input.form-control.form-control-user#password(type='password' placeholder='Password' name='password')
                     .col-sm-6
-                      input.form-control.form-control-user#exampleRepeatPasswordInput(type='password' placeholder='Repeat Password' name='password_repeat')
+                      input.form-control.form-control-user#confirm(type='password' placeholder='Repeat Password' name='password_repeat')
                   button.btn.btn-primary.btn-block.text-white.btn-user(type='submit') Register Account
                   hr
                   a.btn.btn-primary.btn-block.text-white.btn-google.btn-user(role='button')
@@ -68,3 +69,4 @@ html
                   a.small(href='/login') Already have an account? Login!
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js')
+    script(src='/assets/js/login.js')
