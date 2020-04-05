@@ -1,8 +1,9 @@
 // load all the things we need
+const flash = require ('connect-flash');
 var LocalStrategy   = require('passport-local').Strategy;
 
 // load up the user model
-var User            = require('../app/models/user'); // could be changed into userSchema if we use that
+var User            = require('../models/user.model'); // could be changed into userSchema if we use that
 
 // expose this function to our app using module.exports
 module.exports = function(passport) {

@@ -42,24 +42,18 @@ html
                   .p-5
                     .text-center
                       h4.text-dark.mb-4 Welcome Back!
-                    form.user
+                      h5.text-dark.mb-4 #{loginMessage}
+                    form.user(action="/login", method="post")
                       .form-group
-                        input.form-control.form-control-user#exampleInputEmail(type='email' aria-describedby='emailHelp' placeholder='Enter Email Address...' name='email')
+                        input.form-control.form-control-user#exampleInputEmail(type='text' aria-describedby='emailHelp' placeholder='Enter Username...' name='username')
                       .form-group
                         input.form-control.form-control-user#exampleInputPassword(type='password' placeholder='Password' name='password')
-                      .form-group
-                        .custom-control.custom-checkbox.small
-                          .form-check
-                            input.form-check-input.custom-control-input#formCheck-1(type='checkbox')
-                            label.form-check-label.custom-control-label(for='formCheck-1') Remember Me
+                      //- .form-group
+                      //-   .custom-control.custom-checkbox.small
+                      //-     .form-check
+                      //-       input.form-check-input.custom-control-input#formCheck-1(type='checkbox')
+                      //-       label.form-check-label.custom-control-label(for='formCheck-1') Remember Me
                       button.btn.btn-primary.btn-block.text-white.btn-user(type='submit') Login
-                      hr
-                      a.btn.btn-primary.btn-block.text-white.btn-google.btn-user(role='button')
-                        i.fab.fa-google
-                        |   Login with Google
-                      a.btn.btn-primary.btn-block.text-white.btn-facebook.btn-user(role='button')
-                        i.fab.fa-facebook-f
-                        |   Login with Facebook
                       hr
                     .text-center
                       a.small(href='/forgot-password') Forgot Password?

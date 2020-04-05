@@ -41,12 +41,16 @@ html
                 .text-center
                   h4.text-dark.mb-4 Create an Account!
                   h5.text-danger.mb-4#errormessage
-                form.user#daForm
+                form.user#daForm(role="form", action="/register", method="post")
                   .form-group.row
                     .col-sm-6.mb-3.mb-sm-0
                       input.form-control.form-control-user#firstname(type='text' placeholder='First Name' name='first_name')
                     .col-sm-6
                       input.form-control.form-control-user#lastname(type='text' placeholder='Last Name' name='last_name')
+                  .form-group
+                    input.form-control.form-control-user#username(type='text' placeholder='Username' name='username')
+                  .form-group
+                    input.form-control.form-control-user#institution(type='text' placeholder='Debate Institution' name='institution')
                   .form-group
                     input.form-control.form-control-user#email(type='email' aria-describedby='emailHelp' placeholder='Email Address' name='email')
                   .form-group.row
@@ -56,13 +60,7 @@ html
                       input.form-control.form-control-user#confirm(type='password' placeholder='Repeat Password' name='password_repeat')
                   button.btn.btn-primary.btn-block.text-white.btn-user(type='submit') Register Account
                   hr
-                  a.btn.btn-primary.btn-block.text-white.btn-google.btn-user(role='button')
-                    i.fab.fa-google
-                    |   Register with Google
-                  a.btn.btn-primary.btn-block.text-white.btn-facebook.btn-user(role='button')
-                    i.fab.fa-facebook-f
-                    |   Register with Facebook
-                  hr
+                  
                 .text-center
                   a.small(href='/forgot-password') Forgot Password?
                 .text-center

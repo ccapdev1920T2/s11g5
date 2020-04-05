@@ -86,15 +86,15 @@ block content
     .card-body
       .row
         .col-md-6.text-nowrap
-          #dataTable_length.dataTables_length(aria-controls='dataTable')
-            label
-              | Show Items 
-              select.form-control.form-control-sm.custom-select.custom-select-sm
-                option(value='10' selected) 10
-                option(value='25') 25
-                option(value='50') 50
-                option(value='100') 100
-              |  
+          //- #dataTable_length.dataTables_length(aria-controls='dataTable')
+          //-   label
+          //-     | Show Items 
+          //-     select.form-control.form-control-sm.custom-select.custom-select-sm
+          //-       option(value='10' selected) 10
+          //-       option(value='25') 25
+          //-       option(value='50') 50
+          //-       option(value='100') 100
+          //-     |  
         .col-md-6
           .text-md-right.dataTables_filter#dataTable_filter
             label
@@ -114,21 +114,24 @@ block content
               th Your Role
               th Your Score
           tbody
-            each match in matches
-              tr
-                td
-                  a(href='roundroomStatistics.html') #{match.roundID}
-                td G306B
-                td #{match.motion}
-                td(class=(match.winner === "Gov" ? "border-left-success" : "border-left-danger"))
-                  | #{match.gov}
-                td(class=(match.winner === "Opp" ? "border-left-success" : "border-left-danger"))
-                  | #{match.opp}
-                td #{match.govscore}
-                td #{match.oppscore}
-                td #{match.winner}
-                td #{match.role}
-                td #{match.rolescore}
-      .row
-        .col-md-6.align-self-center
-          p#dataTable_info.dataTables_info(role='status' aria-live='polite') Showing 1 to 6 of 6
+            if (matches.length > 0)
+              each match in matches
+                tr
+                  td
+                    a(href='roundroomStatistics.html') #{match.roundID}
+                  td G306B
+                  td #{match.motion}
+                  td(class=(match.winner === "Gov" ? "border-left-success" : "border-left-danger"))
+                    | #{match.gov}
+                  td(class=(match.winner === "Opp" ? "border-left-success" : "border-left-danger"))
+                    | #{match.opp}
+                  td #{match.govscore}
+                  td #{match.oppscore}
+                  td #{match.winner}
+                  td #{match.role}
+                  td #{match.rolescore}
+            tr
+              td.text-center(colspan=10) You have no more matches
+      //- .row
+      //-   .col-md-6.align-self-center
+      //-     p#dataTable_info.dataTables_info(role='status' aria-live='polite') Showi
