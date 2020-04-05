@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-var TeamSchema = require('mongoose').model('Team').schema;
-var UserSchema = require('mongoose').model('User').schema;
+var TeamSchema = require('./team.model');
+var UserSchema = require('./user.model');
 
 let RndRoomSchema = new Schema({
     roomno: {
@@ -15,7 +15,7 @@ let RndRoomSchema = new Schema({
       required: true
     },
     gov: {
-      type: [TeamSchema],
+      type: TeamSchema,
       required: true
     },
     gscore: {
@@ -23,7 +23,7 @@ let RndRoomSchema = new Schema({
       required: true
     },
     firstGov: {
-      type: [UserSchema],
+      type: UserSchema,
       required: true
     },
     firstPosGov: {  //Position of first speaker
@@ -35,7 +35,7 @@ let RndRoomSchema = new Schema({
       required: true
     },
     secondGov: {
-      type: [UserSchema],
+      type: UserSchema,
       required: true
     },
     secondPosGov: {  //Position of second speaker
@@ -47,7 +47,7 @@ let RndRoomSchema = new Schema({
       required: true
     },
     thirdGov: {
-      type: [UserSchema],
+      type: UserSchema,
       required: true
     },
     thirdPosGov: {  //Position of third speaker
@@ -59,7 +59,7 @@ let RndRoomSchema = new Schema({
       required: true
     },
     opp: {
-      type: [TeamSchema],
+      type: TeamSchema,
       required: true
     },
     oscore: {
@@ -67,7 +67,7 @@ let RndRoomSchema = new Schema({
       required: true
     },
     firstOpp: {
-      type: [UserSchema],
+      type: UserSchema,
       required: true
     },
     firstPosOpp: {  //Position of first speaker
@@ -79,7 +79,7 @@ let RndRoomSchema = new Schema({
       required: true
     },
     secondOpp: {
-      type: [UserSchema],
+      type: UserSchema,
       required: true
     },
     secondPosOpp: {  //Position of second speaker
@@ -91,7 +91,7 @@ let RndRoomSchema = new Schema({
       required: true
     },
     thirdOpp: {
-      type: [UserSchema],
+      type: UserSchema,
       required: true
     },
     thirdPosOpp: {  //Position of third speaker
@@ -114,7 +114,7 @@ let RndRoomSchema = new Schema({
       type: [UserSchema],
       required: true
     },
-});
+}, {timestamps: true});
 
 
 // Export the model

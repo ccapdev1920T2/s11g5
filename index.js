@@ -47,9 +47,9 @@ passport.deserializeUser(User.deserializeUser());
 
 /* ===============Routes============== */
 // please note that in each view, the "cur" variable is for the navbar. usage: name of route
-var index = require('./routes/index');
+var routes = require('./routes/routes');
 var users = require('./routes/users');
-app.use("/", index)
+app.use("/", routes)
 app.use("/", users)
 
 

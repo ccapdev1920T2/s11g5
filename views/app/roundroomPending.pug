@@ -8,7 +8,7 @@ block content
     .col-lg-6.col-xl-3.mb-4
       .card.shadow.mb-4
         .card-header.py-3
-          h6.text-primary.font-weight-bold.m-0 DLSU Team A
+          h6.text-primary.font-weight-bold.m-0 #{gov.teamname}
           span Government
         ul.list-group.list-group-flush
           li.list-group-item.border-left-warning(style='font-size: 18px;')
@@ -18,7 +18,7 @@ block content
                   img.border.rounded-circle.img-profile#pmImg(src='/assets/img/OCR-A_char_Plus_Sign.png')
               .col.mr-2
                 h6.mb-0
-                  strong Join...
+                  strong #{gov.first}
                 span.text-xs Prime Minister
           li.list-group-item.border-left-success
             .row.align-items-center.no-gutters
@@ -26,7 +26,7 @@ block content
                 img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar1.jpeg')
               .col.mr-2
                 h6.mb-0
-                  strong Marc Gonzalez
+                  strong #{gov.second}
                 span.text-xs Deputy Prime Minister
           li.list-group-item.border-left-success
             .row.align-items-center.no-gutters
@@ -34,7 +34,7 @@ block content
                 img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar2.jpeg')
               .col.mr-2
                 h6.mb-0
-                  strong Bernice Betito
+                  strong #{gov.third}
                 span.text-xs Government Whip
     .col-lg-6.mb-4
       .card.shadow.mb-4
@@ -50,7 +50,7 @@ block content
     .col-lg-6.col-xl-3.mb-4
       .card.shadow.mb-4
         .card-header.py-3
-          h6.text-primary.font-weight-bold.m-0 DLSU Team B
+          h6.text-primary.font-weight-bold.m-0 #{opp.teamname}
           span Opposition
         ul.list-group.list-group-flush
           li.list-group-item.border-left-success
@@ -59,7 +59,7 @@ block content
                 img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar3.jpeg')
               .col.mr-2
                 h6.mb-0
-                  strong Pe Sean
+                  strong #{opp.first}
                 span.text-xs Leader of Opposition
           li.list-group-item.border-left-success
             .row.align-items-center.no-gutters
@@ -67,7 +67,7 @@ block content
                 img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar4.jpeg')
               .col.mr-2
                 h6.mb-0
-                  strong Gonzalez Marc
+                  strong #{opp.second}
                 span.text-xs Deputy Leader of Opposition
           li.list-group-item.border-left-success
             .row.align-items-center.no-gutters
@@ -75,5 +75,5 @@ block content
                 img.border.rounded-circle.img-profile(src='/assets/img/avatars/avatar2.jpeg')
               .col.mr-2
                 h6.mb-0
-                  strong Join
+                  strong #{opp.third}
                 span.text-xs Opposition Whip

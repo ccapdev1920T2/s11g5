@@ -1,4 +1,4 @@
-const RoundRoom = require('../models/roundRoom.model');
+const RoundRoom = require('../models/roundroom.model');
 
 exports.roundRoom_create = function (motion, roomNo) {
     let RoundRoom = new RoundRoom(

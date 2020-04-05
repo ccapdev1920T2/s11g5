@@ -9,7 +9,7 @@ var User = new Schema({
     last_name: String,
     email: String,
     institution: String,
-});
+}, {timestamps: true});
 
 User.plugin(passportLocalMongoose);
 

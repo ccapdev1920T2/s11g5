@@ -50,4 +50,49 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
 
   });
 
+router.post('/settings/changepassword', isLoggedIn, (req, res) => {
+  // do something here with
+  //req.body.password
+  context = {
+    message: "Successfully Changed Password!",
+    user: req.user,
+  }
+
+  res.render('app/settings', context)
+})
+
+router.post('/settings/changepersonal', isLoggedIn, (req, res) => {
+  // do something here with
+  //req.body.password
+  context = {
+    message: "Successfully Changed Personal Info!",
+    user: req.user,
+  }
+
+  res.render('app/settings', context)
+})
+
+router.post('/settings/changeuser', isLoggedIn, (req,res) => {
+  // do something here with
+  //req.body.password
+  context = {
+    message: "Successfully Changed User Settings!",
+    user: req.user,
+  }
+
+  res.render('app/settings', context)
+})
+
+// route middleware to make sure a user is logged in
+function isLoggedIn(req, res, next) {
+
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated())
+        return next();
+
+    // if they aren't redirect them to the home page
+    res.redirect('/login');
+}
+
+
 module.exports = router;
