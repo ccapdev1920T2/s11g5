@@ -1,0 +1,123 @@
+extends ../layout/base.pug
+
+block content
+  h3.text-dark.mb-4 Profile Settings
+  .row.mb-3
+    .col-lg-8
+      .row
+        .col
+          .card.shadow.mb-3
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold User Settings
+            .card-body
+              form.user(action="/settings/user", method="post")
+                .form-row
+                  .col
+                    if(pagedetails.user == 1)
+                      .form-group
+                        label(for='username')
+                          strong Username
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.username}` name='username')
+                        .text-center.small Can only contain letters, numbers, - , _ , or .
+                        .text-center.small(style="color: #d66") Invalid User Name
+                    else
+                      .form-group
+                        label(for='username')
+                          strong Username
+                        input.form-control(type='text' placeholder=`${pagedetails.curr_user.username}` name='username')
+                        .text-center.small Can only contain letters, numbers, - , _ , or .
+                  .col
+                    if(pagedetails.mail == 1)
+                      .form-group
+                        label(for='email')
+                          strong Email Address
+                        input.form-control(style='border: 1px solid #d66' type='email' placeholder=`${pagedetails.curr_user.email}` name='email')
+                        .text-center.small(style="color: #d66") Invalid Email
+                    else
+                      .form-group
+                        label(for='email')
+                          strong Email Address
+                        input.form-control(type='email' placeholder=`${pagedetails.curr_user.email}` name='email')
+                .form-group
+                  button.btn.btn-primary.btn-sm(type='submit') Save Settings
+          .card.shadow
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold Personal Information
+            .card-body
+              form.user(action="/settings/personal", method="post")
+                .form-row
+                  .col
+                    .form-group
+                      label(for='first_name')
+                        strong First Name
+                      if(pagedetails.first == 1)
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.first_name}` name='first_name')
+                        .text-center.small(style="color: #d66") Invalid First Name
+                      else
+                        input.form-control(type='text' placeholder=`${pagedetails.curr_user.first_name}` name='first_name')
+                  .col
+                    .form-group
+                      label(for='last_name')
+                        strong Last Name
+                      if(pagedetails.last == 1)
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.last_name}` name='last_name')
+                        .text-center.small(style="color: #d66") Invalid Last Name
+                      else
+                        input.form-control(type='text' placeholder=`${pagedetails.curr_user.last_name}` name='last_name')
+                .form-group
+                  label(for='country')
+                    strong Debate Institution
+                  if(pagedetails.insti == 1)
+                    input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.institution}` name='institution')
+                    .text-center.small Can only contain letters and spaces
+                    .text-center.small(style="color: #d66") Invalid Institution
+                  else
+                    input.form-control(type='text' placeholder=`${pagedetails.curr_user.institution}` name='institution')
+                    .text-center.small Can only contain letters and spaces
+                .form-group
+                  button.btn.btn-primary.btn-sm(type='submit') Save Settings
+          .card.shadow(style='margin-top: 15px;')
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold Change Password
+            .card-body
+              form.user(action="/settings/password", method="post")
+                if(pagedetails.pass == 1)
+                  .form-group
+                    label(for='password')
+                      strong Current Password
+                      br
+                    input.form-control(style='border: 1px solid #d66' type='password', name='current_pass')
+                  .form-group
+                    label(for='password')
+                      strong New Password
+                      br
+                    input.form-control(style='border: 1px solid #d66' type='password', name='password')
+                  .form-group
+                    label(for='password')
+                      strong Confirm Password
+                      br
+                    input.form-control(style='border: 1px solid #d66' type='password', name='confirm_pass')
+                  .text-center.small Password should be at least 8 characters with no whitespaces
+                  .text-center.small(style="color: #d66") Invalid Current and/or New Password
+                else
+                  .form-group
+                    label(for='password')
+                      strong Current Password
+                      br
+                    input.form-control(type='password', name='current_pass')
+                  .form-group
+                    label(for='password')
+                      strong New Password
+                      br
+                    input.form-control(type='password', name='password')
+                  .form-group
+                    label(for='password')
+                      strong Confirm Password
+                      br
+                    input.form-control(type='password', name='confirm_pass')
+                  .text-center.small Password should be at least 8 characters with no whitespaces
+                .form-group
+                  button.btn.btn-primary.btn-sm(type='submit') Save Settings
+          a.text-center.btn.btn-danger(href='/deleteAccount' style='margin-top: 30px;')
+            i.fa.fa-trash-o
+            |   Delete Account

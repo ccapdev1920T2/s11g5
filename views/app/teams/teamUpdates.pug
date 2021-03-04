@@ -1,0 +1,40 @@
+extends ../layout/base.pug
+
+block content
+  .container-fluid
+    .card.shadow
+      .card-header.py-3
+        p.text-primary.m-0.font-weight-bold Team Updates for #{pagedetails.curr_user.full_name}
+      .card-body
+        #dataTable.table-responsive.table.mt-2(role='grid' aria-describedby='dataTable_info')
+          table#dataTable.table.dataTable.my-0
+            thead
+              tr
+                th Team Name
+                th(style='text-align:center') Updates
+                th
+            tbody
+                if (updates.length > 0)
+                  each update in updates
+                    tr
+                      td
+                        a(href=update.link+'?teamname='+update.teamname) #{update.teamname}
+                      td #{update.teamupdate}
+                      td
+                        a.text-center.btn.btn-danger(href='/deleteUpdate?index='+update.index+'&teamname='+update.teamname)
+                          i.fa.fa-trash-o
+                  tr
+                    td
+                    td(style='text-align:center') You have no more team updates
+                    td
+                  tr
+                    td
+                    td(style='text-align:center')
+                      a.text-center.btn.btn-danger.btn-sm(href='/deleteAllUpdates')
+                        i.fa.fa-trash-o
+                        |  Delete All
+                    td
+                else
+                  tr
+                    td
+                      td(style='text-align:center') No Team Updates to Show!

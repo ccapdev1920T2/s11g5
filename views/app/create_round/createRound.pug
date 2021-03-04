@@ -1,0 +1,30 @@
+extends ../layout/base.pug
+
+block content
+  h3.text-dark.mb-4 Create a Round
+  .row.mb-3
+    .col-lg-8
+      .row
+        .col
+          .card.shadow.mb-3
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold Create a Round
+            .card-body
+              h4.text-dark.mb-0 Hey, #{pagedetails.curr_user.full_name}! Choose between the two options to get started.
+              br
+              br
+              h6.text-dark.mb-0
+                i.fa.fa-archive
+                |    Created Rounds - find rounds you haven't finished creating
+              br
+              h6.text-dark.mb-0
+                i.fa.fa-pencil
+                |    Start a New Round - start a completely new round
+              br
+              br
+              a.card-link.btn.btn-primary(href='/roundsCreated')
+                i.fa.fa-archive
+                |    Created Rounds
+              a.card-link.btn.btn-primary(href='/startNew')
+                i.fa.fa-pencil
+                |    Start a New Round

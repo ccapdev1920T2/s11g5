@@ -1,0 +1,164 @@
+extends ../layout/base.pug
+
+block content
+  h3.text-dark.mb-4 Start a New Round
+  .row
+    .col-lg-6.col-xl-6
+      .row
+        .col
+          .card.shadow.mb-3
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold.text-center Round Information
+            .card-body
+              form.user(action="/matchInfo?roundID="+pagedetails.match.roundID+"&status="+pagedetails.match.status, method="post")
+                if(pagedetails.fields.all == 1)
+                  .form-row
+                    .col
+                      .form-group
+                        h3.text-dark.mb-0 Round ID: #{pagedetails.match.roundID}
+                  .form-row
+                    .col
+                      .form-group
+                        label(for='user_role')
+                          strong Choose Your Role:
+                        select#user_role.form-control(style='border: 1px solid #d66' name='user_role')
+                          option(value='' disabled selected) #{pagedetails.match.creatorRole}
+                          option(value='ad') Adjudicator
+                          option(value='gov') Government Speaker
+                          option(value='opp') Opposition Speaker
+                  .form-row
+                    .col
+                      .form-group
+                        label(for='motion')
+                          strong Motion of the Round:
+                        textarea#motion.form-control(style='border: 1px solid #d66' placeholder=`${pagedetails.match.motion}` name='motion')
+                  .form-row
+                    .col
+                      h4.text-dark.mb-0 TEAMS
+                      h6.text-dark.mb-0 Enter names of existing teams
+                      <br>
+                      .form-group
+                        label(for='gov')
+                          strong Enter Government Team Name:
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.gov.teamname}` name='gov')
+                  .form-row
+                    .col
+                      .form-group
+                        label(for='opp')
+                          strong Enter Opposition Team Name:
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.opp.teamname}` name='opp')
+                        .text-center.small(style="color: #d66") All fields need to be filled up
+                else
+                  .form-row
+                    .col
+                      .form-group
+                        h3.text-dark.mb-0 Round ID: #{pagedetails.match.roundID}
+                  if(pagedetails.fields.role == 1)
+                    .form-row
+                      .col
+                        .form-group
+                          label(for='user_role')
+                            strong Choose Your Role:
+                          select#user_role.form-control(style='border: 1px solid #d66' name='user_role')
+                            option(value='' disabled selected) #{pagedetails.match.creatorRole}
+                            option(value='ad') Adjudicator
+                            option(value='gov') Government Speaker
+                            option(value='opp') Opposition Speaker
+                          .text-center.small(style="color: #d66") Invalid User Role
+                  else
+                    .form-row
+                      .col
+                        .form-group
+                          label(for='user_role')
+                            strong Choose Your Role:
+                          select#user_role.form-control(name='user_role')
+                            option(value='' disabled selected) #{pagedetails.match.creatorRole}
+                            option(value='ad') Adjudicator
+                            option(value='gov') Government Speaker
+                            option(value='opp') Opposition Speaker
+                  if(pagedetails.fields.motion == 1)
+                    .form-row
+                      .col
+                        .form-group
+                          label(for='motion')
+                            strong Motion of the Round:
+                          textarea#motion.form-control(style='border: 1px solid #d66' placeholder=`${pagedetails.match.motion}` name='motion')
+                          .text-center.small(style="color: #d66") Invalid Motion
+                  else
+                    .form-row
+                      .col
+                        .form-group
+                          label(for='motion')
+                            strong Motion of the Round:
+                          textarea#motion.form-control(placeholder=`${pagedetails.match.motion}` name='motion')
+                  .form-row
+                    .col
+                      h4.text-dark.mb-0 TEAMS
+                      h6.text-dark.mb-0 Enter names of existing teams
+                      <br>
+                      if(pagedetails.fields.gov == 1)
+                        .form-group
+                          label(for='gov')
+                            strong Enter Government Team Name:
+                          input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.gov.teamname}` name='gov')
+                      else
+                        .form-group
+                          label(for='gov')
+                            strong Enter Government Team Name:
+                          input.form-control(type='text' placeholder=`${pagedetails.match.gov.teamname}` name='gov')
+                  .form-row
+                    .col
+                      if(pagedetails.fields.opp == 1 || pagedetails.fields.gov == 1)
+                        .form-group
+                          label(for='opp')
+                            strong Enter Opposition Team Name:
+                          input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.opp.teamname}` name='opp')
+                          .text-center.small(style="color: #d66") Invalid Teams
+                      else
+                        .form-group
+                          label(for='opp')
+                            strong Enter Opposition Team Name:
+                          input.form-control(type='text' placeholder=`${pagedetails.match.opp.teamname}` name='opp')
+                .form-group.text-center
+                  button.btn.btn-block.btn-primary(type='submit') Next
+    .col-lg-6.col-xl-6
+      .row
+        .col
+          .card.shadow.mb-3
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold.text-center Guide for Round Information
+            .card-body
+              ul.list-group.list-group-flush
+                li.list-group-item
+                  h4.text-dark.mb-0.text-center Round ID
+                  h6.mb-0.text-center The unique identifier of the round you are building.
+                  br
+                li.list-group-item
+                  br
+                  h4.text-dark.mb-0.text-center You can choose any of the following roles in a round:
+                  br
+                  h5.mb-0.text-dark Adjudicator
+                  h6.mb-0 - The Adjudicators are the ones to judge the round. They can call on the next speaker, end the round, give all speakers their grades, and give any comments that they may have.
+                  br
+                  h5.mb-0.text-dark Government Speaker
+                  h6.mb-0 - One of the speakers who agrees with the motion.
+                  br
+                  h5.mb-0.text-dark Opposition Speaker
+                  h6.mb-0 - One of the speakers who does not agree with the motion.
+                  br
+                li.list-group-item
+                  br
+                  h4.text-dark.mb-0.text-center Motion
+                  h6.mb-0.text-center The Motion is the topic of this debate round.
+                  br
+                li.list-group-item
+                  br
+                  h4.text-dark.mb-0.text-center Teams
+                  h6.mb-0.text-center Take note! Only existing teams are allowed to participate in debates and users cannot be in both teams. Proceed to your teams dashboard if you want to enter a new team.
+                  br
+                  h5.mb-0.text-dark Government Team
+                  h6.mb-0 - The team consisting of members who agree with the motion.
+                  br
+                  h5.mb-0.text-dark Opposition Team
+                  h6.mb-0 - The team consisting of members who do not agree with the motion.
+                  br

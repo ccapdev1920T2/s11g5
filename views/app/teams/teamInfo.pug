@@ -1,0 +1,110 @@
+extends ../layout/base.pug
+
+block content
+  h3.text-dark.mb-4 #{pagedetails.team.teamname}
+  .row
+    .col-lg-6.col-xl-6
+      .card.shadow.mb-4
+        .card-header.py-3
+          p.text-primary.m-0.font-weight-bold.text-center Team Information
+        .card-body
+          ul.list-group.list-group-flush
+            li.list-group-item
+              .text-center
+                h3.text-dark.mb-0 Team Members
+              br
+              h5.text-dark.mb-0 Leader: #{pagedetails.team.first.full_name}
+              .small Institution: #{pagedetails.team.first.institution}
+              br
+              h5.text-dark.mb-0 Deputy Leader: #{pagedetails.team.second.full_name}
+              .small Institution: #{pagedetails.team.second.institution}
+              br
+              h5.text-dark.mb-0 Whip: #{pagedetails.team.third.full_name}
+              .small Institution: #{pagedetails.team.third.institution}
+              br
+            li.list-group-item
+              br
+              .text-center
+                h3.text-dark.mb-0 Debate Statistics of #{pagedetails.team.teamname}
+              br
+              if (pagedetails.team.numdebates == 0)
+                h4.text-center(style='font-size: 30px') No Matches yet!
+              else
+                .chart-area
+                  canvas(data-bs-chart='{"type":"doughnut","data":{"labels":["Draws","Loses","Wins"],"datasets":[{"label":"","backgroundColor":["#36b9cc","#ff4d4d","#1cc88a"],"borderColor":["#ffffff","#ffffff","#ffffff"],"data":['+pagedetails.team.draws+','+pagedetails.team.loses+','+pagedetails.team.wins+']}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{}}}')
+                .text-center.small.mt-4
+                  span.mr-2
+                    i.fas.fa-circle.text-success
+                    |  Wins
+                  span.mr-2
+                    i.fas.fa-circle.text-danger
+                    |  Loses
+                  span.mr-2
+                    i.fas.fa-circle.text-info
+                    | Draws
+              br
+              #dataTable.table-responsive.table.mt-2(role='grid' aria-describedby='dataTable_info')
+                table#dataTable.table.dataTable.my-0
+                  tbody
+                    tr
+                      td.text-success(style='text-align:center') Wins
+                      td.text-danger(style='text-align:center') Loses
+                      td.text-info(style='text-align:center') Draws
+                    tr
+                      td(style='text-align:center') #{pagedetails.team.rawWins}
+                      td(style='text-align:center') #{pagedetails.team.rawLose}
+                      td(style='text-align:center') #{pagedetails.team.rawDraw}
+                    tr.text-light
+                      td.text-primary
+                      td.text-primary(style='text-align:center') TOTAL DEBATES:
+                      td.text-primary
+                    tr
+                      td
+                      td(style='text-align:center') #{pagedetails.team.numdebates}
+                      td
+            if(pagedetails.part == 1)
+              li.list-group-item
+                .text-center
+                  br
+                  a.card-link.btn.btn-primary.btn-sm(href='/editTeams?teamname='+pagedetails.team.teamname)
+                    i.fa.fa-pencil
+                    |   Edit Team
+                  if(pagedetails.leave == 1)
+                    a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmLeave?teamname='+pagedetails.team.teamname)
+                      i.fa.fa-user-times
+                      |   Leave Team
+                  a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmDeleteTeam?teamname='+pagedetails.team.teamname)
+                    i.fa.fa-trash-o
+                    |   Delete Team
+    if(pagedetails.part == 1)
+      .col-lg-6
+        .card.shadow.mb-4
+          .card-header.py-3
+            p.text-primary.m-0.font-weight-bold.text-center Team Updates
+          #dataTable.table-responsive.table.mt-2(role='grid' aria-describedby='dataTable_info')
+            table#dataTable.table.dataTable.my-0
+              tbody
+                if (pagedetails.teamUpdates.length > 0)
+                  each update in pagedetails.teamUpdates
+                    tr
+                      td
+                      td #{update.update}
+                      td
+                        a.text-center.btn.btn-danger(href='/deleteUpdate?index='+update.index+'&teamname='+update.teamname)
+                          i.fa.fa-trash-o
+                  tr
+                    td
+                    td(style='text-align:center') You have no more team updates
+                    td
+                  tr
+                    td
+                    td(style='text-align:center')
+                      a.text-center.btn.btn-danger.btn-sm(href='/deleteAllUpdates?teamname='+pagedetails.team.teamname)
+                        i.fa.fa-trash-o
+                        |  Delete All
+                    td
+                else
+                  tr
+                    td
+                    td(style='text-align:center') No Team Updates to Show!
+                    td

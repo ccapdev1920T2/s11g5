@@ -1,0 +1,205 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1,shrink-to-fit=no')
+    title  #{pagedetails.pagename} | TabCore
+    link(rel='stylesheet' href='/assets/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Adamina')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Oswald')
+    link(rel='stylesheet' href='/assets/fonts/fontawesome-all.min.css')
+    link(rel='stylesheet' href='/assets/fonts/font-awesome.min.css')
+    link(rel='stylesheet' href='/assets/fonts/line-awesome.min.css')
+    link(rel='stylesheet' href='/assets/fonts/fontawesome5-overrides.min.css')
+    link(rel='stylesheet' href='/assets/css/debateTimer.css')
+    link(rel='stylesheet' href='/assets/css/fullscreen.css')
+    link(rel='stylesheet' href='/assets/css/login.css')
+    link(rel='stylesheet' href='/assets/css/theme.css')
+  body#page-top(style='font-family: Oswald, sans-serif;')
+    #wrapper
+      .d-flex.flex-column#content-wrapper
+        #content
+          nav.navbar.navbar-dark.navbar-expand.bg-primary.shadow.mb-4.topbar.static-top
+            .container-fluid
+              span.d-none.d-lg-inline.mr-2.text-light #{pagedetails.curr_user.username}
+          .container-fluid
+            .d-sm-flex.justify-content-between.align-items-center.mb-4
+              h3.text-dark.mb-0 Round ID: #{pagedetails.match.roundID}
+            .row
+              .col-lg-6.col-xl-3.mb-4
+                .card.shadow.mb-4
+                  .card-header.py-3
+                    h6.text-primary.font-weight-bold.m-0 #{pagedetails.match.gov.teamname}
+                    span Government
+                  ul.list-group.list-group-flush
+                    li.list-group-item.bg-light.text-dark#gov_first(style='font-size: 18px;')
+                      .row.align-items-center.no-gutters
+                        .col.mr-2
+                          h6.mb-0
+                            strong#gov_first_name #{pagedetails.match.gov.first.full_name}
+                            input#govFirst(type='hidden' value=pagedetails.match.gov.first.full_name)
+                          if(pagedetails.match.gov.first.full_name != 'No User')
+                            .small Leader of Government
+                            span.text-xs Institution: #{pagedetails.match.gov.first.institution}
+                    li.list-group-item.bg-light.text-dark#gov_second(style='font-size: 18px;')
+                      .row.align-items-center.no-gutters
+                        .col.mr-2
+                          h6.mb-0
+                            strong#gov_second_name #{pagedetails.match.gov.second.full_name}
+                            input#govSecond(type='hidden' value=pagedetails.match.gov.second.full_name)
+                          if(pagedetails.match.gov.second.full_name != 'No User')
+                            .small Deputy Leader of Government
+                            span.text-xs Institution: #{pagedetails.match.gov.second.institution}
+                    li.list-group-item.bg-light.text-dark#gov_third(style='font-size: 18px;')
+                      .row.align-items-center.no-gutters
+                        .col.mr-2
+                          h6.mb-0
+                            strong#gov_third_name #{pagedetails.match.gov.third.full_name}
+                            input#govThird(type='hidden' value=pagedetails.match.gov.third.full_name)
+                          if(pagedetails.match.gov.third.full_name != 'No User')
+                            .small Government Whip
+                            span.text-xs Institution: #{pagedetails.match.gov.third.institution}
+              .col-lg-6.mb-4
+                .card.shadow.mb-4
+                  .card-header.py-3
+                    h6.text-primary.font-weight-bold.m-0 Timer
+                  .card-body#roundtimer
+                    #adj_motion_area
+                      .h5.text-center Adjudicator: #{pagedetails.match.adjudicator.full_name}
+                      br
+                      .h3.text-center.text-dark #{pagedetails.match.motion}
+                      br
+                    #timer_area
+                      .timer-box.justify-content-center
+                        .speaker
+                            .h6 Current Speaker:
+                            #current_text.h6 #{pagedetails.match.speaker.name_speaker}
+                            input#current_speaker(type='hidden' value=pagedetails.match.speaker.name_speaker)
+                            input#speaker_count(type='hidden' value=pagedetails.match.speaker.num_speaker)
+                        .circle.justify-content-center
+                          svg#timer(width='300' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg')
+                            g(transform='translate(110,110)')
+                              circle.e-c-base(r='100')
+                        .controlls
+                          .display-remain-time.text-primary#timer_text(style='font-family: Oswald, sans-serif;')
+                            span#minutes 00
+                            | :
+                            span#seconds 00
+                            input#seconds_val(type='hidden')
+                          #rndTimer
+                            button#pause.play
+                            input#roundID(type='hidden' value=pagedetails.match.roundID)
+                    #tutorial_area
+                      .h2.text-center.text-dark#title_area Before getting started, here's a guide on Rounds in Tabcore.
+                      br
+                      br
+                      #first_area
+                        .row
+                          .col
+                            .h4.text-left.text-primary#left_title On the Left side, you have the Government team.
+                            .h6.text-left.text-dark#left_details They're the ones who agree with the motion.
+                          .col
+                            .h4.text-right.text-primary#right_title On the Right side, you have the Opposition team.
+                            .h6.text-right.text-dark#right_details They're the ones who don't agree with the motion.
+                        br
+                      #second_area
+                        .h4.text-center.text-primary#timer_title Timer
+                        .h6.text-center.text-dark#timer_details Each speaker is given seven minutes. This timer allows all of the users in this round to see how much time a speaker has been speaking.
+                        br
+                      .row
+                        .col.text-right#back_class
+                          button#back_btn.btn.btn-danger Back
+                        .col.text-right#next_class
+                          button#next_btn.btn.btn-success Next
+                          input#tutorial_count(type='hidden')
+                        .col.text-left
+                          button#skip_btn.btn.btn-dark Skip
+                    #join_area
+                      .col.text-center
+                        button#confirm_btn.btn.btn-block.btn-primary Join Round
+                        input#roundID(type='hidden' value=pagedetails.match.roundID)
+                        br
+                      .row
+                        .col.text-right
+                          button#tutorial_btn.btn.btn-sm.btn-info Tutorial
+                        .col.text-left
+                          a.text-white.btn.btn-sm.btn-dark(href="/dashboard") Back to Dashboard
+                    #end_area
+                      .col.text-center
+                        a.text-white.btn.btn-block.btn-danger(href="/endRound?roundID="+pagedetails.match.roundID) Exit
+                        input#roundID(type='hidden' value=pagedetails.match.roundID)
+                    #ad_commands
+                      if(pagedetails.match.adjudicator.username == pagedetails.curr_user.username)
+                        .row
+                          .col.text-right
+                            button#next_speaker_btn.btn.btn-success Next Speaker
+                          .col.text-left
+                            button#end_btn.btn.btn-danger End Round
+                            input#roundID(type='hidden' value=pagedetails.match.roundID)
+                        br
+                        .row
+                          .col.text-center
+                            button#dash_adj_btn.btn.btn-dark Exit
+                      else
+                        .row
+                          .col.text-center
+                            .text-dark Only Adjudicators can call for the Next Speaker and End the Round
+                        br
+                        .row
+                          .col.text-center
+                            button#dash_deb_btn.btn.btn-dark Exit
+                    #back_dash_area
+                      .row
+                        .col.text-center
+                          a.text-white.btn.btn-block.btn-danger(href="/dashboard") Back to Dashboard
+                    a.card-link#fullscreen(href='#')
+                      i.fas.fa-expand.fa-fw#fsBtn
+              .col-lg-6.col-xl-3.mb-4
+                .card.shadow.mb-4
+                  .card-header.py-3
+                    h6.text-primary.font-weight-bold.m-0 #{pagedetails.match.opp.teamname}
+                    span Opposition
+                  ul.list-group.list-group-flush
+                    li.list-group-item.bg-light.text-dark#opp_first(style='font-size: 18px;')
+                      .row.align-items-center.no-gutters
+                        .col.mr-2
+                          h6.mb-0
+                            strong#opp_first_name #{pagedetails.match.opp.first.full_name}
+                            input#oppFirst(type='hidden' value=pagedetails.match.opp.first.full_name)
+                          if(pagedetails.match.opp.first.full_name != 'No User')
+                            .small Leader of Opposition
+                            span.text-xs Institution: #{pagedetails.match.opp.first.institution}
+                    li.list-group-item.bg-light.text-dark#opp_second(style='font-size: 18px;')
+                      .row.align-items-center.no-gutters
+                        .col.mr-2
+                          h6.mb-0
+                            strong#opp_second_name #{pagedetails.match.opp.second.full_name}
+                            input#oppSecond(type='hidden' value=pagedetails.match.opp.second.full_name)
+                          if(pagedetails.match.opp.second.full_name != 'No User')
+                            .small Deputy Leader of Opposition
+                            span.text-xs Institution: #{pagedetails.match.opp.second.institution}
+                    li.list-group-item.bg-light.text-dark#opp_third(style='font-size: 18px;')
+                      .row.align-items-center.no-gutters
+                        .col.mr-2
+                          h6.mb-0
+                            strong#opp_third_name #{pagedetails.match.opp.third.full_name}
+                            input#oppThird(type='hidden' value=pagedetails.match.opp.third.full_name)
+                          if(pagedetails.match.opp.third.full_name != 'No User')
+                            .small Opposition Whip
+                            span.text-xs Institution: #{pagedetails.match.opp.third.institution}
+        footer.bg-white.sticky-footer
+          .container.my-auto
+            .text-center.my-auto.copyright
+              span Copyright © Tabcore 2020
+      a.border.rounded.d-inline.scroll-to-top(href='#page-top')
+        i.fas.fa-angle-up
+    script(src='/assets/js/jquery.min.js')
+    script(src='/assets/bootstrap/js/bootstrap.min.js')
+    script(src='/assets/js/chart.min.js')
+    script(src='/assets/js/bs-init.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='/assets/js/fullscreen.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js')
+    script(src='/assets/js/joinRound.js')
+    script(src='/assets/js/theme.js')

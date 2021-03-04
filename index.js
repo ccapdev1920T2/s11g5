@@ -5,71 +5,101 @@ const io = require('socket.io')(http) //socket.io for live client-server interac
 const pug = require('pug') //pug templating language so html can be divided into blocks
 const port = process.env.PORT || 3000 //port server will receive requests from
 
-//backend stuff
+/* Backend */
 const mongoose = require ('mongoose');
 const flash = require ('connect-flash');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const session = require('express-session');
 var LocalStrategy = require('passport-local').Strategy;
+const sanitize = require('mongo-sanitize');
 
-//middleware for front-end
+/* Middleware for Front-End */
 app.set('view engine', 'pug') // sets pug as view engine
 app.set('views', __dirname + '/views') //sets view directory
 app.use('/assets', express.static(__dirname + "/views/assets")) //static_root
 
-//middleware for backend
+/* Middleware for Cache */
+app.use(function (req, res, next) {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
+    next()
+});
+
+/* Middleware for Backend */
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(require('express-session')({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: false
+app.use(session({
+    secret: 'secretKey',
+    saveUninitialized: true,
+    resave: true
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 
+/* Connect to the database in MongoDB */
+async function func(){
+  const {MongoClient} = require('mongodb');
+  const uri = "mongodb+srv://dbUser:p@ssword@cluster-1.ayffn.gcp.mongodb.net/db?retryWrites=true&w=majority";
+  const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
+  try{
+    await client.connect();
+  }catch (e){
+    console.error(e);
+  }
+}
 
-const configDB = require('./config/database.js');
-
-// configuration
-// connect to our database "url to be changed"
-mongoose.connect(configDB.url, {useUnifiedTopology: true, useNewUrlParser: true});
-
-var User = require('./models/user.model');
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-/* ===============Routes============== */
-// please note that in each view, the "cur" variable is for the navbar. usage: name of route
-var routes = require('./routes/routes');
+/* Routes */
 var users = require('./routes/users');
-app.use("/", routes)
-app.use("/", users)
-
-
+app.use("/", users);
 
 
 /* Socket.io functions for live debate rooms */
 io.on('connection', function(socket){
-  console.log("someone connected");
-  var elapsed, started;
-
-  socket.on('startstop', function(timerdata){
-    io.emit('startstop', timerdata);
-    elapsed, started = timerdata['elapsed'], timerdata['started']
-  })
-
-  socket.on('wew', ()=>{
-    io.emit('wew', {'elapsed':elapsed, 'started':started})
+  /* Join a round using the unique Round ID given */
+  socket.on('joinRound',function(roundID){
+    try{
+      console.log('join round:\t'+roundID);
+      socket.join(roundID);
+    }catch(e){
+      console.log('error in join room:\t'+e);
+    }
   });
 
-})
+  /* Start the timer of a round */
+  socket.on('start', function(details){
+    io.in(details.roundID).emit('start', details.seconds);
+  });
+
+  /* Stop the timer of a round */
+  socket.on('stop', function(details){
+    io.in(details.roundID).emit('stop', details.seconds);
+  });
+
+  /* Go to the next speaker in a round */
+  socket.on('nextSpeaker', function(details){
+    io.in(details.roundID).emit('nextSpeaker', details.numSpeaker);
+  });
+
+  /* End a round */
+  socket.on('endRound', function(roundID){
+    io.in(roundID).emit('endRound', roundID);
+  });
+
+  /* Leave a round using the unique Round ID given */
+  socket.on('leaveRound', function(roundID){
+    try{
+      console.log('leaving round:\t'+roundID);
+      socket.leave(roundID);
+    }catch(e){
+      console.log('error in leave room:\t'+e);
+    }
+  });
+});
 
 
 http.listen(port, function(){

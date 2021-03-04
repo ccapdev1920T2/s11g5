@@ -1,0 +1,55 @@
+extends ../layout/base_guest.pug
+
+block content
+  .container-fluid
+    .card.shadow
+      .card-header.py-3
+        p.text-primary.m-0.font-weight-bold Match History for #{pagedetails.curr_user.full_name}
+      .card-body
+        #dataTable.table-responsive.table.mt-2(role='grid' aria-describedby='dataTable_info')
+          table#dataTable.table.dataTable.my-0
+            thead
+              tr
+                th Round ID
+                th Motion
+                th Adjudicator
+                th Gov
+                th Opp 
+                th Gov Score
+                th Opp Score
+                th Winner
+            tbody
+                if (pagedetails.matches.length > 0)
+                  each match in pagedetails.matches
+                    tr
+                      td
+                        a(href='/roundroomStatistics?roundID='+match.roundID) #{match.roundID}
+                      td #{match.motion}
+                      td #{match.adjudicator.full_name}
+                      if(match.winner_side == 'Gov')
+                        td.border-left-success
+                          | #{match.gov.teamname}
+                      else if(match.winner_side == 'Opp')
+                        td.border-left-danger
+                          | #{match.gov.teamname}
+                      else
+                        td.border-left-info
+                          | #{match.gov.teamname}
+                      if(match.winner_side == 'Opp')
+                        td.border-left-success
+                          | #{match.opp.teamname}
+                      else if(match.winner_side == 'Gov')
+                        td.border-left-danger
+                          | #{match.opp.teamname}
+                      else
+                        td.border-left-info
+                          | #{match.opp.teamname}
+                      td #{match.govTotal}
+                      td #{match.oppTotal}
+                      td #{match.winner_side}
+                  tr
+                    td.text-center(colspan=10) You have no more matches
+                else
+                  tr
+                    td
+                      td.text-center(colspan=10) No Rounds to show for #{pagedetails.curr_user.full_name}

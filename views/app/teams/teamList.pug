@@ -1,0 +1,31 @@
+extends ../layout/base.pug
+
+block content
+  .container-fluid
+    .card.shadow
+      .card-header.py-3
+        p.text-primary.m-0.font-weight-bold Teams of #{pagedetails.curr_user.full_name}
+      .card-body
+        #dataTable.table-responsive.table.mt-2(role='grid' aria-describedby='dataTable_info')
+          table#dataTable.table.dataTable.my-0
+            thead
+              tr
+                th Team Name
+                th Leader
+                th Deputy Leader
+                th Whip
+            tbody
+                if (pagedetails.teams.length > 0)
+                  each team in pagedetails.teams
+                    tr
+                      td
+                        a(href='/teamInfo?teamname='+team.teamname) #{team.teamname}
+                      td #{team.first.full_name}
+                      td #{team.second.full_name}
+                      td #{team.third.full_name}
+                  tr
+                    td.text-center(colspan=10) You have no more teams
+                else
+                  tr
+                    td
+                      td.text-center(colspan=10) No Teams to show. Click on Create a Team!

@@ -7,7 +7,7 @@ $("#fullscreen").click( () => {
         $("#fsBtn").removeClass("fa-expand");
         $("#fsBtn").addClass("fa-compress");
     }
-    else { 
+    else {
         closeFullscreen();
         $("#fsBtn").removeClass("fa-compress");
         $("#fsBtn").addClass("fa-expand");

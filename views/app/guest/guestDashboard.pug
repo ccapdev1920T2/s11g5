@@ -1,0 +1,41 @@
+extends ../layout/base_guest.pug
+
+block content
+    .container
+      .row.justify-content-center(style='padding-top: 75px;')
+        .col-md-6.col-xl-3
+          .card.shadow.mb-4
+            .card-header.d-flex.justify-content-between.align-items-center.bg-danger
+              h6.text-primary.font-weight-bold.m-0.text-light Teams
+            .card-body.text-center
+              br
+              a.card-link(href='/teamList')
+                i.fas.fa-users.text-danger(style='font-size: 59px;')
+              br
+              br
+              h1.text-center.text-dark(style='font-size: 30px;') Teams
+        .col-md-6.col-xl-3
+          .card.shadow.mb-4
+            .card-header.d-flex.justify-content-between.align-items-center.bg-warning
+              h6.text-warning.font-weight-bold.m-0.text-light Join a Round
+            .card-body.text-center
+              br
+              a.card-link(href='/findRound')
+                i.fa.fa-envelope-open-o.text-warning(style='font-size: 59px;')
+              br
+              br
+              h1.text-center.text-dark(style='font-size: 30px;') Join a Round
+        .col-md-6.col-xl-3
+          .card.shadow.mb-4
+            .card-header.d-flex.justify-content-between.align-items-center.bg-success
+              h6.text-warning.font-weight-bold.m-0.text-light Match History
+            .card-body.text-center
+              br
+              a.card-link(href='/matchHistory')
+                i.fa.fa-table.text-success(style='font-size: 59px;')
+              br
+              br
+              h1.text-center.text-dark(style='font-size: 30px;') Match History
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js')

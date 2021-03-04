@@ -1,0 +1,132 @@
+extends ../layout/base.pug
+
+block content
+  .d-sm-flex.justify-content-between.align-items-center.mb-4
+    h4.text-dark.mb-0 Round ID: #{pagedetails.match.roundID}
+    p Status: #{pagedetails.match.status}
+  h5.text-center Adjudicator: #{pagedetails.match.adjudicator.full_name}
+  h4.text-center.text-dark Motion:
+  h3.text-center.text-dark #{pagedetails.match.motion}
+  .row.text-left.d-xl-flex.justify-content-xl-center(style='margin-top: 34px;')
+    .col-lg-6.col-xl-5.mb-4
+      .card.shadow.mb-4
+        if(pagedetails.match.winner == pagedetails.match.gov.teamname)
+          .card-header.py-3.bg-success
+            .row.text-light.bg-success
+              .col
+                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.gov.teamname) #{pagedetails.match.gov.teamname}
+                br
+                span Government
+              .col
+                h1.text-right Total: #{pagedetails.match.govTotal}
+        else if(pagedetails.match.winner == pagedetails.match.opp.teamname)
+          .card-header.py-3.bg-danger
+            .row.text-light.bg-danger
+              .col
+                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.gov.teamname) #{pagedetails.match.gov.teamname}
+                br
+                span Government
+              .col
+                h1.text-right Total: #{pagedetails.match.govTotal}
+        else
+          .card-header.py-3.bg-info
+            .row.text-light.bg-info
+              .col
+                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.gov.teamname) #{pagedetails.match.gov.teamname}
+                br
+                span Government
+              .col
+                h1.text-right Total: #{pagedetails.match.govTotal}
+        ul.list-group.list-group-flush
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{pagedetails.match.gov.first.full_name}
+                .small Leader
+                span.text-xs Institution: #{pagedetails.match.gov.first.institution}
+              .col-xl-5
+                h3.text-right Score: #{pagedetails.match.govFirstScore}
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{pagedetails.match.gov.second.full_name}
+                .small Deputy Leader
+                span.text-xs Institution: #{pagedetails.match.gov.second.institution}
+              .col-xl-5
+                h3.text-right Score: #{pagedetails.match.govSecondScore}
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{pagedetails.match.gov.third.full_name}
+                .small Whip
+                span.text-xs Institution: #{pagedetails.match.gov.third.institution}
+              .col-xl-5
+                h3.text-right Score: #{pagedetails.match.govThirdScore}
+    .col-lg-6.col-xl-5.mb-4
+      .card.shadow.mb-4
+        if(pagedetails.match.winner == pagedetails.match.opp.teamname)
+          .card-header.py-3.bg-success
+            .row.text-light.bg-success
+              .col
+                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.opp.teamname) #{pagedetails.match.opp.teamname}
+                br
+                span Opposition
+              .col
+                h1.text-right Total: #{pagedetails.match.oppTotal}
+        else if(pagedetails.match.winner == pagedetails.match.gov.teamname)
+          .card-header.py-3.bg-danger
+            .row.text-light.bg-danger
+              .col
+                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.opp.teamname) #{pagedetails.match.opp.teamname}
+                br
+                span Opposition
+              .col
+                h1.text-right Total: #{pagedetails.match.oppTotal}
+        else
+          .card-header.py-3.bg-info
+            .row.text-light.bg-info
+              .col
+                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.opp.teamname) #{pagedetails.match.opp.teamname}
+                br
+                span Opposition
+              .col
+                h1.text-right Total: #{pagedetails.match.oppTotal}
+        ul.list-group.list-group-flush
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{pagedetails.match.opp.first.full_name}
+                .small Leader
+                span.text-xs Institution: #{pagedetails.match.opp.first.institution}
+              .col-xl-5
+                h3.text-right Score: #{pagedetails.match.oppFirstScore}
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{pagedetails.match.opp.second.full_name}
+                .small Deputy Leader
+                span.text-xs Institution: #{pagedetails.match.opp.second.institution}
+              .col-xl-5
+                h3.text-right Score: #{pagedetails.match.oppSecondScore}
+          li.list-group-item(style='font-size: 18px;')
+            .row.align-items-center.no-gutters
+              .col-xl-4.mr-2
+                h6.mb-0
+                  strong #{pagedetails.match.opp.third.full_name}
+                .small Whip
+                span.text-xs Institution: #{pagedetails.match.opp.third.institution}
+              .col-xl-5
+                h3.text-right Score: #{pagedetails.match.oppThirdScore}
+  .row
+    .col.text-center
+      h1.text-dark Winner: #{pagedetails.match.winner}
+      .form-group.d-xl-flex.flex-column.align-items-xl-center
+        .card
+          .card-body
+            h4.card-title Comments:
+            p.text-left.card-text #{pagedetails.match.comments}

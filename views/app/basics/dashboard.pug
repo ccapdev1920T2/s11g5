@@ -1,0 +1,99 @@
+extends ../layout/base.pug
+
+
+block content
+  .d-sm-flex.justify-content-between.align-items-center.mb-4
+    h3.text-dark.mb-0 Hi #{pagedetails.curr_user.first_name}! Here's your Dashboard
+  .row
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-primary.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-primary.font-weight-bold.text-xs.mb-1
+                span Last Debate
+              .text-dark.font-weight-bold.h5.mb-0
+                span #{pagedetails.curr_user.dateoflast}
+            .col-auto
+              i.fas.fa-calendar.fa-2x.text-gray-300
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-success.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-success.font-weight-bold.text-xs.mb-1
+                span Wins
+              .text-dark.font-weight-bold.h5.mb-0
+                span #{pagedetails.curr_user.rawWins}
+            .col-auto
+              i.fas.fa-trophy.fa-2x.text-gray-300
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-danger.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-danger.font-weight-bold.text-xs.mb-1
+                span Loses
+              .text-dark.font-weight-bold.h5.mb-0.mr-3
+                span #{pagedetails.curr_user.rawLose}
+            .col-auto
+              i.fas.fa-times.fa-2x.text-gray-300
+    .col-md-6.col-xl-3.mb-4
+      .card.shadow.border-left-info.py-2
+        .card-body
+          .row.align-items-center.no-gutters
+            .col.mr-2
+              .text-uppercase.text-info.font-weight-bold.text-xs.mb-1
+                span Draws
+              .text-dark.font-weight-bold.h5.mb-0
+                span #{pagedetails.curr_user.rawDraw}
+            .col-auto
+              i.fa.fa-handshake-o.fa-2x.text-gray-300
+  .row
+    .col-lg-7.col-xl-8(style='padding-top: 43px;')
+      .row.d-xl-flex.justify-content-xl-center
+        .col-md-6.col-xl-5.mb-4
+          .card.shadow-lg.p-2.mb-1.bg-danger.rounded
+            .card-body.text-center.bg-danger
+              a.card-link(href='/createRound')
+                i.fa.fa-plus.text-light(style='font-size: 59px;')
+              h1.text-center.text-light(style='font-size: 30px;') Create a Round
+        .col-md-6.col-xl-5.mb-4
+          .card.shadow-lg.p-2.mb-1.bg-warning.rounded
+            .card-body.text-center.bg-warning
+              a.card-link(href='/findRound')
+                i.fa.fa-envelope-open-o.text-light(style='font-size: 59px;')
+              h1.text-center.text-light(style='font-size: 30px;') Join a Round
+      .row.d-xl-flex.justify-content-xl-center
+        .col-md-6.col-xl-5.mb-4
+          .card.shadow-lg.p-2.mb-1.bg-success.rounded
+            .card-body.text-center.bg-success
+              a.card-link(href='/roundStats')
+                i.fa.fa-area-chart.text-light(style='font-size: 59px;')
+              h1.text-center.text-light(style='font-size: 30px;') Round Statistics
+        .col-md-6.col-xl-5.mb-4
+          .card.shadow-lg.p-2.mb-1.bg-primary.rounded
+            .card-body.text-center.bg-primary
+              a.card-link(href='/matchHistory')
+                i.fa.fa-table.text-light(style='font-size: 59px;')
+              h1.text-center.text-light(style='font-size: 30px;') Match History
+    .col-lg-5.col-xl-4
+      .card.shadow.mb-4
+        .card-header.d-flex.justify-content-between.align-items-center
+          h6.text-primary.font-weight-bold.m-0 Win/Loss Ratio
+        .card-body
+          if (pagedetails.curr_user.numdebates == 0)
+            h1.text-center(style='font-size: 30px') No Matches yet!
+          else
+            .chart-area
+              canvas(data-bs-chart='{"type":"doughnut","data":{"labels":["Draws","Losses","Wins"],"datasets":[{"label":"","backgroundColor":["#36b9cc","#ff4d4d","#1cc88a"],"borderColor":["#ffffff","#ffffff","#ffffff"],"data":['+pagedetails.curr_user.draws+','+pagedetails.curr_user.loses+','+pagedetails.curr_user.wins+']}]},"options":{"maintainAspectRatio":false,"legend":{"display":false},"title":{}}}')
+            .text-center.small.mt-4
+              span.mr-2
+                i.fas.fa-circle.text-success
+                |  Wins
+              span.mr-2
+                i.fas.fa-circle.text-danger
+                |  Losses
+              span.mr-2
+                i.fas.fa-circle.text-info
+                |  Losses

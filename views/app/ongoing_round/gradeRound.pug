@@ -1,0 +1,171 @@
+extends ../layout/base.pug
+
+block content
+  h3.text-dark.mb-4 Team Scores for Round ID: #{pagedetails.match.roundID}
+  .row.mb-3
+    .col-lg-8
+      .row
+        .col
+          .card.shadow.mb-3
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold Enter Scores for Both Teams
+            .card-body
+              ul.list-group.list-group-flush
+                li.list-group-item
+                  h3.text-dark.mb-0.text-center Minimum score possible is 1 and the maximum is 100.
+                  br
+                form.user(action="/teamScores?roundID="+pagedetails.match.roundID, method="post")
+                  li.list-group-item
+                    br
+                    h4.text-dark.mb-0.text-center GOVERNMENT TEAM
+                    h6.text-darl.mb-0.text-center #{pagedetails.match.gov.teamname}
+                    br
+                    .form-row.text-center.text-dark
+                      if(pagedetails.match.gov.first.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='first')
+                              strong Leader
+                      if(pagedetails.match.gov.second.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='second')
+                              strong Deputy Leader
+                      if(pagedetails.match.gov.third.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='third')
+                              strong Whip
+                    .form-row.text-center
+                      if(pagedetails.match.gov.first.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='first')
+                              strong #{pagedetails.match.gov.first.full_name}
+                      if(pagedetails.match.gov.second.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='second')
+                              strong #{pagedetails.match.gov.second.full_name}
+                      if(pagedetails.match.gov.third.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='third')
+                              strong #{pagedetails.match.gov.third.full_name}
+                    .form-row
+                      if(pagedetails.match.gov.first.full_name != 'No User')
+                        .col
+                          .form-group
+                            if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.govFirst == 1)
+                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='firstgov')
+                              if(pagedetails.gradeFields.govFirst == 1)
+                                .text-center.small(style="color: #d66") Invalid Score
+                            else
+                              input.form-control(type="number" min="1" max="100" name='firstgov')
+                      if(pagedetails.match.gov.second.full_name != 'No User')
+                        .col
+                          .form-group
+                            if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.govSecond == 1)
+                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='secondgov')
+                              if(pagedetails.gradeFields.govSecond == 1)
+                                .text-center.small(style="color: #d66") Invalid Score
+                            else
+                              input.form-control(type="number" min="1" max="100" name='secondgov')
+                      if(pagedetails.match.gov.third.full_name != 'No User')
+                        .col
+                          .form-group
+                            if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.govThird == 1)
+                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='thirdgov')
+                              if(pagedetails.gradeFields.govThird == 1)
+                                .text-center.small(style="color: #d66") Invalid Score
+                            else
+                              input.form-control(type="number" min="1" max="100" name='thirdgov')
+                    br
+                  li.list-group-item
+                    br
+                    h4.text-dark.mb-0.text-center OPPOSITION TEAM
+                    h6.text-darl.mb-0.text-center #{pagedetails.match.opp.teamname}
+                    br
+                    .form-row.text-center.text-dark
+                      if(pagedetails.match.opp.first.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='first')
+                              strong Leader
+                      if(pagedetails.match.opp.second.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='second')
+                              strong Deputy Leader
+                      if(pagedetails.match.opp.third.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='third')
+                              strong Whip
+                    .form-row.text-center
+                      if(pagedetails.match.opp.first.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='first')
+                              strong #{pagedetails.match.opp.first.full_name}
+                      if(pagedetails.match.opp.second.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='second')
+                              strong #{pagedetails.match.opp.second.full_name}
+                      if(pagedetails.match.opp.third.full_name != 'No User')
+                        .col
+                          .form-group
+                            label(for='third')
+                              strong #{pagedetails.match.opp.third.full_name}
+                    .form-row
+                      if(pagedetails.match.opp.first.full_name != 'No User')
+                        .col
+                          .form-group
+                            if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.oppFirst == 1)
+                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='firstopp')
+                              if(pagedetails.gradeFields.oppFirst == 1)
+                                .text-center.small(style="color: #d66") Invalid Score
+                            else
+                              input.form-control(type="number" min="1" max="100" name='firstopp')
+                      if(pagedetails.match.opp.second.full_name != 'No User')
+                        .col
+                          .form-group
+                            if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.oppSecond == 1)
+                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='secondopp')
+                              if(pagedetails.gradeFields.oppSecond == 1)
+                                .text-center.small(style="color: #d66") Invalid Score
+                            else
+                              input.form-control(type="number" min="1" max="100" name='secondopp')
+                      if(pagedetails.match.opp.third.full_name != 'No User')
+                        .col
+                          .form-group
+                            if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.oppThird == 1)
+                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='thirdopp')
+                              if(pagedetails.gradeFields.oppThird == 1)
+                                .text-center.small(style="color: #d66") Invalid Score
+                            else
+                              input.form-control(type="number" min="1" max="100" name='thirdopp')
+                    br
+                  li.list-group-item
+                    br
+                    h4.text-dark.mb-0.text-center COMMENTS
+                    br
+                    .form-group
+                      label(for='comments')
+                        strong Comments for Round ID: #{pagedetails.match.roundID}
+                      if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.comments == 1)
+                        textarea#comment.form-control(style='border: 1px solid #d66' name='comment')
+                        if(pagedetails.gradeFields.comments == 1)
+                          .text-center.small(style="color: #d66") Invalid Comment/s.
+                      else
+                        textarea#comment.form-control(name='comment')
+                    br
+                    if(pagedetails.gradeFields.all == 1)
+                      .text-center.small(style="color: #d66") All fields need to be filled up
+                  li.list-group-item.text-center
+                    br
+                    .form-group.text-center
+                      button.btn.btn-block.btn-success(type='submit') Submit Grades
+                      br
+                      a.card-link.btn.btn-primary.btn-sm.btn-primary(href='/findGrade') Grade a Different Round

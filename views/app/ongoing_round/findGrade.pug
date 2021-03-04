@@ -1,0 +1,31 @@
+extends ../layout/base.pug
+
+block content
+  .container-fluid
+    .card.shadow
+      .card-header.py-3
+        p.text-primary.m-0.font-weight-bold Grade a Round
+      .card-body
+        #dataTable.table-responsive.table.mt-2(role='grid' aria-describedby='dataTable_info')
+          table#dataTable.table.dataTable.my-0
+            thead
+              tr
+                th Round ID
+                th Motion
+                th Gov
+                th Opp
+            tbody
+                if (pagedetails.matches.length > 0)
+                  each match in pagedetails.matches
+                    tr
+                      td
+                        a(href='/gradeRound?roundID='+match.roundID) #{match.roundID}
+                      td #{match.motion}
+                      td #{match.gov.teamname}
+                      td #{match.opp.teamname}
+                  tr
+                    td.text-center(colspan=10) You have no more rounds to grade
+                else
+                  tr
+                    td
+                      td.text-center(colspan=10) No Rounds to show. Click on Start a New Round to Create a Round!

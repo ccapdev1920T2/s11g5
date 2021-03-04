@@ -1,0 +1,49 @@
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1,shrink-to-fit=no')
+    title #{pagename} | TabCore
+    link(rel='stylesheet' href='/assets/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Adamina')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Oswald')
+    link(rel='stylesheet' href='/assets/fonts/fontawesome-all.min.css')
+    link(rel='stylesheet' href='/assets/fonts/font-awesome.min.css')
+  body(style='font-family: Oswald, sans-serif;')
+    nav.navbar.navbar-light.navbar-expand-md(style='font-family: Oswald, sans-serif;color: #4e73df;background-color: #4e73df;')
+      .container-fluid
+        a.navbar-brand.d-flex.justify-content-center.align-items-center.sidebar-brand.m-0(href='/')
+          .sidebar-brand-icon.rotate-n-15
+            i.fas.fa-balance-scale(style='font-size: 46px;color: rgba(255,255,255,0.9);')
+          .sidebar-brand-text.mx-3
+            span(style='font-size: 44px;color: rgba(255,255,255,0.9);') TABCORE
+        button.navbar-toggler(data-toggle='collapse' data-target='#navcol-1')
+          span.sr-only Toggle navigation
+          span.navbar-toggler-icon
+        .collapse.navbar-collapse.text-right.d-xl-flex.justify-content-xl-end#navcol-1(style='font-size: 25px;')
+          ul.nav.navbar-nav
+            li.nav-item(role='presentation')
+            li.nav-item(role='presentation')
+              a.nav-link.border-white(href='/login' style='color: rgba(255,255,255,0.5);') Login
+            li.nav-item(role='presentation')
+              a.nav-link.border-white(href='/guestLogin' style='color: rgba(255,255,255,0.5);') Guest
+            li.nav-item(role='presentation')
+              a.nav-link(href='/register' style='color: rgba(255,255,255,0.5);') Register
+            li.nav-item(role='presentation')
+    section
+      .container(style='margin-top: 89px;')
+        h1.text-center THE EASIEST WAY TO KEEP YOUR DEBATE ROUNDS COORDINATED
+        h3.text-center See the motion, the timer, and check-in to make your debate rounds easier.
+        .row(style='margin-top: 65px;margin-bottom: 45px;')
+          .col.text-center
+            i.fa.fa-clock-o(style='font-size: 48px;')
+            h5 Concurrent Timer and Round Room
+            p(style='margin-top: 26px;') Manage debates with a synchronized timer and check-in feature.
+          .col.text-center
+            i.fa.fa-pie-chart(style='font-size: 48px;')
+            h5 Statistics
+            p(style='margin-top: 26px;') Keep track of your performance within rounds to improve.
+          .col.text-center
+            i.fa.fa-gavel(style='font-size: 48px;')
+            h5 Easy Adjudication
+            p(style='margin-top: 26px;') Easily adj a round after hosting one.
+        a.text-center.d-xl-flex.justify-content-xl-center.btn.btn-primary(href='/register') Create an Account

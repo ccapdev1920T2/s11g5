@@ -1,0 +1,74 @@
+extends ../layout/base.pug
+
+block content
+  h3.text-dark.mb-4 Edit a Team
+  .row.mb-3
+    .col-lg-8
+      .row
+        .col
+          .card.shadow.mb-3
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold Edit a Team
+            .card-body
+              form.user(action="/editChosenTeam", method="post")
+                .form-row
+                  .col
+                    .form-group
+                      label(for='new_teamname')
+                        strong Team Name
+                      if(pagedetails.new_team == 1)
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.teamname}` name='new_teamname')
+                        .text-center.small Can only contain letters and spaces
+                        .text-center.small(style="color: #d66") Invalid Team Name
+                      else
+                        input.form-control(type='text' placeholder=`${pagedetails.team.teamname}` name='new_teamname')
+                        .text-center.small Can only contain letters and spaces
+                  .col
+                    .form-group
+                      label(for='first')
+                        strong Leader
+                      if(pagedetails.new_users >= 1)
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.first.username}` name='first_username')
+                      else
+                        input.form-control(type='text' placeholder=`${pagedetails.team.first.username}` name='first_username')
+                .form-row
+                  .col
+                    .form-group
+                      label(for='second')
+                        strong Deputy Leader
+                      if(pagedetails.new_users >= 1)
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.second.username}` name='second_username')
+                      else
+                        input.form-control(type='text' placeholder=`${pagedetails.team.second.username}` name='second_username')
+                  .col
+                    .form-group
+                      label(for='third')
+                        strong Whip
+                      if(pagedetails.new_users >= 1)
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.third.username}` name='third_username')
+                      else
+                        input.form-control(type='text' placeholder=`${pagedetails.team.third.username}` name='third_username')
+                if(pagedetails.new_users >= 1)
+                  .form-row
+                    .col
+                      .form-group
+                        if(pagedetails.new_users == 1)
+                          .text-center.small(style="color: #d66") Invalid User/s Entered
+                        else
+                          .text-center.small(style="color: #d66") Team Already Exists
+                .form-row
+                  .col
+                    .form-group
+                      label(for='current')
+                        strong Enter Current Team Name for confirmation:
+                      if(pagedetails.new_current == 1)
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Current Team Name...' name='current')
+                        .text-center.small(style="color: #d66") Invalid Team Name
+                      else
+                        input.form-control(type='text' placeholder='Enter Current Team Name...' name='current')
+                .form-row
+                  .col
+                    .form-group.text-center
+                      button.btn.btn-primary.btn-block.btn-success(type='submit') Save Changes
+                      br
+                      a.card-link.btn.btn-primary(href='/teamPage') Cancel

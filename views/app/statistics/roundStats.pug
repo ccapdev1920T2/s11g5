@@ -1,0 +1,18 @@
+extends ../layout/base.pug
+
+block content
+  .d-sm-flex.justify-content-between.align-items-center.mb-4
+    h3.text-dark.mb-0 Round Statistics
+  .row
+    .col-lg-6.mb-4
+      .card.shadow.mb-4
+        .card-header.py-3
+          h6.text-primary.font-weight-bold.m-0 Search Criteria
+        .card-body#roundtimer
+          form(action="/roundroomStatistics", method="post")
+            .form-group
+              label(for='roundID')
+                strong Enter Round ID to Find:
+              input#roundID.form-control(type='text' placeholder='Enter Round ID...' name='roundID')
+            .form-group
+              button.btn.btn-primary.btn-sm(type='submit') Find Round

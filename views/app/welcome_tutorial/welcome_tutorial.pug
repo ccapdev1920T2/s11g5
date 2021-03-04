@@ -1,0 +1,103 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1,shrink-to-fit=no')
+    title  #{pagename} | TabCore
+    link(rel='stylesheet' href='/assets/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Adamina')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Oswald')
+    link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.12.0/css/all.css')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet' href='https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css')
+    link(rel='stylesheet' href='assets/fonts/fontawesome5-overrides.min.css')
+  body.bg-gradient-primary(style='font-family: Oswald, sans-serif;')
+    nav.navbar.navbar-light.navbar-expand-md(style='font-family: Oswald, sans-serif;color: #4e73df;background-color: #4e73df;')
+      .container-fluid
+        a.navbar-brand.d-flex.justify-content-center.align-items-center.sidebar-brand.m-0(href='/')
+          .sidebar-brand-icon.rotate-n-15
+            i.fas.fa-balance-scale(style='font-size: 46px;color: rgba(255,255,255,0.9);')
+          .sidebar-brand-text.mx-3
+            span(style='font-size: 44px;color: rgba(255,255,255,0.9);') TABCORE
+        button.navbar-toggler(data-toggle='collapse' data-target='#navcol-1')
+          span.sr-only Toggle navigation
+          span.navbar-toggler-icon
+        .collapse.navbar-collapse.text-right.d-xl-flex.justify-content-xl-end#navcol-1(style='font-size: 25px;')
+    .container
+      .row.justify-content-center
+        .col-md-9.col-lg-12.col-xl-10
+          .card.shadow-lg.o-hidden.border-0.my-5
+            .card-body.p-0
+              #welcome_area.text-center
+                h1.text-primary.mb-0#welcome_title Welcome to Tabcore, #{curr_user.full_name}!
+                input#full_name(type='hidden', value=curr_user.full_name)
+                br
+                br
+                h2.text-dark.mb-0#welcome_message To get you started, we'll go through some features.
+                br
+                br
+                #welcome_buttons
+                  .row
+                    .col.text-right
+                      button#next_wel_btn.btn.btn-success Next
+                    .col.text-left
+                      a.card-link.btn.btn-dark(href='/dashboard') Skip
+                  br
+                #final_buttons
+                  .row
+                    .col.text-center
+                      a.card-link.btn.btn-primary(href='/dashboard') Go to My Dashboard
+                  br
+                  .row
+                    .col.text-center
+                      button#back_wel_btn.btn.btn-danger Back
+                  br
+              #specifics_area.row
+                .col-lg-6.d-none.d-lg-flex
+                  .flex-grow-1.bg-login-image#wel_photo(style='background-image: url("assets/img/tutorial/sidebarFirst.jpg");')
+                .col-lg-6
+                  .p-5
+                  .text-center
+                    h1.text-primary.mb-4#specifics_title First up, the Sidebar!
+                    h3.text-dark.mb-0#specifics_description The sidebar contains various tabs leading to different pages.
+                    br
+                    br
+                    #specifics_first
+                      .row(style='margin-right:25px;')
+                        h6.text-dark.mb-0(style="text-align:left;")
+                          i.fas.fa-tachometer-alt#specifics_first_icon
+                          span#specifics_first_details  Dashboard - This is your profile page. You'll find some information such as the number of debates you've won and lost.
+                        br
+                    #specifics_second
+                      .row(style='margin-right:25px;')
+                        h6.text-dark.mb-0(style="text-align:left;")
+                          i.fa.fa-plus-circle#specifics_second_icon
+                          span#specifics_second_details  Create a Round - When you want to create your own round, this is where you head to.
+                        br
+                    #specifics_third
+                      .row(style='margin-right:25px;')
+                        h6.text-dark.mb-0(style="text-align:left;")
+                          i.fa.fa-envelope-open-o#specifics_third_icon
+                          span#specifics_third_details  Join a Round - If any of your teams are invited to join rounds, here is where you'll find them, as well as ongoing rounds.
+                        br
+                    #specifics_fourth
+                      .row(style='margin-right:25px;')
+                        h6.text-dark.mb-0(style="text-align:left;")
+                          i.fa.fa-edit#specifics_fourth_icon
+                          span#specifics_fourth_details  Grade a Round - If you're an adjudicator for a round, you can head on over to this tab when the round ends in order to grade everyone.
+                        br
+                    .row
+                      .col.text-right#back_class
+                        button#back_tut_btn.btn.btn-danger Back
+                      .col.text-centert#next_class
+                        button#next_tut_btn.btn.btn-success Next
+                        input#welcome_count(type='hidden')
+                      .col.text-left
+                        button#skip_tut_btn.btn.btn-dark Skip
+                    br
+                    br
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js')
+    script(src='/assets/js/welcome.js')

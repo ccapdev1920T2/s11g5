@@ -1,0 +1,109 @@
+extends ../layout/base.pug
+
+block content
+  h3.text-dark.mb-4 Create a New Team
+  .row.mb-3
+    .col-lg-8
+      .row
+        .col
+          .card.shadow.mb-3
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold Create a New Team
+            .card-body
+              form.user(action="/checkInfo", method="post")
+                .form-row
+                  .col
+                    .form-group
+                      h5.text-dark.text-center.mb-0 Users could be registered users or guests! If adding registered users, kindly enter their user name. If adding guests, kindly enter their email address.
+                      br
+                if (pagedetails.team > 1)
+                  .form-row
+                    .col
+                      .form-group
+                        label(for='teamname')
+                          strong Team Name
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Team Name...' name='teamname' id='teamname')
+                        .text-center.small Can only contain letters and spaces
+                    .col
+                      .form-group
+                        label(for='first_username')
+                          strong Leader Username
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Leader...' name='first_username' id='first_username')
+                  .form-row
+                    .col
+                      .form-group
+                        label(for='second_username')
+                          strong Deputy Username
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Deputy...' name='second_username' id='second_username')
+                    .col
+                      .form-group
+                        label(for='third_username')
+                          strong Whip Username
+                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Whip...' name='third_username' id='third_username')
+                  if (pagedetails.team == 2)
+                    .text-center.small(style="color: #d66") Team Already Exists
+                  else if (pagedetails.team == 3)
+                    .text-center.small(style="color: #d66") #{pagedetails.curr_user.full_name} needs to be in the team
+                  else if (pagedetails.team == 4)
+                    .text-center.small(style="color: #d66") No two users can be the same
+                  else if (pagedetails.team == 5)
+                    .text-center.small(style="color: #d66") All fields need to be filled
+                  .form-group
+                    button.btn.btn-primary.btn-sm(type='submit') Create Team
+                else
+                  .form-row
+                    .col
+                      if (pagedetails.team == 1)
+                        .form-group
+                          label(for='teamname')
+                            strong Team Name
+                          input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Team Name...' name='teamname' id='teamname')
+                          .text-center.small Can only contain letters and spaces
+                          .text-center.small(style="color: #d66") Invalid Team Name
+                      else
+                        .form-group
+                          label(for='teamname')
+                            strong Team Name
+                          input.form-control(type='text' placeholder='Enter Team Name...' name='teamname' id='teamname')
+                          .text-center.small Can only contain letters and spaces
+                    .col
+                      if (pagedetails.lead == 1)
+                        .form-group
+                          label(for='first_username')
+                            strong Leader Username
+                          input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Leader...' name='first_username' id='first_username')
+                          .text-center.small(style="color: #d66") Invalid Username / Email Address
+                      else
+                        .form-group
+                          label(for='first_username')
+                            strong Leader Username
+                          input.form-control(type='text' placeholder='Enter Username of Leader...' name='first_username' id='first_username')
+                  .form-row
+                    .col
+                      if (pagedetails.dep == 1)
+                        .form-group
+                          label(for='second_username')
+                            strong Deputy Username
+                          input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Deputy...' name='second_username' id='second_username')
+                          .text-center.small(style="color: #d66") Invalid Username / Email Address
+                      else
+                        .form-group
+                          label(for='second_username')
+                            strong Deputy Username
+                          input.form-control(type='text' placeholder='Enter Username of Deputy...' name='second_username' id='second_username')
+                    .col
+                      if (pagedetails.whip == 1)
+                        .form-group
+                          label(for='third_username')
+                            strong Whip Username
+                          input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Whip...' name='third_username' id='third_username')
+                          .text-center.small(style="color: #d66") Invalid Username / Email Address
+                      else
+                        .form-group
+                          label(for='third_username')
+                            strong Whip Username
+                          input.form-control(type='text' placeholder='Enter Username of Whip...' name='third_username' id='third_username')
+                  .form-group.text-center
+                    button.btn.btn-primary.btn-block.btn-success(type='submit') Create Team
+                    br
+                    a.card-link.btn.btn-primary(href='/teamPage') Cancel

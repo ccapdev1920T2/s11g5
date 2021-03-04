@@ -1,0 +1,21 @@
+extends ../layout/base_delete.pug
+
+block content
+  .container
+    .row.justify-content-center
+      .col-md-9.col-lg-12.col-xl-10
+        .card.shadow-lg.o-hidden.border-0.my-5
+          .card-body.p-0
+            .text-center
+              h1.text-dark.mb-0 Delete Account
+              br
+              br
+              h3.text-dark.mb-0 Account of #{pagedetails.curr_user.full_name}, (#{pagedetails.curr_user.username}) will be deleted.
+              br
+              .text-center
+                Click Confirm to proceed and Cancel to go back to settings.
+              br
+              a.card-link.btn.btn-primary(href='/confirmDelete') Confirm
+              a.card-link.btn.btn-primary(href='/dashboard') Cancel
+              br
+              br

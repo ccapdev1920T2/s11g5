@@ -1,0 +1,68 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1,shrink-to-fit=no')
+    title Login | TabCore
+    link(rel='stylesheet' href='/assets/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Adamina')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Oswald')
+    link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.12.0/css/all.css')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet' href='https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css')
+    link(rel='stylesheet' href='assets/fonts/fontawesome5-overrides.min.css')
+  body.bg-gradient-warning(style='font-family: Oswald, sans-serif;')
+    nav.navbar.navbar-light.navbar-expand-md.bg-warnng(style='font-family: Oswald, sans-serif;color: #4e73df')
+      .container-fluid
+        a.navbar-brand.d-flex.justify-content-center.align-items-center.sidebar-brand.m-0(href='/')
+          .sidebar-brand-icon.rotate-n-15
+            i.fas.fa-balance-scale(style='font-size: 46px;color: rgba(255,255,255,0.9);')
+          .sidebar-brand-text.mx-3
+            span(style='font-size: 44px;color: rgba(255,255,255,0.9);') TABCORE
+        button.navbar-toggler(data-toggle='collapse' data-target='#navcol-1')
+          span.sr-only Toggle navigation
+          span.navbar-toggler-icon
+        .collapse.navbar-collapse.text-right.d-xl-flex.justify-content-xl-end#navcol-1(style='font-size: 25px;')
+          ul.nav.navbar-nav
+            li.nav-item(role='presentation')
+              a.nav-link.border-white(href='/login' style='color: #ffffff;') Login
+            li.nav-item(role='presentation')
+              a.nav-link.border-white(href='/guestLogin' style='color: rgba(255,255,255,0.5);') Guest
+            li.nav-item(role='presentation')
+              a.nav-link(href='/register' style='color: rgba(255,255,255,0.5);') Register
+            li.nav-item(role='presentation')
+    .container
+      .row.justify-content-center
+        .col-md-9.col-lg-12.col-xl-10
+          .card.shadow-lg.o-hidden.border-0.my-5
+            .card-body.p-0
+              .row
+                .col-lg-6.d-none.d-lg-flex
+                  .flex-grow-1.bg-login-image(style='background-image: url("assets/img/logo/TABCORE_LOGIN.gif");')
+                .col-lg-6
+                  .p-5
+                    .text-center
+                      h4.text-dark.mb-4 Welcome Back!
+                      h5.text-dark.mb-4 #{loginMessage}
+                    form.user(action="/login", method="post")
+                      if (invalid == 1)
+                        .form-group
+                          input.form-control.form-control-user#exampleInputEmail(style='border: 1px solid #d66' type='text' aria-describedby='emailHelp' placeholder='Enter Username...' name='username')
+                        .form-group
+                          input.form-control.form-control-user#exampleInputPassword(style='border: 1px solid #d66' type='password' placeholder='Password' name='password')
+                        .text-center.small(style="color: #d66") Invalid username and/or password.
+                      else
+                        .form-group
+                          input.form-control.form-control-user#exampleInputEmail(type='text' aria-describedby='emailHelp' placeholder='Enter Username...' name='username')
+                        .form-group
+                          input.form-control.form-control-user#exampleInputPassword(type='password' placeholder='Password' name='password')
+                      button.btn.btn-primary.btn-block.text-white.btn-user(type='submit') Login
+                      hr
+                    .text-center
+                      a.small(href='/guestLogin') Login as a Guest!
+                      br
+                      a.small(href='/register') Create an Account!
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js')

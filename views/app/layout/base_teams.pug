@@ -1,0 +1,21 @@
+extends base.pug
+
+block content
+  h3.text-dark.mb-4 #{pagedetails.title}
+  .row.mb-3
+    .col-lg-8
+      .row
+        .col
+          .card.shadow.mb-3
+            .card-header.py-3
+              p.text-primary.m-0.font-weight-bold #{pagedetails.title}
+            .card-body
+              h4.text-dark.mb-0 #{pagedetails.message_one}: #{pagedetails.teamname}.
+              br
+              h6.text-dark.mb-0 #{pagedetails.message_two}
+              br
+              h6.text-dark.mb-0 #{pagedetails.message_three}
+              br
+              br
+              a.card-link.btn.btn-primary.btn-danger(href=pagedetails.proceed_link) #{pagedetails.proceed}
+              a.card-link.btn.btn-primary(href=pagedetails.cancel_link) #{pagedetails.cancel}
