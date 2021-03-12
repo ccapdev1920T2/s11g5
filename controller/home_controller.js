@@ -309,7 +309,6 @@ const home_controller = {
       if (!errors.isEmpty()){
         var all = 0, validFirst = 0, validLast = 0, validInsti = 0, validUser = 0, validEmail = 0, validPass = 0;
         errors = errors.errors;
-        console.log(errors);
         for(i = 0; i < errors.length; i++){
           if(errors[i].msg == 'empty'){
             all = 1;
