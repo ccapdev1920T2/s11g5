@@ -11,6 +11,8 @@ block content
               p.text-primary.m-0.font-weight-bold.text-center Round Information
             .card-body
               form.user(action="/matchInfo?roundID="+pagedetails.match.roundID+"&status="+pagedetails.match.status, method="post")
+                input#current_user(type='hidden' value=pagedetails.curr_user.username)
+                input#current_status(type='hidden' value=pagedetails.match.status)
                 if(pagedetails.fields.all == 1)
                   .form-row
                     .col
@@ -26,12 +28,16 @@ block content
                           option(value='ad') Adjudicator
                           option(value='gov') Government Speaker
                           option(value='opp') Opposition Speaker
+                        input#edit_role(type='hidden' value=pagedetails.match.creatorRole)
+                        .text-center.small#invalid_role(style="color: #d66")
                   .form-row
                     .col
                       .form-group
                         label(for='motion')
                           strong Motion of the Round:
                         textarea#motion.form-control(style='border: 1px solid #d66' placeholder=`${pagedetails.match.motion}` name='motion')
+                        input#edit_motion(type='hidden' value=pagedetails.match.motion)
+                        .text-center.small#invalid_motion(style="color: #d66")
                   .form-row
                     .col
                       h4.text-dark.mb-0 TEAMS
@@ -40,14 +46,17 @@ block content
                       .form-group
                         label(for='gov')
                           strong Enter Government Team Name:
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.gov.teamname}` name='gov')
+                        input.form-control#gov(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.gov.teamname}` name='gov')
+                        input#edit_gov(type='hidden' value=pagedetails.match.gov.teamname)
+                        .text-center.small#invalid_gov(style="color: #d66")
                   .form-row
                     .col
                       .form-group
                         label(for='opp')
                           strong Enter Opposition Team Name:
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.opp.teamname}` name='opp')
-                        .text-center.small(style="color: #d66") All fields need to be filled up
+                        input.form-control#opp(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.opp.teamname}` name='opp')
+                        input#edit_opp(type='hidden' value=pagedetails.match.opp.teamname)
+                        .text-center.small#invalid_opp(style="color: #d66") All fields need to be filled up
                 else
                   .form-row
                     .col
@@ -64,7 +73,8 @@ block content
                             option(value='ad') Adjudicator
                             option(value='gov') Government Speaker
                             option(value='opp') Opposition Speaker
-                          .text-center.small(style="color: #d66") Invalid User Role
+                          input#edit_role(type='hidden' value=pagedetails.match.creatorRole)
+                          .text-center.small#invalid_role(style="color: #d66") Invalid User Role
                   else
                     .form-row
                       .col
@@ -76,6 +86,8 @@ block content
                             option(value='ad') Adjudicator
                             option(value='gov') Government Speaker
                             option(value='opp') Opposition Speaker
+                          input#edit_role(type='hidden' value=pagedetails.match.creatorRole)
+                          .text-center.small#invalid_role(style="color: #d66")
                   if(pagedetails.fields.motion == 1)
                     .form-row
                       .col
@@ -83,7 +95,8 @@ block content
                           label(for='motion')
                             strong Motion of the Round:
                           textarea#motion.form-control(style='border: 1px solid #d66' placeholder=`${pagedetails.match.motion}` name='motion')
-                          .text-center.small(style="color: #d66") Invalid Motion
+                          input#edit_motion(type='hidden' value=pagedetails.match.motion)
+                          .text-center.small#invalid_motion(style="color: #d66") Invalid Motion
                   else
                     .form-row
                       .col
@@ -91,6 +104,8 @@ block content
                           label(for='motion')
                             strong Motion of the Round:
                           textarea#motion.form-control(placeholder=`${pagedetails.match.motion}` name='motion')
+                          input#edit_motion(type='hidden' value=pagedetails.match.motion)
+                          .text-center.small#invalid_motion(style="color: #d66")
                   .form-row
                     .col
                       h4.text-dark.mb-0 TEAMS
@@ -100,27 +115,34 @@ block content
                         .form-group
                           label(for='gov')
                             strong Enter Government Team Name:
-                          input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.gov.teamname}` name='gov')
+                          input.form-control#gov(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.gov.teamname}` name='gov')
+                          input#edit_gov(type='hidden' value=pagedetails.match.gov.teamname)
+                          .text-center.small#invalid_gov(style="color: #d66")
                       else
                         .form-group
                           label(for='gov')
                             strong Enter Government Team Name:
-                          input.form-control(type='text' placeholder=`${pagedetails.match.gov.teamname}` name='gov')
+                          input.form-control#gov(type='text' placeholder=`${pagedetails.match.gov.teamname}` name='gov')
+                          input#edit_gov(type='hidden' value=pagedetails.match.gov.teamname)
+                          .text-center.small#invalid_gov(style="color: #d66")
                   .form-row
                     .col
                       if(pagedetails.fields.opp == 1 || pagedetails.fields.gov == 1)
                         .form-group
                           label(for='opp')
                             strong Enter Opposition Team Name:
-                          input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.opp.teamname}` name='opp')
-                          .text-center.small(style="color: #d66") Invalid Teams
+                          input.form-control#opp(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.opp.teamname}` name='opp')
+                          input#edit_opp(type='hidden' value=pagedetails.match.opp.teamname)
+                          .text-center.small#invalid_opp(style="color: #d66") Invalid Teams
                       else
                         .form-group
                           label(for='opp')
                             strong Enter Opposition Team Name:
-                          input.form-control(type='text' placeholder=`${pagedetails.match.opp.teamname}` name='opp')
+                          input.form-control#opp(type='text' placeholder=`${pagedetails.match.opp.teamname}` name='opp')
+                          input#edit_opp(type='hidden' value=pagedetails.match.opp.teamname)
+                          .text-center.small#invalid_opp(style="color: #d66")
                 .form-group.text-center
-                  button.btn.btn-block.btn-primary(type='submit') Next
+                  button.btn.btn-block.btn-primary#round_next(type='submit') Next
     .col-lg-6.col-xl-6
       .row
         .col

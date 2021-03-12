@@ -1,12 +1,13 @@
 const crypto = require('crypto');
 const db = require('../models/db.js');
-const user_collection = 'user';
-const teams_collection = 'teams';
-const match_collection = 'match';
+const User = require('../models/user_model.js');
+const Team = require('../models/team_model.js');
+const Match = require('../models/match_model.js');
+const { validationResult } = require('express-validator');
+var validator = require('validator');
 var sanitize = require('mongo-sanitize');
 
 /* Regex for checking */
-const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const nameFormat = /^[a-zA-Z][a-zA-Z\s]*$/;
 const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
 
@@ -33,7 +34,7 @@ const new_controller = {
       /* Build the query to find all rounds */
       var wholeQuery = {$and: [{'status':{$in:['Creating', 'Editing']}}, {'creator.username':req.session.curr_user.username}]};
       /* Find all rounds */
-      await db.findMany(match_collection, wholeQuery, function(result){
+      await db.findMany(Match, wholeQuery, function(result){
         var render = 'app/create_round/roundsCreated';
         var pagedetails = {
           pagename: "Rounds Created",
@@ -72,7 +73,7 @@ const new_controller = {
           renderPage(req, res, render, pagedetails);
         }else{
           /* If the round status is editing, find the round using the round ID */
-          await db.findOne(match_collection, {roundID:req.session.roundID}, async function(round){
+          await db.findOne(Match, {roundID:req.session.roundID}, async function(round){
             if(round){ /* If round is found, proceed */
               if(round.creator.username == req.session.curr_user.username){
                 var render = 'app/create_round/startRound';
@@ -120,41 +121,66 @@ const new_controller = {
   /* Process the information of the round entered in the start a new round page */
   matchInfo: async function(req, res){
     if(req.session.curr_user){
-      if(req.query.roundID && req.query.status){
+      var errors = validationResult(req);
+      var validRoundID = 0, validStatus = 0, validRole = 0, validMotion = 0, validGov = 0, validOpp = 0;
+      var paramRoundID = 0, paramStatus = 0, paramRole = 0, paramMotion = 0, paramGov = 0, paramOpp = 0;
+
+      if (!errors.isEmpty()){
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            if(errors[i].param == 'roundID' || errors[i].param == 'status'){
+              validRoundID = 1;
+              validStatus = 1;
+              paramRoundID = 1;
+              paramStatus = 1;
+              break;
+            }else{
+              if(errors[i].param == 'user_role'){
+                paramRole = 1;
+              }else if(errors[i].param == 'motion'){
+                paramMotion = 1;
+              }else if(errors[i].param == 'gov'){
+                paramGov = 1;
+              }else if(errors[i].param == 'opp'){
+                paramOpp = 1;
+              }
+            }
+          }else{
+            if(errors[i].param == 'roundID' || errors[i].param == 'status'){
+              validRoundID = 1;
+              validStatus = 1;
+              paramRoundID = 1;
+              paramStatus = 1;
+              break;
+            }else if(errors[i].param == 'user_role'){
+              validRole = 1;
+            }else if(errors[i].param == 'motion'){
+              validMotion = 1;
+            }else if(errors[i].param == 'gov'){
+              validGov = 1;
+            }else if(errors[i].param == 'opp'){
+              validOpp = 1;
+            }
+          }
+        }
+      }
+      if(validRoundID == 0 && paramRoundID == 0 && validStatus == 0 && paramStatus == 0){
         var roundID = sanitize(req.query.roundID);
         var status = sanitize(req.query.status);
         /* Find the round */
-        await db.findOne(match_collection, {roundID:roundID}, async function(foundMatch){
+        await db.findOne(Match, {roundID:roundID}, async function(foundMatch){
           /* If the current status is creating, proceed */
           if(status == 'Creating'){
             if(foundMatch && foundMatch.status != 'Creating'){ /* If there is already an existing match with the indicated round ID, proceed */
               goMessage(req, res, 'Error in Creating a Round! Please try again later.');
             }else{
               /* If all fields are filled up, proceed */
-              if(req.body.user_role && req.body.motion && req.body.gov && req.body.opp){
+              if(paramRole == 0 && paramMotion == 0 && paramGov == 0 && paramOpp == 0){
                 var role = sanitize(req.body.user_role);
                 var motion = sanitize(req.body.motion);
                 var gov = sanitize(req.body.gov);
                 var opp = sanitize(req.body.opp);
-                var validRole = 0, validMotion = 0, validGov = 0, validOpp = 0;
-                /* Check the user role entered */
-                if (!userFormat.test(role)){
-                  validRole = 1;
-                }else{
-                  validRole = 0;
-                }
-                /* Check the government team entered */
-                if (!nameFormat.test(gov)){
-                  console.log(nameFormat.test(gov));
-                }else{
-                  validGov = 0;
-                }
-                /* Check the opposition team entered */
-                if (!nameFormat.test(opp)){
-                  validOpp = 1;
-                }else{
-                  validOpp = 0;
-                }
                 if(validRole == 1 || validMotion == 1 || validGov == 1 || validOpp == 1){
                   req.session.roundID = roundID;
                   req.session.status = 'Creating';
@@ -185,45 +211,30 @@ const new_controller = {
               var role, motion, gov, opp;
               var validRole = 0, validMotion = 0, validGov = 0, validOpp = 0;
               /* If a new role is entered, process */
-              if(req.body.user_role){
+              if(validRole == 0 && paramRole == 0){
                 role = sanitize(req.body.user_role);
               }else{
                 role = foundMatch.creatorRole
               }
-              if (!nameFormat.test(role)){ /* Check the user role entered */
-                validRole = 1;
-              }else{
-                validRole = 0;
-              }
               /* If a new motion is entered, process */
-              if(req.body.motion){
+              if(validMotion == 0 && paramMotion == 0){
                 motion = sanitize(req.body.motion);
               }else{
                 motion = foundMatch.motion
               }
               /* If a new role is government team, process */
-              if(req.body.gov){
+              if(validGov == 0 && paramGov == 0){
                 gov = sanitize(req.body.gov);
               }else{
                 gov = foundMatch.gov.teamname
               }
-              if (!nameFormat.test(gov)){ /* Check the government team entered */
-                validGov = 1;
-              }else{
-                validGov = 0;
-              }
               /* If a new role is opposition team, process */
-              if(req.body.opp){
+              if(validOpp == 0 && paramOpp == 0){
                 opp = sanitize(req.body.opp);
               }else{
                 opp = foundMatch.opp.teamname
               }
-              if (!nameFormat.test(opp)){ /* Check the opposition team entered */
-                validOpp = 1;
-              }else{
-                validOpp = 0;
-              }
-              if(validRole == 1 || validMotion == 1 || validGov == 1 || validOpp == 1){
+              if((validRole == 1 && paramRole == 0) || (validMotion == 1  && paramMotion == 0) || (validGov == 1 && paramGov == 0) || (validOpp == 1 && paramOpp == 0)){
                 req.session.roundID = roundID;
                 req.session.status = 'Creating';
                 req.session.fields = {all: 0, role: validRole, motion: validMotion, gov: validGov, opp: validOpp, ad:0};
@@ -258,23 +269,46 @@ const new_controller = {
   /* Load the current information of the round */
   currentInfo: async function(req, res){
   if(req.session.curr_user){
-    var roundID;
-    if(req.query.roundID){
-      roundID = sanitize(req.query.roundID);
-    }else if(req.session.roundID){
-      roundID = req.session.roundID;
+    var errors = validationResult(req);
+    var validRoundID = 0,  paramRoundID = 0;
+    if (!errors.isEmpty()){
+      errors = errors.errors;
+      for(i = 0; i < errors.length; i++){
+        if(errors[i].msg == 'empty'){
+          if(errors[i].param == 'roundID'){
+            paramRoundID = 1;
+          }
+        }else{
+          if(errors[i].param == 'roundID'){
+            validRoundID = 1;
+          }
+        }
+      }
     }
-    if(roundID){
-      await db.findOne(match_collection, {roundID:roundID}, async function(match){
-        if(match){
-          if(match.creator.username == req.session.curr_user.username){
-            var proceed;
-            if(match.gov && match.opp && match.adjudicator && match.motion){
-              if(checkUsers(match.gov.first.username, match.opp) && checkUsers(match.gov.second.username, match.opp) && checkUsers(match.gov.third.username, match.opp) && checkUsers(match.opp.first.username, match.gov) && checkUsers(match.opp.second.username, match.gov) && checkUsers(match.opp.third.username, match.gov)){
-                if(checkUsers(match.adjudicator.username, match.gov) && checkUsers(match.adjudicator.username, match.opp)){
-                  if(match.adjudicator.username != 'No User'){
-                    proceed = 1;
-                    req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
+    if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+      var roundID;
+      if(req.query.roundID){
+        roundID = sanitize(req.query.roundID);
+      }else if(req.session.roundID){
+        roundID = req.session.roundID;
+      }
+      if(roundID){
+        await db.findOne(Match, {roundID:roundID}, async function(match){
+          if(match){
+            if(match.creator.username == req.session.curr_user.username){
+              var proceed;
+              if(match.gov && match.opp && match.adjudicator && match.motion){
+                if(checkUsers(match.gov.first.username, match.opp) && checkUsers(match.gov.second.username, match.opp) && checkUsers(match.gov.third.username, match.opp) && checkUsers(match.opp.first.username, match.gov) && checkUsers(match.opp.second.username, match.gov) && checkUsers(match.opp.third.username, match.gov)){
+                  if(checkUsers(match.adjudicator.username, match.gov) && checkUsers(match.adjudicator.username, match.opp)){
+                    if(match.adjudicator.username != 'No User'){
+                      proceed = 1;
+                      req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
+                    }else{
+                      proceed = 0;
+                      req.session.roundID = roundID;
+                      req.session.status = 'Editing';
+                      req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:1};
+                    }
                   }else{
                     proceed = 0;
                     req.session.roundID = roundID;
@@ -285,64 +319,17 @@ const new_controller = {
                   proceed = 0;
                   req.session.roundID = roundID;
                   req.session.status = 'Editing';
-                  req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:1};
+                  req.session.fields = {all: 0, role: 0, motion: 0, gov: 1, opp: 1, ad:0};
                 }
               }else{
                 proceed = 0;
-                req.session.roundID = roundID;
-                req.session.status = 'Editing';
-                req.session.fields = {all: 0, role: 0, motion: 0, gov: 1, opp: 1, ad:0};
               }
-            }else{
-              proceed = 0;
-            }
-            var render = 'app/create_round/currentInfo';
-            var pagedetails = {
-              pagename: 'Current Information',
-              curr_user:req.session.curr_user,
-              match: match,
-              proceed: proceed
-            };
-            renderPage(req, res, render, pagedetails);
-          }else{
-            goMessage(req, res, 'Error in Creating a Round! You are not the recorded creator of this round.');
-          }
-        }else{
-          goMessage(req, res, 'Error in Creating a Round! RoundID: ' + roundID + ' not found.');
-        }
-      });
-    }else{
-      goMessage(req, res, 'Error in Creating a Round! Please try again later.');
-    }
-  }else{
-    goHome(req, res);
-  }
-},
-
-  /* Load the adjudicator page */
-  adjudicatorInfo: async function(req, res){
-    if(req.session.curr_user){
-      /* Get the round ID */
-      var roundID;
-      if(req.query.roundID){
-        roundID = sanitize(req.query.roundID);
-      }else if(req.session.roundID){
-        roundID = req.session.roundID;
-      }
-      if(roundID){
-        /* Find the round */
-        await db.findOne(match_collection, {roundID:roundID}, async function(match){
-          if(match){ /* If round is found, proceed */
-            if(match.creator.username == req.session.curr_user.username){ /* If the user is the creator, proceed */
-              if(!req.session.fields){
-                req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
-              }
-              var render = 'app/create_round/roundAdjudicator';
+              var render = 'app/create_round/currentInfo';
               var pagedetails = {
-                pagename: 'Start a New Round',
-                curr_user: req.session.curr_user,
+                pagename: 'Current Information',
+                curr_user:req.session.curr_user,
                 match: match,
-                ad: req.session.fields.ad
+                proceed: proceed
               };
               renderPage(req, res, render, pagedetails);
             }else{
@@ -353,7 +340,71 @@ const new_controller = {
           }
         });
       }else{
-        goMessage(req, res, 'Error in Creating a Round! Please try again later.');
+        goMessage(req, res, 'Error in Creating a Round! No Valid Round ID entered.');
+      }
+    }else{
+      goMessage(req, res, 'Error in Creating a Round! No Valid Round ID entered.');
+    }
+  }else{
+    goHome(req, res);
+  }
+},
+
+  /* Load the adjudicator page */
+  adjudicatorInfo: async function(req, res){
+    if(req.session.curr_user){
+      var errors = validationResult(req);
+      var validRoundID = 0,  paramRoundID = 0;
+      if (!errors.isEmpty()){
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            if(errors[i].param == 'roundID'){
+              paramRoundID = 1;
+            }
+          }else{
+            if(errors[i].param == 'roundID'){
+              validRoundID = 1;
+            }
+          }
+        }
+      }
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+        /* Get the round ID */
+        var roundID;
+        if(req.query.roundID){
+          roundID = sanitize(req.query.roundID);
+        }else if(req.session.roundID){
+          roundID = req.session.roundID;
+        }
+        if(roundID){
+          /* Find the round */
+          await db.findOne(Match, {roundID:roundID}, async function(match){
+            if(match){ /* If round is found, proceed */
+              if(match.creator.username == req.session.curr_user.username){ /* If the user is the creator, proceed */
+                if(!req.session.fields){
+                  req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
+                }
+                var render = 'app/create_round/roundAdjudicator';
+                var pagedetails = {
+                  pagename: 'Start a New Round',
+                  curr_user: req.session.curr_user,
+                  match: match,
+                  ad: req.session.fields.ad
+                };
+                renderPage(req, res, render, pagedetails);
+              }else{
+                goMessage(req, res, 'Error in Creating a Round! You are not the recorded creator of this round.');
+              }
+            }else{
+              goMessage(req, res, 'Error in Creating a Round! RoundID: ' + roundID + ' not found.');
+            }
+          });
+        }else{
+          goMessage(req, res, 'Error in Creating a Round! No Valid Round ID entered.');
+        }
+      }else{
+        goMessage(req, res, 'Error in Creating a Round! No Valid Round ID entered.');
       }
     }else{
       goHome(req, res);
@@ -363,36 +414,52 @@ const new_controller = {
   /* Procees the information about the adjudicator entered in the adjudicator page */
   matchAdjudicator: async function(req, res){
     if(req.session.curr_user){
-      /* Get round ID */
-      var roundID;
-      if(req.query.roundID){
-        roundID = sanitize(req.query.roundID);
-      }else if(req.session.roundID){
-        roundID = req.session.roundID;
-      }
-      if(roundID){
-        if(req.body.ad){ /* If there was a user entered, proceed */
-          var validAd = 0;
-          var adj = sanitize(req.body.ad);
-          /* Check if the username entered contains only valid characters */
-          if (!userFormat.test(adj)){
-            validAd = 1;
-          }
-          if(validAd == 1){ /* If the username entered contains invalid character/s, redirect back to the adjudicator information page */
-            req.session.roundID = roundID;
-            req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:1};
-            res.redirect('/adjudicatorInfo');
-            res.end();
+      var errors = validationResult(req);
+      var validRoundID = 0, validStatus = 0, validAd = 0;
+      var paramRoundID = 0, paramStatus = 0, paramAd = 0;
+      if (!errors.isEmpty()){
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            if(errors[i].param == 'roundID'){
+              paramRoundID = 1;
+            }else if(errors[i].param == 'status'){
+              paramStatus = 1;
+            }else if(errors[i].param == 'ad'){
+              paramAd = 1;
+            }
           }else{
-            /* Find the round */
-            await db.findOne(user_collection, {username:adj}, async function(newAd){
+            if(errors[i].param == 'roundID'){
+              validRoundID = 1;
+            }else if(errors[i].param == 'status'){
+              validStatus = 1;
+            }else if(errors[i].param == 'ad'){
+              validAd = 1;
+            }
+          }
+        }
+      }
+      if(((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID)) && paramStatus == 0 && validStatus == 0){
+        /* Get round ID */
+        var roundID;
+        if(paramRoundID == 0 && validRoundID){
+          roundID = sanitize(req.query.roundID);
+        }else if(paramRoundID == 1 && req.session.roundID){
+          roundID = req.session.roundID;
+        }
+        if(roundID){
+          if(paramAd == 0 && validAd == 0){ /* If there was a user entered, proceed */
+            var validAd = 0;
+            var adj = sanitize(req.body.ad);
+            /* Find the user */
+            await db.findOne(User, {username:adj}, async function(newAd){
               if(newAd){ /* If user is found, proceed */
-                await db.findOne(match_collection, {roundID:roundID}, async function(foundMatch){
+                await db.findOne(Match, {roundID:roundID}, async function(foundMatch){
                   if(foundMatch){ /* If round is found, proceed */
                     /* Check if user is already in the government or opposition side */
                     if(checkUsers(newAd.username, foundMatch.gov) && checkUsers(newAd.username,foundMatch.opp)){
                       /* Update the match information */
-                      await db.findOneAndUpdate(match_collection, {roundID:roundID}, {$set:{adjudicator:newAd}}, async function(updated){
+                      await db.findOneAndUpdate(Match, {roundID:roundID}, {$set:{adjudicator:newAd}}, async function(updated){
                         if(updated){ /* If successfully updated, proceed */
                           req.session.roundID = roundID;
                           res.redirect('/currentInfo');
@@ -421,16 +488,16 @@ const new_controller = {
                 res.end();
               }
             });
+          }else{
+            req.session.roundID = roundID;
+            req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:1};
+            res.redirect('/adjudicatorInfo');
+            res.end();
           }
         }else{
-          req.session.roundID = roundID;
-          req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:1};
-          res.redirect('/adjudicatorInfo');
+          res.redirect('/createRound');
           res.end();
         }
-      }else{
-        res.redirect('/createRound');
-        res.end();
       }
     }else{
       goHome(req, res);
@@ -440,39 +507,59 @@ const new_controller = {
   /* Edit a round by loading the start a new round with the current information */
   editRound: async function(req, res){
     if(req.session.curr_user){
-      /* Get the round ID */
-      var roundID;
-      if(req.query.roundID){
-        roundID = sanitize(req.query.roundID);
-      }else if(req.session.roundID){
-        roundID = req.session.roundID;
-      }
-      if(roundID){
-        /* Find the round and set the status to 'Editing' */
-        await db.findOneAndUpdate(match_collection, {roundID:roundID}, {$set: {status:'Editing'}}, function(result){
-          if(result){ /* If round was found and status was successfully updated to 'Editing', proceed */
-            if(result.creator.username == req.session.curr_user.username){ /* If the user is the creator of the round, proceed */
-              if(!req.session.fields){
-                req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
-              }
-              var render = 'app/create_round/startRound';
-              var pagedetails = {
-                pagename: 'Start a New Round',
-                curr_user: req.session.curr_user,
-                match: result,
-                fields: req.session.fields
-              };
-              renderPage(req, res, render, pagedetails);
-            }else{
-              goMessage(req, res, 'Error in Creating a Round! You are not the recorded creator of this round.');
+      var errors = validationResult(req);
+      var validRoundID = 0,  paramRoundID = 0;
+      if (!errors.isEmpty()){
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            if(errors[i].param == 'roundID'){
+              paramRoundID = 1;
             }
           }else{
-            goMessage(req, res, 'Error in Creating a Round! RoundID: ' + roundID + ' not found.');
+            if(errors[i].param == 'roundID'){
+              validRoundID = 1;
+            }
           }
-        });
+        }
+      }
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+        /* Get the round ID */
+        var roundID;
+        if(paramRoundID == 0 && validRoundID == 0){
+          roundID = sanitize(req.query.roundID);
+        }else if(req.session.roundID){
+          roundID = req.session.roundID;
+        }
+        if(roundID){
+          /* Find the round and set the status to 'Editing' */
+          await db.findOneAndUpdate(Match, {roundID:roundID}, {$set: {status:'Editing'}}, function(result){
+            if(result){ /* If round was found and status was successfully updated to 'Editing', proceed */
+              if(result.creator.username == req.session.curr_user.username){ /* If the user is the creator of the round, proceed */
+                if(!req.session.fields){
+                  req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
+                }
+                var render = 'app/create_round/startRound';
+                var pagedetails = {
+                  pagename: 'Start a New Round',
+                  curr_user: req.session.curr_user,
+                  match: result,
+                  fields: req.session.fields
+                };
+                renderPage(req, res, render, pagedetails);
+              }else{
+                goMessage(req, res, 'Error in Creating a Round! You are not the recorded creator of this round.');
+              }
+            }else{
+              goMessage(req, res, 'Error in Creating a Round! RoundID: ' + roundID + ' not found.');
+            }
+          });
+        }else{
+          res.redirect('/createRound');
+          res.end();
+        }
       }else{
-        res.redirect('/createRound');
-        res.end();
+        goMessage(req, res, 'Error in Creating a Round! No Valid Round ID entered.');
       }
     }else{
       goHome(req, res);
@@ -482,10 +569,13 @@ const new_controller = {
   /* Load the confirmation page for deleting a creating/editing round of the user */
   cancelRound: async function(req, res){
     if(req.session.curr_user){
-      if(req.query.roundID){
+      var errors = validationResult(req);
+      if (!errors.isEmpty()){
+        goMessage(req, res, 'Error in Cancel a Round! No Valid Round ID entered.');
+      }else{
         var roundID = sanitize(req.query.roundID);
         /* Find the round */
-        await db.findOne(match_collection, {roundID:roundID}, async function(foundMatch){
+        await db.findOne(Match, {roundID:roundID}, async function(foundMatch){
           if(foundMatch){ /* If round is found, proceed */
             if(foundMatch.creator.username == req.session.curr_user.username){ /* If user is the creator, proceed */
               var render = 'app/create_round/cancelRound';
@@ -504,8 +594,6 @@ const new_controller = {
             goMessage(req, res, 'Error in Cancel a Round! RoundID: ' + roundID + ' not found.');
           }
         });
-      }else{
-        goMessage(req, res, 'Error in Cancel a Round! Please try again later.');
       }
     }else{
       goHome(req, res);
@@ -515,13 +603,16 @@ const new_controller = {
   /* Delete a creating/editing round of the user */
   deleteRound: async function(req, res){
     if(req.session.curr_user){
-      if(req.query.roundID){
+      var errors = validationResult(req);
+      if (!errors.isEmpty()){
+        goMessage(req, res, 'Error in Cancel a Round! No Valid Round ID entered.');
+      }else{
         var roundID = sanitize(req.query.roundID);
         /* Find the round */
-        await db.findOne(match_collection, {roundID:roundID}, async function(result){
+        await db.findOne(Match, {roundID:roundID}, async function(result){
           if(result){ /* If round is found, proceed */
             if(result.creator.username == req.session.curr_user.username){ /* If user is the creator, proceed */
-              await db.deleteOne(match_collection, {roundID:roundID});
+              await db.deleteOne(Match, {roundID:roundID});
               goMessage(req, res, "Successfully cancelled the round!");
             }else{
               goMessage(req, res, 'Error in Cancel a Round! You are not the recorded creator of this round.');
@@ -530,8 +621,6 @@ const new_controller = {
             goMessage(req, res, 'Error in Cancel a Round! RoundID: ' + roundID + ' not found.');
           }
         });
-      }else{
-        goMessage(req, res, 'Error in Cancel a Round! Please try again later.');
       }
     }else{
       goHome(req, res);
@@ -558,7 +647,7 @@ const new_controller = {
   confirmDeleteAllPending: async function(req, res){
     if(req.session.curr_user){
       var wholeQuery = {$and: [{'status':{$in:['Creating', 'Editing']}}, {'creator.username':req.session.curr_user.username}]};
-      await db.deleteMany(match_collection, wholeQuery);
+      await db.deleteMany(Match, wholeQuery);
       goMessage(req, res, "Successfully cancelled all pending rounds!");
     }else{
       goHome(req, res);
@@ -577,7 +666,6 @@ function reset(req){
   req.session.create_fields = null;
   req.session.choosing = 0;
   req.session.edit_fields = null;
-  req.session.current_edit = null;
   req.session.edit_team = null;
   req.session.roundID = null;
   req.session.status = null;
@@ -617,9 +705,9 @@ function checkUsers(user, team){
 /* Check the match info entered */
 async function checkInfo(req, res, match_info, status){
   /* Find the government team entered */
-  await db.findOne(teams_collection, {teamname:match_info.gov}, async function(gov){
+  await db.findOne(Team, {teamname:match_info.gov}, async function(gov){
     /* Find the opposition team entered */
-    await db.findOne(teams_collection, {teamname:match_info.opp}, async function(opp){
+    await db.findOne(Team, {teamname:match_info.opp}, async function(opp){
       if(gov && opp){ /* if both are existing teams, proceed */
         var role = match_info.user_role;
         /* Check if all users are unique (not one user is in both teams) */
@@ -652,7 +740,7 @@ async function checkInfo(req, res, match_info, status){
             res.end();
           }else{
             if(status == 'Creating'){ /* If status is creating, create the round */
-              await db.insertOneCallback(match_collection, {
+              await db.insertOneCallback(Match, {
                 status: 'Editing',
                 roundID: match_info.roundID,
                 motion: match_info.motion,
@@ -673,14 +761,14 @@ async function checkInfo(req, res, match_info, status){
                 }
               });
             }else{ /* If the status is editing, find the match and update */
-              await db.findOne(match_collection, {roundID:match_info.roundID}, async function(outdated){
+              await db.findOne(Match, {roundID:match_info.roundID}, async function(outdated){
                 if(outdated){
                   /* If the adjudicator indicated is in any of the new teams, flag an error */
                   if(!checkUsers(outdated.adjudicator.username, gov) || !checkUsers(outdated.adjudicator.username, opp)){
                     req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:1};
                   }
                   /* Update the round information */
-                  await db.findOneAndUpdate(match_collection, {roundID:match_info.roundID}, {
+                  await db.findOneAndUpdate(Match, {roundID:match_info.roundID}, {
                     $set: {
                       status:'Editing',
                       roundID: match_info.roundID,
@@ -740,7 +828,7 @@ async function renderPage(req, res, render, pagedetails){
   var updateCount = 0, roundCount = 0;
   var updateRem = 0, roundRem = 0;
   /* Find the user's account */
-  await db.findOne(user_collection, {username:req.session.curr_user.username}, async function(result){
+  await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
     if(result){
       /* If they have team updates, store at most 5 updates in an array */
       if(result.updates){
@@ -768,7 +856,7 @@ async function renderPage(req, res, render, pagedetails){
       }
       var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
       /* If they have debate invites, store them in an array */
-      await db.findMany(match_collection, wholeQuery, function(result){
+      await db.findMany(Match, wholeQuery, function(result){
         if(result){
           for(i = 0; i < result.length; i++){
             if(roundCount < 5){

@@ -12,6 +12,7 @@ html
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
     link(rel='stylesheet' href='https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css')
     link(rel='stylesheet' href='assets/fonts/fontawesome5-overrides.min.css')
+    script(type='text/javascript' src='/assets/js/validator.min.js')
   body.bg-gradient-success(style='font-family: Oswald, sans-serif;')
     nav.navbar.navbar-light.navbar-expand-md.bg-success(style='font-family: Oswald, sans-serif;color: #4e73df')
       .container-fluid
@@ -42,27 +43,33 @@ html
                     form.user(action="/addName", method="post")
                       if (name == 1)
                         .form-group
-                          input.form-control.form-control-user(style='border: 1px solid #d66' type='text' aria-describedby='emailHelp' placeholder='Enter First Name...' name='firstname')
+                          input.form-control.form-control-user#firstname(style='border: 1px solid #d66' type='text' placeholder='Enter First Name...' name='firstname')
+                          .text-center.small#invalid_first(style="color: #d66")
                         .form-group
-                          input.form-control.form-control-user(style='border: 1px solid #d66' type='text' placeholder='Enter Last Name' name='lastname')
+                          input.form-control.form-control-user#lastname(style='border: 1px solid #d66' type='text' placeholder='Enter Last Name' name='lastname')
                           .text-center.small(style="color: #d66") Invalid Name
+                          .text-center.small#invalid_last(style="color: #d66")
                         br
                       else
                         .form-group
-                          input.form-control.form-control-user(type='text' aria-describedby='emailHelp' placeholder='Enter First Name...' name='firstname')
+                          input.form-control.form-control-user#firstname(type='text' placeholder='Enter First Name...' name='firstname')
+                          .text-center.small#invalid_first(style="color: #d66")
                         .form-group
-                          input.form-control.form-control-user(type='text' placeholder='Enter Last Name' name='lastname')
+                          input.form-control.form-control-user#lastname(type='text' placeholder='Enter Last Name' name='lastname')
+                          .text-center.small#invalid_last(style="color: #d66")
                         br
                       if (insti == 1)
                         .form-group
-                          input.form-control.form-control-user(style='border: 1px solid #d66' type='text' placeholder='Enter Institution' name='institution')
+                          input.form-control.form-control-user#institution(style='border: 1px solid #d66' type='text' placeholder='Enter Institution' name='institution')
                           .text-center.small Can only contain letters and spaces
-                          .text-center.small(style="color: #d66") Invalid Institution
+                          .text-center.small#invalid_insti(style="color: #d66") Invalid Institution
                       else
                         .form-group
-                          input.form-control.form-control-user(type='text' placeholder='Enter Institution' name='institution')
+                          input.form-control.form-control-user#institution(type='text' placeholder='Enter Institution' name='institution')
                           .text-center.small Can only contain letters and spaces
-                      button.btn.btn-primary.btn-block.text-white.btn-user(type='submit') Proceed
+                          .text-center.small#invalid_insti(style="color: #d66")
+                      button.btn.btn-primary.btn-block.text-white.btn-user#submit(type='submit') Proceed
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js')
+    script(src='/assets/js/guest_login.js')

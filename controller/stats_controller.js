@@ -1,11 +1,13 @@
 const crypto = require('crypto');
 const db = require('../models/db.js');
-const user_collection = 'user';
-const match_collection = 'match';
-const teams_collection = 'teams';
+const User = require('../models/user_model.js');
+const Team = require('../models/team_model.js');
+const Match = require('../models/match_model.js');
+const { validationResult } = require('express-validator');
+var validator = require('validator');
 var sanitize = require('mongo-sanitize');
 
-/* Regex for checking */
+/* Regex for checking *///
 const idFormat = /[a-zA-Z0-9]+$/;
 
 const stats_controller = {
@@ -39,7 +41,7 @@ const stats_controller = {
         {"opp.second.username": current},
         {"opp.third.username": current}]}]
       };
-      await db.findMany(match_collection, wholeQuery, function(result){
+      await db.findMany(Match, wholeQuery, function(result){
         var render = "app/statistics/matchHistory";
         var pagedetails = {
           pagename: 'Match History',
@@ -59,7 +61,7 @@ const stats_controller = {
         {"opp.second.email": current},
         {"opp.third.email": current}]}]
       };
-      await db.findMany(match_collection, wholeQuery, function(result){
+      await db.findMany(Match, wholeQuery, function(result){
         var render = "app/guest/guestMatchHistory";
         var pagedetails = {
           pagename: 'Match History',
@@ -86,10 +88,32 @@ const stats_controller = {
       }else if(req.session.roundID){
         roundID = req.session.roundID;
       }
-      if(roundID){
-        if(idFormat.test(roundID)){
+      var errors = validationResult(req);
+      console.log(errors.errors);
+      if (!errors.isEmpty() && !req.session.roundID){
+        errors = errors.errors;
+        var empty = 0;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            empty = 1;
+            break;
+          }
+        }
+        if(empty == 1){
+          req.session.message = "Error in loading Round Statistics! No Round ID entered.";
+        }else{
+          req.session.message = "Error in loading Round Statistics! Invalid Round ID entered.";
+        }
+        req.session.pagename = "Round Statistics";
+        req.session.header = "Round Statistics";
+        req.session.link = '/roundStats'
+        req.session.back = "Round Statistics";
+        res.redirect('/message');
+        res.end();
+      }else if(roundID){
+        if(validator.isAlphanumeric(roundID)){
           /* Find the round ID */
-          await db.findOne(match_collection, {roundID:roundID}, async function(result){
+          await db.findOne(Match, {roundID:roundID}, async function(result){
             if(result){
               /* If the debate is done, proceed */
               if(result.status == 'Done'){
@@ -174,7 +198,7 @@ const stats_controller = {
       }else{
         req.session.pagename = "Round Statistics";
         req.session.header = "Round Statistics";
-        req.session.message = "Error in loading Round Statistics! Please try again later.";
+        req.session.message = "Error in loading Round Statistics! No Round ID entered.";
         req.session.link = '/roundStats'
         req.session.back = "Round Statistics";
         res.redirect('/message');
@@ -197,7 +221,6 @@ function reset(req){
   req.session.create_fields = null;
   req.session.choosing = 0;
   req.session.edit_fields = null;
-  req.session.current_edit = null;
   req.session.edit_team = null;
   req.session.roundID = null;
   req.session.status = null;
@@ -235,7 +258,7 @@ async function renderPage(req, res, render, pagedetails){
   var updateCount = 0, roundCount = 0;
   var updateRem = 0, roundRem = 0;
   /* Find the user's account */
-  await db.findOne(user_collection, {username:req.session.curr_user.username}, async function(result){
+  await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
     if(result){
       /* If they have team updates, store at most 5 updates in an array */
       if(result.updates){
@@ -263,7 +286,7 @@ async function renderPage(req, res, render, pagedetails){
       }
       var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
       /* If they have debate invites, store them in an array */
-      await db.findMany(match_collection, wholeQuery, function(result){
+      await db.findMany(Match, wholeQuery, function(result){
         if(result){
           for(i = 0; i < result.length; i++){
             if(roundCount < 5){

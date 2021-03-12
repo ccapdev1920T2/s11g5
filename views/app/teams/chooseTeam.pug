@@ -17,20 +17,21 @@ block content
                       label(for='teamname')
                         strong Choose a Team to Edit:
                       if (pagedetails.choosing == 1)
-                        select#teamname.form-control(name='teamname' style='border: 1px solid #d66')
+                        select#edit_choose.form-control(name='edit_choose' style='border: 1px solid #d66')
                           option(value='choose') Choose an option
                           if(pagedetails.teams.length > 0)
                             each team in pagedetails.teams
                               option(value=team.teamname) #{team.teamname}
                       else
-                        select#teamname.form-control(name='teamname')
+                        select#edit_choose.form-control(name='edit_choose')
                           option(value='choose') Choose an option
                           if(pagedetails.teams.length > 0)
                             each team in pagedetails.teams
                               option(value=team.teamname) #{team.teamname}
                 if (pagedetails.choosing == 1)
-                  .text-center.small(style="color: #d66") Choose one team to edit
+                  .text-center.small#invalid_editChoose(style="color: #d66") Choose one team to edit
+                .text-center.small#invalid_editChoose(style="color: #d66")
                 .form-row
                   .col
                     .form-group
-                      button.btn.btn-primary.btn-sm(type='submit') Next
+                      button.btn.btn-primary.btn-sm#edit_next(type='submit') Next

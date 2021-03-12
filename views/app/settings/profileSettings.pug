@@ -13,69 +13,80 @@ block content
               form.user(action="/settings/user", method="post")
                 .form-row
                   .col
+                    input#current_user(type='hidden' value=pagedetails.curr_user.username)
+                    input#current_email(type='hidden' value=pagedetails.curr_user.email)
                     if(pagedetails.user == 1)
                       .form-group
                         label(for='username')
                           strong Username
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.username}` name='username')
+                        input.form-control#username(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.username}` name='username')
                         .text-center.small Can only contain letters, numbers, - , _ , or .
-                        .text-center.small(style="color: #d66") Invalid User Name
+                        .text-center.small#invalid_user(style="color: #d66") Invalid User Name
                     else
                       .form-group
                         label(for='username')
                           strong Username
-                        input.form-control(type='text' placeholder=`${pagedetails.curr_user.username}` name='username')
+                        input.form-control#username(type='text' placeholder=`${pagedetails.curr_user.username}` name='username')
                         .text-center.small Can only contain letters, numbers, - , _ , or .
+                        .text-center.small#invalid_user(style="color: #d66")
                   .col
                     if(pagedetails.mail == 1)
                       .form-group
                         label(for='email')
                           strong Email Address
-                        input.form-control(style='border: 1px solid #d66' type='email' placeholder=`${pagedetails.curr_user.email}` name='email')
+                        input.form-control#email(style='border: 1px solid #d66' type='email' placeholder=`${pagedetails.curr_user.email}` name='email')
                         .text-center.small(style="color: #d66") Invalid Email
+                        .text-center.small#invalid_email(style="color: #d66")
                     else
                       .form-group
                         label(for='email')
                           strong Email Address
-                        input.form-control(type='email' placeholder=`${pagedetails.curr_user.email}` name='email')
+                        input.form-control#email(type='email' placeholder=`${pagedetails.curr_user.email}` name='email')
+                        .text-center.small#invalid_email(style="color: #d66")
                 .form-group
-                  button.btn.btn-primary.btn-sm(type='submit') Save Settings
+                  button.btn.btn-primary.btn-sm#user(type='submit') Save Settings
           .card.shadow
             .card-header.py-3
               p.text-primary.m-0.font-weight-bold Personal Information
             .card-body
               form.user(action="/settings/personal", method="post")
+                input#current_first(type='hidden' value=pagedetails.curr_user.first_name)
+                input#current_last(type='hidden' value=pagedetails.curr_user.last_name)
+                input#current_insti(type='hidden' value=pagedetails.curr_user.institution)
                 .form-row
                   .col
                     .form-group
                       label(for='first_name')
                         strong First Name
                       if(pagedetails.first == 1)
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.first_name}` name='first_name')
-                        .text-center.small(style="color: #d66") Invalid First Name
+                        input.form-control#first_name(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.first_name}` name='first_name')
+                        .text-center.small#invalid_first(style="color: #d66") Invalid First Name
                       else
-                        input.form-control(type='text' placeholder=`${pagedetails.curr_user.first_name}` name='first_name')
+                        input.form-control#first_name(type='text' placeholder=`${pagedetails.curr_user.first_name}` name='first_name')
+                        .text-center.small#invalid_first(style="color: #d66")
                   .col
                     .form-group
                       label(for='last_name')
                         strong Last Name
                       if(pagedetails.last == 1)
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.last_name}` name='last_name')
-                        .text-center.small(style="color: #d66") Invalid Last Name
+                        input.form-control#last_name(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.last_name}` name='last_name')
+                        .text-center.small#invalid_last(style="color: #d66") Invalid Last Name
                       else
-                        input.form-control(type='text' placeholder=`${pagedetails.curr_user.last_name}` name='last_name')
+                        input.form-control#last_name(type='text' placeholder=`${pagedetails.curr_user.last_name}` name='last_name')
+                        .text-center.small#invalid_last(style="color: #d66")
                 .form-group
-                  label(for='country')
+                  label(for='institution')
                     strong Debate Institution
                   if(pagedetails.insti == 1)
-                    input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.institution}` name='institution')
+                    input.form-control#institution(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.institution}` name='institution')
                     .text-center.small Can only contain letters and spaces
-                    .text-center.small(style="color: #d66") Invalid Institution
+                    .text-center.small#invalid_insti(style="color: #d66") Invalid Institution
                   else
-                    input.form-control(type='text' placeholder=`${pagedetails.curr_user.institution}` name='institution')
+                    input.form-control#institution(type='text' placeholder=`${pagedetails.curr_user.institution}` name='institution')
                     .text-center.small Can only contain letters and spaces
+                    .text-center.small#invalid_insti(style="color: #d66")
                 .form-group
-                  button.btn.btn-primary.btn-sm(type='submit') Save Settings
+                  button.btn.btn-primary.btn-sm#personal(type='submit') Save Settings
           .card.shadow(style='margin-top: 15px;')
             .card-header.py-3
               p.text-primary.m-0.font-weight-bold Change Password
@@ -83,41 +94,42 @@ block content
               form.user(action="/settings/password", method="post")
                 if(pagedetails.pass == 1)
                   .form-group
-                    label(for='password')
+                    label(for='current_pass')
                       strong Current Password
                       br
-                    input.form-control(style='border: 1px solid #d66' type='password', name='current_pass')
+                    input.form-control#current_pass(style='border: 1px solid #d66' type='password', name='current_pass')
                   .form-group
                     label(for='password')
                       strong New Password
                       br
-                    input.form-control(style='border: 1px solid #d66' type='password', name='password')
+                    input.form-control#password(style='border: 1px solid #d66' type='password', name='password')
                   .form-group
-                    label(for='password')
+                    label(for='confirm_pass')
                       strong Confirm Password
                       br
-                    input.form-control(style='border: 1px solid #d66' type='password', name='confirm_pass')
+                    input.form-control#confirm_pass(style='border: 1px solid #d66' type='password', name='confirm_pass')
                   .text-center.small Password should be at least 8 characters with no whitespaces
-                  .text-center.small(style="color: #d66") Invalid Current and/or New Password
+                  .text-center.small#invalid_pass(style="color: #d66") Invalid Current and/or New Password
                 else
                   .form-group
                     label(for='password')
                       strong Current Password
                       br
-                    input.form-control(type='password', name='current_pass')
+                    input.form-control#current_pass(type='password', name='current_pass')
                   .form-group
                     label(for='password')
                       strong New Password
                       br
-                    input.form-control(type='password', name='password')
+                    input.form-control#password(type='password', name='password')
                   .form-group
                     label(for='password')
                       strong Confirm Password
                       br
-                    input.form-control(type='password', name='confirm_pass')
-                  .text-center.small Password should be at least 8 characters with no whitespaces
+                    input.form-control#confirm_pass(type='password', name='confirm_pass')
+                  .text-center.small Password should be at least 8 characters
+                  .text-center.small#invalid_pass(style="color: #d66")
                 .form-group
-                  button.btn.btn-primary.btn-sm(type='submit') Save Settings
+                  button.btn.btn-primary.btn-sm#change_pass(type='submit') Save Settings
           a.text-center.btn.btn-danger(href='/deleteAccount' style='margin-top: 30px;')
             i.fa.fa-trash-o
             |   Delete Account

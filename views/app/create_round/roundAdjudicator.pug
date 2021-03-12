@@ -22,12 +22,13 @@ block content
                           h6.text-dark.mb-0 (Enter the User Name)
                           br
                           if(pagedetails.ad == 1)
-                            input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.adjudicator.full_name}` name='ad')
-                            .text-center.small(style="color: #d66") Invalid User Name
+                            input.form-control#ad(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.adjudicator.full_name}` name='ad')
+                            .text-center.small#invalid_ad(style="color: #d66") Invalid User Name
                           else
-                            input.form-control(type='text' placeholder=`${pagedetails.match.adjudicator.full_name}` name='ad')
+                            input.form-control#ad(type='text' placeholder=`${pagedetails.match.adjudicator.full_name}` name='ad')
+                            .text-center.small#invalid_ad(style="color: #d66")
                     .form-group.text-center
-                      button.btn.btn-block.btn-primary(type='submit') Next
+                      button.btn.btn-block.btn-primary#adj_next(type='submit') Next
                       br
                       a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/editRound?roundID='+pagedetails.match.roundID) Back
                 li.list-group-item

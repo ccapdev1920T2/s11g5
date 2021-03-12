@@ -11,64 +11,84 @@ block content
               p.text-primary.m-0.font-weight-bold Edit a Team
             .card-body
               form.user(action="/editChosenTeam", method="post")
+                input#current_user(type='hidden' value=pagedetails.curr_user.username)
+                input#current_team(type='hidden' value=pagedetails.team.teamname name='current_team')
                 .form-row
                   .col
                     .form-group
                       label(for='new_teamname')
                         strong Team Name
-                      if(pagedetails.new_team == 1)
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.teamname}` name='new_teamname')
+                      if(pagedetails.new_team == 1 || pagedetails.all == 1)
+                        input.form-control#edit_teamname(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.teamname}` name='edit_teamname')
                         .text-center.small Can only contain letters and spaces
-                        .text-center.small(style="color: #d66") Invalid Team Name
+                        if(pagedetails.new_team == 1)
+                          .text-center.small#invalid_editTeam(style="color: #d66") Invalid Team Name
                       else
-                        input.form-control(type='text' placeholder=`${pagedetails.team.teamname}` name='new_teamname')
+                        input.form-control#edit_teamname(type='text' placeholder=`${pagedetails.team.teamname}` name='edit_teamname')
                         .text-center.small Can only contain letters and spaces
+                        .text-center.small#invalid_editTeam(style="color: #d66")
                   .col
                     .form-group
                       label(for='first')
                         strong Leader
-                      if(pagedetails.new_users >= 1)
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.first.username}` name='first_username')
+                      if(pagedetails.new_users >= 1 || pagedetails.all == 1)
+                        input.form-control#edit_first(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.first.username}` name='edit_first')
+                        input#edit_firstCurrent(type='hidden' value=pagedetails.team.first.username)
+                        .text-center.small#invalid_editFirst(style="color: #d66")
                       else
-                        input.form-control(type='text' placeholder=`${pagedetails.team.first.username}` name='first_username')
+                        input.form-control#edit_first(type='text' placeholder=`${pagedetails.team.first.username}` name='edit_first')
+                        input#edit_firstCurrent(type='hidden' value=pagedetails.team.first.username)
+                        .text-center.small#invalid_editFirst(style="color: #d66")
                 .form-row
                   .col
                     .form-group
                       label(for='second')
                         strong Deputy Leader
-                      if(pagedetails.new_users >= 1)
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.second.username}` name='second_username')
+                      if(pagedetails.new_users >= 1 || pagedetails.all == 1)
+                        input.form-control#edit_second(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.second.username}` name='edit_second')
+                        input#edit_secondCurrent(type='hidden' value=pagedetails.team.second.username)
+                        .text-center.small#invalid_editSecond(style="color: #d66")
                       else
-                        input.form-control(type='text' placeholder=`${pagedetails.team.second.username}` name='second_username')
+                        input.form-control#edit_second(type='text' placeholder=`${pagedetails.team.second.username}` name='edit_second')
+                        input#edit_secondCurrent(type='hidden' value=pagedetails.team.second.username)
+                        .text-center.small#invalid_editSecond(style="color: #d66")
                   .col
                     .form-group
                       label(for='third')
                         strong Whip
-                      if(pagedetails.new_users >= 1)
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.third.username}` name='third_username')
+                      if(pagedetails.new_users >= 1 || pagedetails.all == 1)
+                        input.form-control#edit_third(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.team.third.username}` name='edit_third')
+                        input#edit_thirdCurrent(type='hidden' value=pagedetails.team.third.username)
+                        .text-center.small#invalid_editThird(style="color: #d66")
                       else
-                        input.form-control(type='text' placeholder=`${pagedetails.team.third.username}` name='third_username')
-                if(pagedetails.new_users >= 1)
+                        input.form-control#edit_third(type='text' placeholder=`${pagedetails.team.third.username}` name='edit_third')
+                        input#edit_thirdCurrent(type='hidden' value=pagedetails.team.third.username)
+                        .text-center.small#invalid_editThird(style="color: #d66")
+                if(pagedetails.new_users >= 1  || pagedetails.all == 1)
                   .form-row
                     .col
                       .form-group
                         if(pagedetails.new_users == 1)
-                          .text-center.small(style="color: #d66") Invalid User/s Entered
+                          .text-center.small#invalid_editAll(style="color: #d66") Invalid User/s Entered
+                        else if(pagedetails.all == 1)
+                          .text-center.small#invalid_editAll(style="color: #d66") No new Team Name / Users entered
                         else
-                          .text-center.small(style="color: #d66") Team Already Exists
+                          .text-center.small#invalid_editAll(style="color: #d66") Team Already Exists
+                .text-center.small#invalid_editAll(style="color: #d66")
                 .form-row
                   .col
                     .form-group
                       label(for='current')
                         strong Enter Current Team Name for confirmation:
                       if(pagedetails.new_current == 1)
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Current Team Name...' name='current')
-                        .text-center.small(style="color: #d66") Invalid Team Name
+                        input.form-control#edit_current(style='border: 1px solid #d66' type='text' placeholder='Enter Current Team Name...' name='edit_current')
+                        .text-center.small#invalid_editCurrent(style="color: #d66") Invalid Team Name
                       else
-                        input.form-control(type='text' placeholder='Enter Current Team Name...' name='current')
+                        input.form-control#edit_current(type='text' placeholder='Enter Current Team Name...' name='edit_current')
+                        .text-center.small#invalid_editCurrent(style="color: #d66")
                 .form-row
                   .col
                     .form-group.text-center
-                      button.btn.btn-primary.btn-block.btn-success(type='submit') Save Changes
+                      button.btn.btn-primary.btn-block.btn-success#edit(type='submit') Save Changes
                       br
                       a.card-link.btn.btn-primary(href='/teamPage') Cancel

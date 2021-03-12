@@ -49,14 +49,15 @@ html
                       .form-group
                         if (invalid == 1)
                           .form-group
-                            input.form-control.form-control-user#exampleInputEmail(style='border: 1px solid #d66' type='text' aria-describedby='emailHelp' placeholder='Enter Email Address...' name='email' pattern='[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$')
+                            input.form-control.form-control-user#guest_email(style='border: 1px solid #d66' type='text' aria-describedby='emailHelp' placeholder='Enter Email Address...' name='email')
                             .text-center.small.text-dark Must follow the following format: abc@email.domain
-                          .text-center.small(style="color: #d66") Invalid Email Address.
+                          .text-center.small#invalid_guest(style="color: #d66") Invalid Email Address.
                         else
                           .form-group
-                            input.form-control.form-control-user#exampleInputEmail(type='text' aria-describedby='emailHelp' placeholder='Enter Email Address...' name='email' pattern='[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$')
+                            input.form-control.form-control-user#guest_email(type='text' aria-describedby='emailHelp' placeholder='Enter Email Address...' name='email')
                             .text-center.small.text-dark Must follow the following format: abc@email.domain
-                      button.btn.btn-primary.btn-block.text-white.btn-user(type='submit') Login as Guest
+                            .text-center.small#invalid_guest(style="color: #d66")
+                      button.btn.btn-primary.btn-block.text-white.btn-user#login_guest(type='submit') Login as Guest
                       hr
                     .text-center
                       a.small(href='/login') Already have an account? Login!
@@ -65,3 +66,4 @@ html
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js')
+    script(src='/assets/js/guest_login.js')

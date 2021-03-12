@@ -57,29 +57,38 @@ block content
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.govFirst == 1)
-                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='firstgov')
+                              input.form-control#firstgov(style='border: 1px solid #d66' type="number" min="1" max="100" name='firstgov')
                               if(pagedetails.gradeFields.govFirst == 1)
-                                .text-center.small(style="color: #d66") Invalid Score
+                                .text-center.small#invalid_firstgov(style="color: #d66") Invalid Score
                             else
-                              input.form-control(type="number" min="1" max="100" name='firstgov')
+                              input.form-control#firstgov(type="number" min="1" max="100" name='firstgov')
+                              .text-center.small#invalid_firstgov(style="color: #d66")
+                      else
+                        input#firstgov(type=hidden name='firstgov' value=0)
                       if(pagedetails.match.gov.second.full_name != 'No User')
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.govSecond == 1)
-                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='secondgov')
+                              input.form-control#secondgov(style='border: 1px solid #d66' type="number" min="1" max="100" name='secondgov')
                               if(pagedetails.gradeFields.govSecond == 1)
-                                .text-center.small(style="color: #d66") Invalid Score
+                                .text-center.small#invalid_secondgov(style="color: #d66") Invalid Score
                             else
-                              input.form-control(type="number" min="1" max="100" name='secondgov')
+                              input.form-control#secondgov(type="number" min="1" max="100" name='secondgov')
+                              .text-center.small#invalid_secondgov(style="color: #d66")
+                      else
+                        input#secondgov(type=hidden name='secondgov' value=0)
                       if(pagedetails.match.gov.third.full_name != 'No User')
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.govThird == 1)
-                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='thirdgov')
+                              input.form-control#thirdgov(style='border: 1px solid #d66' type="number" min="1" max="100" name='thirdgov')
                               if(pagedetails.gradeFields.govThird == 1)
-                                .text-center.small(style="color: #d66") Invalid Score
+                                .text-center.small#invalid_thirdgov(style="color: #d66") Invalid Score
                             else
-                              input.form-control(type="number" min="1" max="100" name='thirdgov')
+                              input.form-control#thirdgov(type="number" min="1" max="100" name='thirdgov')
+                              .text-center.small#invalid_thirdgov(style="color: #d66")
+                      else
+                        input#thirdgov(type=hidden name='thirdgov' value=0)
                     br
                   li.list-group-item
                     br
@@ -123,29 +132,38 @@ block content
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.oppFirst == 1)
-                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='firstopp')
+                              input.form-control#firstopp(style='border: 1px solid #d66' type="number" min="1" max="100" name='firstopp')
                               if(pagedetails.gradeFields.oppFirst == 1)
-                                .text-center.small(style="color: #d66") Invalid Score
+                                .text-center.small#invalid_firstopp(style="color: #d66") Invalid Score
                             else
-                              input.form-control(type="number" min="1" max="100" name='firstopp')
+                              input.form-control#firstopp(type="number" min="1" max="100" name='firstopp')
+                              .text-center.small#invalid_firstopp(style="color: #d66")
+                      else
+                        input#firstopp(type=hidden name='firstopp' value=0)
                       if(pagedetails.match.opp.second.full_name != 'No User')
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.oppSecond == 1)
-                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='secondopp')
+                              input.form-control#secondopp(style='border: 1px solid #d66' type="number" min="1" max="100" name='secondopp')
                               if(pagedetails.gradeFields.oppSecond == 1)
-                                .text-center.small(style="color: #d66") Invalid Score
+                                .text-center.small#invalid_secondopp(style="color: #d66") Invalid Score
                             else
-                              input.form-control(type="number" min="1" max="100" name='secondopp')
+                              input.form-control#secondopp(type="number" min="1" max="100" name='secondopp')
+                              .text-center.small#invalid_secondopp(style="color: #d66")
+                      else
+                        input#secondopp(type=hidden name='secondopp' value=0)
                       if(pagedetails.match.opp.third.full_name != 'No User')
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.oppThird == 1)
-                              input.form-control(style='border: 1px solid #d66' type="number" min="1" max="100" name='thirdopp')
+                              input.form-control#thirdopp(style='border: 1px solid #d66' type="number" min="1" max="100" name='thirdopp')
                               if(pagedetails.gradeFields.oppThird == 1)
-                                .text-center.small(style="color: #d66") Invalid Score
+                                .text-center.small#invalid_thirdopp(style="color: #d66") Invalid Score
                             else
-                              input.form-control(type="number" min="1" max="100" name='thirdopp')
+                              input.form-control#thirdopp(type="number" min="1" max="100" name='thirdopp')
+                              .text-center.small#invalid_thirdopp(style="color: #d66")
+                      else
+                        input#thirdopp(type=hidden name='thirdopp' value=0)
                     br
                   li.list-group-item
                     br
@@ -155,17 +173,19 @@ block content
                       label(for='comments')
                         strong Comments for Round ID: #{pagedetails.match.roundID}
                       if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.comments == 1)
-                        textarea#comment.form-control(style='border: 1px solid #d66' name='comment')
+                        textarea.form-control#comment(style='border: 1px solid #d66' name='comment')
                         if(pagedetails.gradeFields.comments == 1)
-                          .text-center.small(style="color: #d66") Invalid Comment/s.
+                          .text-center.small#invalid_comment(style="color: #d66") Invalid Comment/s.
                       else
-                        textarea#comment.form-control(name='comment')
+                        textarea.form-control#comment(name='comment')
+                        .text-center.small#invalid_comment(style="color: #d66")
                     br
                     if(pagedetails.gradeFields.all == 1)
-                      .text-center.small(style="color: #d66") All fields need to be filled up
+                      .text-center.small#invalid_grade_all(style="color: #d66") All fields need to be filled up
+                    .text-center.small#invalid_grade_all(style="color: #d66")
                   li.list-group-item.text-center
                     br
                     .form-group.text-center
-                      button.btn.btn-block.btn-success(type='submit') Submit Grades
+                      button.btn.btn-block.btn-success#submit_grades(type='submit') Submit Grades
                       br
                       a.card-link.btn.btn-primary.btn-sm.btn-primary(href='/findGrade') Grade a Different Round

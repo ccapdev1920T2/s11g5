@@ -12,6 +12,7 @@ html
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
     link(rel='stylesheet' href='https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css')
     link(rel='stylesheet' href='assets/fonts/fontawesome5-overrides.min.css')
+    script(type='text/javascript' src='/assets/js/validator.min.js')
   body.bg-gradient-danger(style='font-family: Oswald, sans-serif;')
     nav.navbar.navbar-light.navbar-expand-md.bg-danger(style='font-family: Oswald, sans-serif;color: #4e73df;')
       .container-fluid
@@ -47,9 +48,9 @@ html
                   if(all == 1)
                     .form-group.row
                       .col-sm-6.mb-3.mb-sm-0
-                        input.form-control.form-control-user#firstname(style='border: 1px solid #d66' type='text' placeholder='First Name' name='first_name')
+                        input.form-control.form-control-user#first_name(style='border: 1px solid #d66' type='text' placeholder='First Name' name='first_name')
                       .col-sm-6
-                        input.form-control.form-control-user#lastname(style='border: 1px solid #d66' type='text' placeholder='Last Name' name='last_name')
+                        input.form-control.form-control-user#last_name(style='border: 1px solid #d66' type='text' placeholder='Last Name' name='last_name')
                     .form-group
                       input.form-control.form-control-user#username(style='border: 1px solid #d66' type='text' placeholder='Username' name='username')
                       .text-center.small Can only contain letters, numbers, - , _ , or .
@@ -63,62 +64,70 @@ html
                       .col-sm-6.mb-3.mb-sm-0
                         input.form-control.form-control-user#password(style='border: 1px solid #d66' type='password' placeholder='Password' name='password')
                       .col-sm-6
-                        input.form-control.form-control-user#confirm(style='border: 1px solid #d66' type='password' placeholder='Repeat Password' name='confirm_pass')
-                    .text-center.small(style="color: #d66") All fields need to be filled up
+                        input.form-control.form-control-user#confirm_pass(style='border: 1px solid #d66' type='password' placeholder='Repeat Password' name='confirm_pass')
+                    .text-center.small#invalid_all(style="color: #d66") All fields need to be filled up
                   else
                     .form-group.row
                       .col-sm-6.mb-3.mb-sm-0
                         if (first == 1)
-                          input.form-control.form-control-user#firstname(style='border: 1px solid #d66' type='text' placeholder='First Name' name='first_name')
+                          input.form-control.form-control-user#first_name(style='border: 1px solid #d66' type='text' placeholder='First Name' name='first_name')
+                          .text-center.small#invalid_first(style="color: #d66") Invalid First Name
                         else
-                          input.form-control.form-control-user#firstname(type='text' placeholder='First Name' name='first_name')
+                          input.form-control.form-control-user#first_name(type='text' placeholder='First Name' name='first_name')
+                          .text-center.small#invalid_first(style="color: #d66")
                       .col-sm-6
                         if (last == 1)
-                          input.form-control.form-control-user#lastname(style='border: 1px solid #d66' type='text' placeholder='Last Name' name='last_name')
+                          input.form-control.form-control-user#last_name(style='border: 1px solid #d66' type='text' placeholder='Last Name' name='last_name')
+                          .text-center.small#invalid_last(style="color: #d66") Invalid Last Name
                         else
-                          input.form-control.form-control-user#lastname(type='text' placeholder='Last Name' name='last_name')
+                          input.form-control.form-control-user#last_name(type='text' placeholder='Last Name' name='last_name')
+                          .text-center.small#invalid_last(style="color: #d66")
                     .form-group
                       if (user == 1)
                         input.form-control.form-control-user#username(style='border: 1px solid #d66' type='text' placeholder='Username' name='username')
                         .text-center.small Can only contain letters, numbers, - , _ , or .
-                        .text-center.small(style="color: #d66") Invalid Username
+                        .text-center.small#invalid_user(style="color: #d66") Invalid Username
                         br
                       else
                         input.form-control.form-control-user#username(type='text' placeholder='Username' name='username')
                         .text-center.small Can only contain letters, numbers, - , _ , or .
+                        .text-center.small#invalid_user(style="color: #d66")
                         br
                     .form-group
                       if (insti == 1)
                         input.form-control.form-control-user#institution(style='border: 1px solid #d66' type='text' placeholder='Debate Institution' name='institution')
                         .text-center.small Can only contain letters and spaces
-                        .text-center.small(style="color: #d66") Invalid Institution
+                        .text-center.small#invalid_insti(style="color: #d66") Invalid Institution
                       else
                         input.form-control.form-control-user#institution(type='text' placeholder='Debate Institution' name='institution')
                         .text-center.small Can only contain letters and spaces
+                        .text-center.small#invalid_insti(style="color: #d66")
                     .form-group
                       if (email == 1)
                         input.form-control.form-control-user#email(style='border: 1px solid #d66' type='email' aria-describedby='emailHelp' placeholder='Email Address' name='email')
-                        .text-center.small(style="color: #d66") Invalid Email
+                        .text-center.small#invalid_email(style="color: #d66") Invalid Email
                         br
                       else
                         input.form-control.form-control-user#email(type='email' aria-describedby='emailHelp' placeholder='Email Address' name='email')
+                        .text-center.small#invalid_email(style="color: #d66")
                     .form-group.row
                       if (pass == 1 || pass == 2)
                         .col-sm-6.mb-3.mb-sm-0
                           input.form-control.form-control-user#password(style='border: 1px solid #d66' type='password' placeholder='Password' name='password')
                         .col-sm-6
-                          input.form-control.form-control-user#confirm(style='border: 1px solid #d66' type='password' placeholder='Repeat Password' name='confirm_pass')
+                          input.form-control.form-control-user#confirm_pass(style='border: 1px solid #d66' type='password' placeholder='Repeat Password' name='confirm_pass')
                       else
                         .col-sm-6.mb-3.mb-sm-0
                           input.form-control.form-control-user#password(type='password' placeholder='Password' name='password')
                         .col-sm-6
-                          input.form-control.form-control-user#confirm(type='password' placeholder='Repeat Password' name='confirm_pass')
+                          input.form-control.form-control-user#confirm_pass(type='password' placeholder='Repeat Password' name='confirm_pass')
                     if (pass > 0)
                       if (pass == 1)
-                        .text-center.small(style="color: #d66") Password and Confirm Password do not match
+                        .text-center.small#invalid_pass(style="color: #d66") Password and Confirm Password do not match
                       else
-                        .text-center.small(style="color: #d66") Password should be at least 8 characters with no whitespaces
-                  button.btn.btn-primary.btn-block.text-white.btn-user(type='submit') Register Account
+                        .text-center.small#invalid_pass(style="color: #d66") Password should be at least 8 characters with no whitespaces
+                    .text-center.small#invalid_pass(style="color: #d66")
+                  button.btn.btn-primary.btn-block.text-white.btn-user#submit(type='submit') Register Account
                   hr
 
                 .text-center
@@ -127,4 +136,4 @@ html
                   a.small(href='/guestLogin') Login as a Guest!
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js')
-    script(src='/assets/js/login.js')
+    script(src='/assets/js/register.js')

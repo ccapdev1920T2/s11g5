@@ -1,83 +1,108 @@
 const crypto = require('crypto');
 const db = require('../models/db.js');
-const user_collection = 'user';
-const teams_collection = 'teams';
-const match_collection = 'match';
+const User = require('../models/user_model.js');
+const Team = require('../models/team_model.js');
+const Match = require('../models/match_model.js');
+const { validationResult } = require('express-validator');
+var validator = require('validator');
 var sanitize = require('mongo-sanitize');
 
 /* Regex for checking */
-const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const nameFormat = /^[a-zA-Z][a-zA-Z\s]*$/;
-const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
 const numberFormat = /^\d+$/;
 
 const ongoing_controller = {
   /* Confirm the round information and change the status to waiting (waiting for the round to start) */
   confirmRoundInfo: async function(req, res){
     if (req.session.curr_user){
-      /* Get the round ID */
-      var roundID;
-      if(req.query.roundID){
-        roundID = sanitize(req.query.roundID);
-      }else if(req.session.gradeID){
-        roundID = req.session.gradeID;
+      var errors = validationResult(req);
+      var validRoundID = 0,  paramRoundID = 0;
+      if (!errors.isEmpty()){
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            if(errors[i].param == 'roundID'){
+              paramRoundID = 1;
+            }
+          }else{
+            if(errors[i].param == 'roundID'){
+              validRoundID = 1;
+            }
+          }
+        }
       }
-      if(roundID){
-        /* Find the round */
-        await db.findOne(match_collection, {roundID:roundID}, async function(foundRound){
-          if(foundRound){
-            if(foundRound.creator.username == req.session.curr_user.username){ /* If round is found and the user is the creator, proceed */
-              var firstSpeaker, num_speaker;
-              if(foundRound.gov.first && foundRound.gov.first.full_name != 'No User'){
-                firstSpeaker = foundRound.gov.first.full_name;
-                num_speaker = 1;
-              }
-              else if(foundRound.opp.first && foundRound.opp.first.full_name != 'No User'){
-                firstSpeaker = foundRound.opp.first.full_name;
-                num_speaker = 2;
-              }
-              else if(foundRound.gov.second && foundRound.gov.second.full_name != 'No User'){
-                firstSpeaker = foundRound.gov.second.full_name;
-                num_speaker = 3;
-              }
-              else if(foundRound.opp.second && foundRound.opp.second.full_name != 'No User'){
-                firstSpeaker = foundRound.opp.second.full_name;
-                num_speaker = 4;
-              }
-              else if(foundRound.gov.third && foundRound.gov.third.full_name != 'No User'){
-                firstSpeaker = foundRound.gov.third.full_name;
-                num_speaker = 5;
-              }
-              else if(foundRound.opp.third && foundRound.opp.third.full_name != 'No User'){
-                firstSpeaker = foundRound.opp.third.full_name;
-                num_speaker = 6;
-              }
-              if(firstSpeaker && num_speaker){
-                var speaker = {
-                  name_speaker:firstSpeaker,
-                  num_speaker:num_speaker
-                };
-                /* Find the round and update the status to waiting and the current speaker details */
-                await db.findOneAndUpdate(match_collection, {roundID:roundID}, {$set:{status:'Ongoing', speaker:speaker}}, async function(foundRound){
-                  if(foundRound){
-                    req.session.roundID = roundID;
-                    res.redirect('/ongoingRound');
-                    res.end();
-                  }else{
-                    req.session.pagename = 'Join a Round';
-                    req.session.header = 'Join a Round';
-                    req.session.message = 'Error in Join a Round! RoundID: ' + roundID + ' not found.';
-                    req.session.link = '/findRound';
-                    req.session.back = 'Join a Round';
-                    res.redirect('/message');
-                    res.end();
-                  }
-                });
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+        /* Get the round ID */
+        var roundID;
+        if(paramRoundID == 0 && validRoundID == 0){
+          roundID = sanitize(req.query.roundID);
+        }else if(req.session.gradeID){
+          roundID = req.session.gradeID;
+        }
+        if(roundID){
+          /* Find the round */
+          await db.findOne(Match, {roundID:roundID}, async function(foundRound){
+            if(foundRound){
+              if(foundRound.creator.username == req.session.curr_user.username){ /* If round is found and the user is the creator, proceed */
+                var firstSpeaker, num_speaker;
+                if(foundRound.gov.first && foundRound.gov.first.full_name != 'No User'){
+                  firstSpeaker = foundRound.gov.first.full_name;
+                  num_speaker = 1;
+                }
+                else if(foundRound.opp.first && foundRound.opp.first.full_name != 'No User'){
+                  firstSpeaker = foundRound.opp.first.full_name;
+                  num_speaker = 2;
+                }
+                else if(foundRound.gov.second && foundRound.gov.second.full_name != 'No User'){
+                  firstSpeaker = foundRound.gov.second.full_name;
+                  num_speaker = 3;
+                }
+                else if(foundRound.opp.second && foundRound.opp.second.full_name != 'No User'){
+                  firstSpeaker = foundRound.opp.second.full_name;
+                  num_speaker = 4;
+                }
+                else if(foundRound.gov.third && foundRound.gov.third.full_name != 'No User'){
+                  firstSpeaker = foundRound.gov.third.full_name;
+                  num_speaker = 5;
+                }
+                else if(foundRound.opp.third && foundRound.opp.third.full_name != 'No User'){
+                  firstSpeaker = foundRound.opp.third.full_name;
+                  num_speaker = 6;
+                }
+                if(firstSpeaker && num_speaker){
+                  var speaker = {
+                    name_speaker:firstSpeaker,
+                    num_speaker:num_speaker
+                  };
+                  /* Find the round and update the status to waiting and the current speaker details */
+                  await db.findOneAndUpdate(Match, {roundID:roundID}, {$set:{status:'Ongoing', speaker:speaker}}, async function(foundRound){
+                    if(foundRound){
+                      req.session.roundID = roundID;
+                      res.redirect('/ongoingRound');
+                      res.end();
+                    }else{
+                      req.session.pagename = 'Join a Round';
+                      req.session.header = 'Join a Round';
+                      req.session.message = 'Error in Join a Round! RoundID: ' + roundID + ' not found.';
+                      req.session.link = '/findRound';
+                      req.session.back = 'Join a Round';
+                      res.redirect('/message');
+                      res.end();
+                    }
+                  });
+                }else{
+                  await db.updateOne(Match, {roundID:roundID}, {$set:{status:'Editing'}});
+                  req.session.pagename = 'Join a Round';
+                  req.session.header = 'Join a Round';
+                  req.session.message = 'Error in Join a Round! Round information needs to be edited.';
+                  req.session.link = '/dashboard';
+                  req.session.back = 'Dashboard';
+                  res.redirect('/message');
+                  res.end();
+                }
               }else{
-                await db.updateOne(match_collection, {roundID:roundID}, {$set:{status:'Editing'}});
                 req.session.pagename = 'Join a Round';
                 req.session.header = 'Join a Round';
-                req.session.message = 'Error in Join a Round! Round information needs to be edited.';
+                req.session.message = 'Error in Join a Round! Confirming of round information can only be done by the creator of the round.';
                 req.session.link = '/dashboard';
                 req.session.back = 'Dashboard';
                 res.redirect('/message');
@@ -86,26 +111,26 @@ const ongoing_controller = {
             }else{
               req.session.pagename = 'Join a Round';
               req.session.header = 'Join a Round';
-              req.session.message = 'Error in Join a Round! Confirming of round information can only be done by the creator of the round.';
-              req.session.link = '/dashboard';
-              req.session.back = 'Dashboard';
+              req.session.message = 'Error in Join a Round! RoundID: ' + roundID + ' not found.';
+              req.session.link = '/findRound';
+              req.session.back = 'Join a Round';
               res.redirect('/message');
               res.end();
             }
-          }else{
-            req.session.pagename = 'Join a Round';
-            req.session.header = 'Join a Round';
-            req.session.message = 'Error in Join a Round! RoundID: ' + roundID + ' not found.';
-            req.session.link = '/findRound';
-            req.session.back = 'Join a Round';
-            res.redirect('/message');
-            res.end();
-          }
-        });
+          });
+        }else{
+          req.session.pagename = 'Join a Round';
+          req.session.header = 'Join a Round';
+          req.session.message = 'Error in Join a Round! No Valid Round ID entered.';
+          req.session.link = '/dashboard';
+          req.session.back = 'Dashboard';
+          res.redirect('/message');
+          res.end();
+        }
       }else{
         req.session.pagename = 'Join a Round';
         req.session.header = 'Join a Round';
-        req.session.message = 'Error in Join a Round! Please try again later.';
+        req.session.message = 'Error in Join a Round! No Valid Round ID entered.';
         req.session.link = '/dashboard';
         req.session.back = 'Dashboard';
         res.redirect('/message');
@@ -123,7 +148,7 @@ const ongoing_controller = {
       /* Build the query to find the rounds the user is in which are waiting or ongoing */
       var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
       /* Find the rounds */
-      await db.findMany(match_collection, wholeQuery, function(result){
+      await db.findMany(Match, wholeQuery, function(result){
         if(result){ /* If rounds are found, proceed */
           var render = 'app/ongoing_round/findRound';
           var pagedetails = {
@@ -146,7 +171,7 @@ const ongoing_controller = {
       /* Build the query to find the rounds the user is in which are waiting or ongoing */
       var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.email":req.session.guest_user.email}, {"gov.second.email":req.session.guest_user.email}, {"gov.third.email":req.session.guest_user.email}, {"opp.first.email":req.session.guest_user.email}, {"opp.second.email":req.session.guest_user.email}, {"opp.third.email":req.session.guest_user.email}]}]};
       /* Find the rounds */
-      await db.findMany(match_collection, wholeQuery, function(result){
+      await db.findMany(Match, wholeQuery, function(result){
         if(result){ /* If rounds are found, proceed */
           var render = 'app/guest/guestFindRound';
           var pagedetails = {
@@ -174,108 +199,134 @@ const ongoing_controller = {
   /* Load the ongoing round page with the round information */
   ongoingRound: async function(req, res){
     if (req.session.curr_user || req.session.guest_user){
-      /* Get the round ID */
-      var roundID;
-      if(req.query.roundID){
-        roundID = sanitize(req.query.roundID);
-      }else if(req.session.roundID){
-        roundID = req.session.roundID;
+      var errors = validationResult(req);
+      var validRoundID = 0,  paramRoundID = 0;
+      if (!errors.isEmpty()){
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            if(errors[i].param == 'roundID'){
+              paramRoundID = 1;
+            }
+          }else{
+            if(errors[i].param == 'roundID'){
+              validRoundID = 1;
+            }
+          }
+        }
       }
-      if(roundID){
-        /* Find the round */
-        await db.findOne(match_collection, {roundID:roundID}, async function(result){
-          if(result){
-            /* If the round is found and the status is waiting or ongoing, proceed */
-            if(result.status == 'Ongoing'){
-              /* If round information is already complete, proceed */
-              if(result.motion && result.gov && result.opp && result.adjudicator.full_name != 'No Adjudicator Entered.'){
-                var username;
-                if(req.session.curr_user)
-                  username = req.session.curr_user.username;
-                else
-                  username = req.session.guest_user.username;
-                /* If user is in the round, proceed */
-                if(!checkUsers(username, result.gov) || !checkUsers(username, result.opp) || username == result.adjudicator.username){
-                  var render = 'app/ongoing_round/ongoingRound';
-                  if(req.session.curr_user){
-                    var pagedetails = {
-                      pagename: 'On Going Round',
-                      match: result,
-                      curr_user:req.session.curr_user
-                    };
-                    renderPage(req, res, render, pagedetails);
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+        /* Get the round ID */
+        var roundID;
+        if(paramRoundID == 0 && validRoundID == 0){
+          roundID = sanitize(req.query.roundID);
+        }else if(req.session.roundID){
+          roundID = req.session.roundID;
+        }
+        if(roundID){
+          /* Find the round */
+          await db.findOne(Match, {roundID:roundID}, async function(result){
+            if(result){
+              /* If the round is found and the status is waiting or ongoing, proceed */
+              if(result.status == 'Ongoing'){
+                /* If round information is already complete, proceed */
+                if(result.motion && result.gov && result.opp && result.adjudicator.full_name != 'No Adjudicator Entered.'){
+                  var username;
+                  if(req.session.curr_user)
+                    username = req.session.curr_user.username;
+                  else
+                    username = req.session.guest_user.username;
+                  /* If user is in the round, proceed */
+                  if(!checkUsers(username, result.gov) || !checkUsers(username, result.opp) || username == result.adjudicator.username){
+                    var render = 'app/ongoing_round/ongoingRound';
+                    if(req.session.curr_user){
+                      var pagedetails = {
+                        pagename: 'On Going Round',
+                        match: result,
+                        curr_user:req.session.curr_user
+                      };
+                      renderPage(req, res, render, pagedetails);
+                    }else{
+                      var pagedetails = {
+                        pagename: 'On Going Round',
+                        match: result,
+                        curr_user:req.session.guest_user
+                      };
+                      res.render(render, {pagedetails:pagedetails});
+                      res.end();
+                    }
                   }else{
-                    var pagedetails = {
-                      pagename: 'On Going Round',
-                      match: result,
-                      curr_user:req.session.guest_user
-                    };
-                    res.render(render, {pagedetails:pagedetails});
+                    req.session.pagename = 'Join a Round';
+                    req.session.header = 'Join a Round';
+                    req.session.message = 'Error in Join a Round! You are not invited in Round ID: ' + result.roundID + '.';
+                    req.session.link = '/dashboard';
+                    req.session.back = 'Dashboard';
+                    res.redirect('/message');
                     res.end();
                   }
                 }else{
                   req.session.pagename = 'Join a Round';
                   req.session.header = 'Join a Round';
-                  req.session.message = 'Error in Join a Round! You are not invited in Round ID: ' + result.roundID + '.';
+                  req.session.message = 'Error in Join a Round! Round information is not yet finalized.';
                   req.session.link = '/dashboard';
                   req.session.back = 'Dashboard';
                   res.redirect('/message');
                   res.end();
                 }
               }else{
-                req.session.pagename = 'Join a Round';
-                req.session.header = 'Join a Round';
-                req.session.message = 'Error in Join a Round! Round information is not yet finalized.';
-                req.session.link = '/dashboard';
-                req.session.back = 'Dashboard';
-                res.redirect('/message');
-                res.end();
+                /* If the status is grading, redirect to the grade round page */
+                if(result.status == 'Grading'){
+                  var username;
+                  if(req.session.curr_user)
+                    username = req.session.curr_user.username;
+                  else
+                    username = req.session.guest_user.username;
+                  if(result.adjudicator.username == username){
+                    req.session.gradeID = roundID;
+                    res.redirect('/gradeRound');
+                    res.end();
+                  }else{
+                    req.session.pagename = 'Grade a Round';
+                    req.session.header = 'Grade a Round';
+                    req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
+                    req.session.link = '/dashboard';
+                    req.session.back = 'Dashboard';
+                    res.redirect('/message');
+                    res.end();
+                  }
+                }else{
+                  req.session.pagename = 'Join a Round';
+                  req.session.header = 'Join a Round';
+                  req.session.message = 'Error in Join a Round! Please try again later.';
+                  req.session.link = '/dashboard';
+                  req.session.back = 'Dashboard';
+                  res.redirect('/message');
+                  res.end();
+                }
               }
             }else{
-              /* If the status is grading, redirect to the grade round page */
-              if(result.status == 'Grading'){
-                var username;
-                if(req.session.curr_user)
-                  username = req.session.curr_user.username;
-                else
-                  username = req.session.guest_user.username;
-                if(result.adjudicator.username == username){
-                  req.session.gradeID = roundID;
-                  res.redirect('/gradeRound');
-                  res.end();
-                }else{
-                  req.session.pagename = 'Grade a Round';
-                  req.session.header = 'Grade a Round';
-                  req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
-                  req.session.link = '/dashboard';
-                  req.session.back = 'Dashboard';
-                  res.redirect('/message');
-                  res.end();
-                }
-              }else{
-                req.session.pagename = 'Join a Round';
-                req.session.header = 'Join a Round';
-                req.session.message = 'Error in Join a Round! Please try again later.';
-                req.session.link = '/dashboard';
-                req.session.back = 'Dashboard';
-                res.redirect('/message');
-                res.end();
-              }
+              req.session.pagename = 'Join a Round';
+              req.session.header = 'Join a Round';
+              req.session.message = 'Error in Join a Round! RoundID: ' + roundID + ' not found.';
+              req.session.link = '/findRound';
+              req.session.back = 'Join a Round';
+              res.redirect('/message');
+              res.end();
             }
-          }else{
-            req.session.pagename = 'Join a Round';
-            req.session.header = 'Join a Round';
-            req.session.message = 'Error in Join a Round! RoundID: ' + roundID + ' not found.';
-            req.session.link = '/findRound';
-            req.session.back = 'Join a Round';
-            res.redirect('/message');
-            res.end();
-          }
-        });
+          });
+        }else{
+          req.session.pagename = 'Join a Round';
+          req.session.header = 'Join a Round';
+          req.session.message = 'Error in Join a Round! No Valid Round ID entered.';
+          req.session.link = '/dashboard';
+          req.session.back = 'Dashboard';
+          res.redirect('/message');
+          res.end();
+        }
       }else{
         req.session.pagename = 'Join a Round';
         req.session.header = 'Join a Round';
-        req.session.message = 'Error in Join a Round! Please try again later.';
+        req.session.message = 'Error in Join a Round! No Valid Round ID entered.';
         req.session.link = '/dashboard';
         req.session.back = 'Dashboard';
         res.redirect('/message');
@@ -295,7 +346,7 @@ const ongoing_controller = {
     let date_ob = new Date(ts);
     var date_match = date_ob.toLocaleString('default', {month: 'long'})+" "+date_ob.getDate()+" "+date_ob.getFullYear();
     /* Find the round and update the status */
-    await db.findOneAndUpdate(match_collection, {roundID:roundID}, {$set:{status:status,date_match:date_match}}, function(updated){
+    await db.findOneAndUpdate(Match, {roundID:roundID}, {$set:{status:status,date_match:date_match}}, function(updated){
       if(updated){
         res.send('updated status');
       }
@@ -309,7 +360,7 @@ const ongoing_controller = {
       var name_speaker = sanitize(req.body.name_speaker);
       var num_speaker = sanitize(req.body.num_speaker);
       /* Find the round and update the speaker details */
-      await db.findOneAndUpdate(match_collection, {roundID:roundID}, {$set:{speaker:{name_speaker:name_speaker,num_speaker:num_speaker}}}, function(updated){
+      await db.findOneAndUpdate(Match, {roundID:roundID}, {$set:{speaker:{name_speaker:name_speaker,num_speaker:num_speaker}}}, function(updated){
         if(updated){
           res.send('updated status');
         }
@@ -320,60 +371,86 @@ const ongoing_controller = {
   /* End the ongoing round */
   endRound: async function(req, res){
     if (req.session.curr_user || req.session.guest_user){
-      /* Get the round ID */
-      var roundID;
-      if(req.query.roundID){
-        roundID = sanitize(req.query.roundID);
-      }else if(req.session.gradeID){
-        roundID = req.session.gradeID;
+      var errors = validationResult(req);
+      var validRoundID = 0,  paramRoundID = 0;
+      if (!errors.isEmpty()){
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            if(errors[i].param == 'roundID'){
+              paramRoundID = 1;
+            }
+          }else{
+            if(errors[i].param == 'roundID'){
+              validRoundID = 1;
+            }
+          }
+        }
       }
-      if(roundID){
-        /* Find the round */
-        await db.findOne(match_collection, {roundID:roundID}, async function(result){
-          if(result){ /* If found and the status is Grading, proceed */
-            if(result.status == 'Grading'){
-              var username;
-              if(req.session.curr_user)
-                username = req.session.curr_user.username;
-              else
-                username = req.session.guest_user.username;
-              /* If the user is the adjudicator, proceed to the grade a round page */
-              if(result.adjudicator.username == username){
-                req.session.gradeID = roundID;
-                res.redirect('/gradeRound');
-                res.end();
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+        /* Get the round ID */
+        var roundID;
+        if(req.query.roundID){
+          roundID = sanitize(req.query.roundID);
+        }else if(req.session.gradeID){
+          roundID = req.session.gradeID;
+        }
+        if(roundID){
+          /* Find the round */
+          await db.findOne(Match, {roundID:roundID}, async function(result){
+            if(result){ /* If found and the status is Grading, proceed */
+              if(result.status == 'Grading'){
+                var username;
+                if(req.session.curr_user)
+                  username = req.session.curr_user.username;
+                else
+                  username = req.session.guest_user.username;
+                /* If the user is the adjudicator, proceed to the grade a round page */
+                if(result.adjudicator.username == username){
+                  req.session.gradeID = roundID;
+                  res.redirect('/gradeRound');
+                  res.end();
+                }else{
+                  req.session.pagename = 'Grade a Round';
+                  req.session.header = 'Grade a Round';
+                  req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
+                  req.session.link = '/dashboard';
+                  req.session.back = 'Dashboard';
+                  res.redirect('/message');
+                  res.end();
+                }
               }else{
                 req.session.pagename = 'Grade a Round';
                 req.session.header = 'Grade a Round';
-                req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
+                req.session.message = 'Error in Grade a Round! Round is still Ongoing.';
                 req.session.link = '/dashboard';
                 req.session.back = 'Dashboard';
                 res.redirect('/message');
                 res.end();
               }
             }else{
-              req.session.pagename = 'Grade a Round';
-              req.session.header = 'Grade a Round';
-              req.session.message = 'Error in Grade a Round! Round is still Ongoing.';
+              req.session.pagename = 'End Round';
+              req.session.header = 'End Round';
+              req.session.message = 'Error in End Round! Round ID: ' + roundID + ' cannot be found.';
               req.session.link = '/dashboard';
               req.session.back = 'Dashboard';
               res.redirect('/message');
               res.end();
             }
-          }else{
-            req.session.pagename = 'End Round';
-            req.session.header = 'End Round';
-            req.session.message = 'Error in End Round! Round ID: ' + roundID + ' cannot be found.';
-            req.session.link = '/dashboard';
-            req.session.back = 'Dashboard';
-            res.redirect('/message');
-            res.end();
-          }
-        });
+          });
+        }else{
+          req.session.pagename = 'End Round';
+          req.session.header = 'End Round';
+          req.session.message = 'Error in End Round! No Valid Round ID entered.';
+          req.session.link = '/dashboard';
+          req.session.back = 'Dashboard';
+          res.redirect('/message');
+          res.end();
+        }
       }else{
         req.session.pagename = 'End Round';
         req.session.header = 'End Round';
-        req.session.message = 'Error in End Round! Please try again later.';
+        req.session.message = 'Error in End Round! No Valid Round ID entered.';
         req.session.link = '/dashboard';
         req.session.back = 'Dashboard';
         res.redirect('/message');
@@ -390,7 +467,7 @@ const ongoing_controller = {
     if (req.session.curr_user){
       var current = req.session.curr_user.username;
       /* Find the rounds wherein the status is Grading and the user is the adjudicator */
-      await db.findMany(match_collection, {"adjudicator.username": current, status:"Grading"}, function(result){
+      await db.findMany(Match, {"adjudicator.username": current, status:"Grading"}, function(result){
         var render = 'app/ongoing_round/findGrade';
         var pagedetails = {
           pagename: 'Grade Rounds',
@@ -407,52 +484,78 @@ const ongoing_controller = {
   /* Grade a round */
   gradeRound: async function(req, res){
     if (req.session.curr_user){
-      /* Get the round ID */
-      var roundID;
-      if(req.query.roundID){
-        roundID = sanitize(req.query.roundID);
-      }else if(req.session.gradeID){
-        roundID = req.session.gradeID;
+      var errors = validationResult(req);
+      var validRoundID = 0,  paramRoundID = 0;
+      if (!errors.isEmpty()){
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            if(errors[i].param == 'roundID'){
+              paramRoundID = 1;
+            }
+          }else{
+            if(errors[i].param == 'roundID'){
+              validRoundID = 1;
+            }
+          }
+        }
       }
-      if(roundID){
-        /* Find the round to grade */
-        await db.findOne(match_collection, {roundID:roundID}, async function(result){
-          if(result){ /* If found and the user is the adjudicator, proceed */
-            if(result.adjudicator.username == req.session.curr_user.username){
-              if(!req.session.gradeFields){
-                req.session.gradeFields = {all:0, govFirst:0, govSecond:0, govThird:0, oppFirst:0, oppSecond:0, oppThird:0, comments:0};
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+        /* Get the round ID */
+        var roundID;
+        if(paramRoundID == 0 && validRoundID == 0){
+          roundID = sanitize(req.query.roundID);
+        }else if(req.session.gradeID){
+          roundID = req.session.gradeID;
+        }
+        if(roundID){
+          /* Find the round to grade */
+          await db.findOne(Match, {roundID:roundID}, async function(result){
+            if(result){ /* If found and the user is the adjudicator, proceed */
+              if(result.adjudicator.username == req.session.curr_user.username){
+                if(!req.session.gradeFields){
+                  req.session.gradeFields = {all:0, govFirst:0, govSecond:0, govThird:0, oppFirst:0, oppSecond:0, oppThird:0, comments:0};
+                }
+                var render = 'app/ongoing_round/gradeRound';
+                var pagedetails = {
+                  pagename: 'Team Grades',
+                  curr_user:req.session.curr_user,
+                  match: result,
+                  gradeFields:req.session.gradeFields
+                };
+                renderPage(req, res, render, pagedetails);
+              }else{
+                req.session.pagename = 'Grade a Round';
+                req.session.header = 'Grade a Round';
+                req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
+                req.session.link = '/dashboard';
+                req.session.back = 'Dashboard';
+                res.redirect('/message');
+                res.end();
               }
-              var render = 'app/ongoing_round/gradeRound';
-              var pagedetails = {
-                pagename: 'Team Grades',
-                curr_user:req.session.curr_user,
-                match: result,
-                gradeFields:req.session.gradeFields
-              };
-              renderPage(req, res, render, pagedetails);
             }else{
               req.session.pagename = 'Grade a Round';
               req.session.header = 'Grade a Round';
-              req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
+              req.session.message = 'Error in Grade a Round! Round ID: ' + roundID + ' cannot be found.';
               req.session.link = '/dashboard';
               req.session.back = 'Dashboard';
               res.redirect('/message');
               res.end();
             }
-          }else{
-            req.session.pagename = 'Grade a Round';
-            req.session.header = 'Grade a Round';
-            req.session.message = 'Error in Grade a Round! Round ID: ' + roundID + ' cannot be found.';
-            req.session.link = '/dashboard';
-            req.session.back = 'Dashboard';
-            res.redirect('/message');
-            res.end();
-          }
-        });
+          });
+        }else{
+          req.session.pagename = 'Grade a Round';
+          req.session.header = 'Grade a Round';
+          req.session.message = 'Error in Grade a Round! No Valid Round ID entered.';
+          req.session.link = '/dashboard';
+          req.session.back = 'Dashboard';
+          res.redirect('/message');
+          res.end();
+        }
       }else{
         req.session.pagename = 'Grade a Round';
         req.session.header = 'Grade a Round';
-        req.session.message = 'Error in Grade a Round! Please try again later.';
+        req.session.message = 'Error in Grade a Round! No Valid Round ID entered.';
         req.session.link = '/dashboard';
         req.session.back = 'Dashboard';
         res.redirect('/message');
@@ -476,7 +579,7 @@ const ongoing_controller = {
       }
       if(roundID){
         /* If all fields are filled up, proceed */
-        await db.findOne(match_collection, {roundID:roundID}, async function(gradeMatch){
+        await db.findOne(Match, {roundID:roundID}, async function(gradeMatch){
           if(gradeMatch){
             var govOne = 0, govTwo = 0, govThree = 0, oppOne = 0, oppTwo = 0, oppThree = 0;
             var firstgov, secondgov, thirdgov, firstopp, secondopp, thirdopp;
@@ -678,7 +781,7 @@ const ongoing_controller = {
                   res.end();
                 }else{
                   /* Find the round */
-                  await db.findOne(match_collection, {roundID:roundID}, async function(result){
+                  await db.findOne(Match, {roundID:roundID}, async function(result){
                     if(result){
                       /* Set the winner and winner side */
                       if(govCount != oppCount){
@@ -709,7 +812,7 @@ const ongoing_controller = {
                       /* Update all the users in the round with the scores */
                       await updateUsers(roundID, result.gov, result.opp, winner_side, result.date_match);
                       /* Update the match information */
-                      await db.findOneAndUpdate(match_collection, {roundID:roundID}, {$set:{
+                      await db.findOneAndUpdate(Match, {roundID:roundID}, {$set:{
                         winner: winner,
                         winner_side: winner_side,
                         govFirstScore: govFirst,
@@ -782,7 +885,6 @@ function reset(req){
   req.session.create_fields = null;
   req.session.choosing = 0;
   req.session.edit_fields = null;
-  req.session.current_edit = null;
   req.session.edit_team = null;
   req.session.roundID = null;
   req.session.status = null;
@@ -810,7 +912,7 @@ function checkUsers(user, team){
 /* Update the debate statistics of the users within the round */
 async function updateIndiv(username, winner, side, date){
   /* Find the user */
-  await db.findOne(user_collection, {username:username}, async function(result){
+  await db.findOne(User, {username:username}, async function(result){
     if(result){
       var newNum, newWins, newLose, newDraw, newW, newL, newD, newRatio;
       /* Update the number of debates */
@@ -846,7 +948,7 @@ async function updateIndiv(username, winner, side, date){
       newD = (newDraw/newNum)*100;
       newRatio = (newWins/newNum)*100;
       /* Update the team's debate statistics */
-      await db.updateOne(user_collection, {username:username}, {$set: {
+      await db.updateOne(User, {username:username}, {$set: {
         dateoflast: date,
         numdebates: newNum,
         wlratio: newRatio,
@@ -864,7 +966,7 @@ async function updateIndiv(username, winner, side, date){
 /* Update the team statistics */
 async function updateTeam(teamname, winner, side){
   /* Find the team */
-  await db.findOne(teams_collection, {teamname:teamname}, async function(result){
+  await db.findOne(Team, {teamname:teamname}, async function(result){
     if(result){
       var newNum, newWins, newLose, newDraw, newW, newL, newD, newRatio;
       /* Update the number of debates */
@@ -900,7 +1002,7 @@ async function updateTeam(teamname, winner, side){
       newD = (newDraw/newNum)*100;
       newRatio = (newWins/newNum)*100;
       /* Update the team's debate statistics */
-      await db.updateOne(teams_collection, {teamname:teamname}, {$set: {
+      await db.updateOne(Team, {teamname:teamname}, {$set: {
         numdebates: newNum,
         wlratio: newRatio,
         rawWins: newWins,
@@ -917,7 +1019,7 @@ async function updateTeam(teamname, winner, side){
 /* Update the information of all of the users in the round */
 async function updateUsers(roundID, gov, opp, winner, date){
   /* Find the round */
-  await db.findOne(match_collection, {roundID:roundID}, async function(result){
+  await db.findOne(Match, {roundID:roundID}, async function(result){
     if(result){ /* If round is found, proceed */
       /* Update the statistics of each of the users */
       await updateIndiv(gov.first.username, winner, 'Gov', date);
@@ -945,7 +1047,7 @@ async function renderPage(req, res, render, pagedetails){
   var updateCount = 0, roundCount = 0;
   var updateRem = 0, roundRem = 0;
   /* Find the user's account */
-  await db.findOne(user_collection, {username:req.session.curr_user.username}, async function(result){
+  await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
     if(result){
       /* If they have team updates, store at most 5 updates in an array */
       if(result.updates){
@@ -973,7 +1075,7 @@ async function renderPage(req, res, render, pagedetails){
       }
       var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
       /* If they have debate invites, store them in an array */
-      await db.findMany(match_collection, wholeQuery, function(result){
+      await db.findMany(Match, wholeQuery, function(result){
         if(result){
           for(i = 0; i < result.length; i++){
             if(roundCount < 5){

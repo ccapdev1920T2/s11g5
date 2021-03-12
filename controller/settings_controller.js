@@ -1,15 +1,12 @@
-const crypto = require('crypto');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const db = require('../models/db.js');
-const user_collection = 'user';
-const teams_collection = 'teams';
-const match_collection = 'match';
+const User = require('../models/user_model.js');
+const Team = require('../models/team_model.js');
+const Match = require('../models/match_model.js');
 const nodemailer = require('nodemailer');
+const { validationResult } = require('express-validator');
 var sanitize = require('mongo-sanitize');
-
-/* Regex for checking */
-const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const nameFormat = /^[a-zA-Z][a-zA-Z\s]*$/;
-const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
 
 /* For emailing any user */
 const transpo = nodemailer.createTransport({
@@ -48,37 +45,49 @@ const settings_controller = {
     if (req.session.curr_user){
       var uname = sanitize(req.body.username);
       var mail = sanitize(req.body.email);
-      var validUser = 0, validMail = 0;
-      /* Check the format of the username and/or email entered */
-      if(uname){
-        if(!userFormat.test(uname)){
-          validUser = 1;
+      var errors = validationResult(req);
+      if (!errors.isEmpty()){
+        var validUser = 0, validMail = 0, emptyCount = 0, paramUser = 0, paramMail = 0;
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            emptyCount = emptyCount + 1;
+            if(errors[i].param == 'username'){
+              paramUser = 1;
+            }else if(errors[i].param == 'email'){
+              paramMail = 1;
+            }
+          }else{
+            if(errors[i].param == 'username'){
+              validUser = 1;
+            }else if(errors[i].param == 'email'){
+              validMail = 1;
+            }
+          }
         }
-      }
-      if(mail){
-        if(!emailFormat.test(mail)){
-          validMail = 1;
-        }
-      }
-      if(validUser == 0 && validMail == 0){
-        if(uname.length < 1){
-          if(mail.length < 1){
-            /* if no username or email were entered, redirect back to the settings page */
-            reset(req);
-            res.redirect('/settings');
-            res.end();
-          }else{ /* if there was no username entered but an email was entered, check the email entered */
+        if(emptyCount == 2 || (paramUser == 1 && paramMail == 1)){
+          reset(req);
+          req.session.settings_fields = {new_user:0, new_mail:0, new_first:0, new_last:0, new_insti:0, pass:0};
+          res.redirect('/settings');
+          res.end();
+        }else if((validUser == 1 && paramUser == 0) || (validMail == 1 && paramMail == 0)){
+          reset(req);
+          req.session.settings_fields = {new_user:validUser, new_mail:validMail, new_first:0, new_last:0, new_insti:0, pass:0};
+          res.redirect('/settings');
+          res.end();
+        }else{
+          if(paramUser == 1){
             /* Find the user's account */
-            await db.findOne(user_collection, {username:req.session.curr_user.username}, async function(result){
+            await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
               if(result){
-                await db.findOne(user_collection, {email:mail}, async function(found){
+                await db.findOne(User, {email:mail}, async function(found){
                   /* if no user is registered with the indicated email, proceed with the process */
                   if(found){
                     req.session.settings_fields = {new_user:0, new_mail:1, new_first:0, new_last:0, new_insti:0, pass:0};
                     res.redirect('/settings');
                     res.end();
                   }else{ /* Update the account of the user and get the result */
-                    await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {email:mail}}, async function(updated){
+                    await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {email:mail}}, async function(updated){
                       /* Set the email details */
                       var email_content = {
                         text_content: "Hey, " + req.session.curr_user.full_name + "!\n\nYour email was changed to " + mail + ".",
@@ -96,19 +105,17 @@ const settings_controller = {
                 goMessage(req, res);
               }
             });
-          }
-        }else{
-          if(mail.length < 1){ /* if there was no email entered but a username was entered, check the username entered */
+          }else if(paramMail == 1){
             /* Find the user's account */
-            await db.findOne(user_collection, {email:req.session.curr_user.email}, async function(result){
+            await db.findOne(User, {email:req.session.curr_user.email}, async function(result){
               if(result){
-                await db.findOne(user_collection, {username:uname}, async function(found){
+                await db.findOne(User, {username:uname}, async function(found){
                   if(found){ /* if no user is registered with the indicated username, proceed with the process */
                     req.session.settings_fields = {new_user:1, new_mail:0, new_first:0, new_last:0, new_insti:0, pass:0};
                     res.redirect('/settings');
                     res.end();
                   }else{ /* Update the account of the user and get the result */
-                    await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {username:uname}}, async function(result){
+                    await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {username:uname}}, async function(result){
                       /* Set the email content */
                       var email_content = {
                         text_content: "Hey, " + req.session.curr_user.full_name + "!\n\nYour username was changed to " + uname + ".",
@@ -126,48 +133,12 @@ const settings_controller = {
                 goMessage(req, res);
               }
             });
-          }else{ /* if there was a username and email entered, check the both entered */
-            /* Find the user's account */
-            await db.findOne(user_collection, {username:req.session.curr_user.username}, async function(result){
-              if(result){
-                /* See if there are any users registered with the username and/or email entered */
-                await db.findOne(user_collection, {username:uname}, async function(found_user){
-                  await db.findOne(user_collection, {email:mail}, async function(found_email){
-                    if(found_user || found_email){ /* if no user is registered with the indicated username and email, proceed with the process */
-                      if(found_user){
-                        req.session.settings_fields.new_user = 1;
-                      }
-                      if(found_email){
-                        req.session.settings_fields.new_mail = 1;
-                      }
-                      res.redirect('/settings');
-                      res.end();
-                    }else{ /* Update the account of the user and get the result */
-                      await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {username:uname, email: mail}}, async function(result){
-                        /* Set the email content */
-                        var email_content = {
-                          text_content: "Hey, " + req.session.curr_user.full_name + "!\n\nYour email and username were recently changed to " + mail + " and " + uname + ".",
-                          html_content: '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your email and username were recently changed to ' + mail + ' and ' + uname + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                          error_mess: "Error in updating Email and username! Please Try again later.",
-                          success_mess: "Successfully updated Email and username to " + mail + " and " + uname + "!"
-                        };
-                        /* Send the email */
-                        sendEmail(req, res, email_content, req.session.curr_user.email, result);
-                      });
-                    }
-                  });
-                });
-              }else{ /* If the user's account cannot be found, bring up an error message */
-                req.session.message = "Error in updating Email and username! Please Try again later.";
-                goMessage(req, res);
-              }
-            });
+          }else{
+            updateUserMail(req, res, uname, mail)
           }
         }
       }else{
-        req.session.settings_fields = {new_user:validUser, new_mail:validMail, new_first:0, new_last:0, new_insti:0, pass:0};
-        res.redirect('/settings');
-        res.end();
+        updateUserMail(req, res, uname, mail)
       }
     }else{
       goHome(req, res);
@@ -182,92 +153,58 @@ const settings_controller = {
       var first_name = sanitize(req.body.first_name);
       var last_name = sanitize(req.body.last_name);
       var institution = sanitize(req.body.institution);
-      if(first_name.length >= 1 || last_name.length >= 1 || institution.length >= 1){
-        var firstName = 0, lastName = 0, inSti = 0;
-        if(first_name){
-          /* Check if the first name entered contains only letters and spaces */
-          if (!nameFormat.test(first_name)){
-            firstName = 1;
+      var errors = validationResult(req);
+      if (!errors.isEmpty()){
+        var validFirst = 0, validLast = 0, validInsti = 0, emptyCount = 0, paramFirst = 0, paramLast = 0, paramInsti = 0;
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            emptyCount = emptyCount + 1;
+            if(errors[i].param == 'first_name'){
+              paramFirst = 1;
+            }else if(errors[i].param == 'last_name'){
+              paramLast = 1;
+            }else if(errors[i].param == 'institution'){
+              paramInsti = 1;
+            }
+          }else{
+            if(errors[i].param == 'first_name'){
+              validFirst = 1;
+            }else if(errors[i].param == 'last_name'){
+              validLast = 1;
+            }else if(errors[i].param == 'institution'){
+              validInsti = 1;
+            }
           }
         }
-        if(last_name){
-          /* Check if the first name entered contains only letters and spaces */
-          if (!nameFormat.test(last_name)){
-            lastName = 1;
-          }
-        }
-        if(institution){
-          /* Check if the first name entered contains only letters and spaces */
-          if (!nameFormat.test(institution)){
-            inSti = 1;
-          }
-        }
-        if(firstName == 1 || lastName == 1 || inSti == 1){
-          req.session.settings_fields = {new_user:0, new_mail:0, new_first:firstName, new_last:lastName, new_insti:inSti, pass:0};
+        if(emptyCount == 3 || (paramFirst == 1 && paramLast == 1 && paramInsti == 1)){
+          reset(req);
+          req.session.settings_fields = {new_user:0, new_mail:0, new_first:1, new_last:1, new_insti:1, pass:0};
+          res.redirect('/settings');
+          res.end();
+        }else if((validFirst == 1 && paramFirst == 0) || (validLast == 1 && paramLast == 0) || (validInsti == 1 && paramInsti == 0)){
+          reset(req);
+          req.session.settings_fields = {new_user:0, new_mail:0, new_first:validFirst, new_last:validLast, new_insti:validInsti, pass:0};
           res.redirect('/settings');
           res.end();
         }else{
-          if(first_name.length >= 1){
-            if(last_name.length >= 1){
-              if(institution.length >= 1){
-                var full_name = first_name + " " + last_name;
-                /* Update the user's account */
-                await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, institution:institution}}, async function(result){
-                  /* Set the email content */
-                  var email_content = {
-                    html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and institution were recently changed to ' + full_name + ' and ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                    error_mess: "Error in updating Name and Institution! Please Try again later.",
-                    success_mess: "Successfully updated First Name, Last Name, and Institution to " + first_name + ", " + last_name + ", and " + institution + "!"
-                  };
-                  /* Send the email */
-                  sendEmail(req, res, email_content, req.session.curr_user.email, result);
-                });
-              }else{
-                var full_name = first_name + " " + last_name;
-                /* Update the user's account */
-                await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name}}, async function(result){
-                  /* Set the email content */
-                  var email_content = {
-                    html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                    error_mess: "Error in updating Name! Please Try again later.",
-                    success_mess: "Successfully updated First Name and Last Name to " + first_name + " and " + last_name + "!"
-                  };
-                  /* Send the email */
-                  sendEmail(req, res, email_content, req.session.curr_user.email, result);
-                });
-              }
-            }else{
-              var full_name = first_name + " " + req.session.curr_user.last_name;
+          if(paramFirst == 1){
+            if(paramLast == 1){
               /* Update the user's account */
-              await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {first_name:first_name, full_name:full_name}}, async function(result){
+              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {institution:institution}}, async function(result){
                 /* Set the email content */
                 var email_content = {
-                  html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                  error_mess: "Error in updating Name! Please Try again later.",
-                  success_mess: "Successfully updated First Name to " + first_name + "!"
+                  html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your institution was recently changed to ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                  error_mess: "Error in updating Institution! Please Try again later.",
+                  success_mess: "Successfully updated Institution to " + institution + "!"
                 };
                 /* Send the email */
                 sendEmail(req, res, email_content, req.session.curr_user.email, result);
               });
-            }
-          }else if(last_name.length >= 1){
-            if(institution.length >= 1){
+            }else if(paramInsti == 1){
               var full_name = req.session.curr_user.first_name + " " + last_name;
               /* Update the user's account */
-              await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {last_name:last_name, institution:institution, full_name:full_name}}, async function(result){
-                /* Set the email content */
-                var email_content = {
-                  html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and institution were recently changed to ' + full_name + ' and ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                  error_mess: "Error in updating Name and Institution! Please Try again later.",
-                  success_mess: "Successfully updated Last Name and Institution to " + last_name + " and " + institution + "!"
-                };
-                /* Send the email */
-                sendEmail(req, res, email_content, req.session.curr_user.email, result);
-              });
-            }else{
-              var full_name = req.session.curr_user.first_name + " " + last_name;
-              /* Update the user's account */
-              await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {last_name:last_name}}, async function(result){
+              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {last_name:last_name}}, async function(result){
                 /* Set the email content */
                 var email_content = {
                   html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -277,27 +214,89 @@ const settings_controller = {
                 /* Send the email */
                 sendEmail(req, res, email_content, req.session.curr_user.email, result);
               });
+            }else{
+              var full_name = req.session.curr_user.first_name + " " + last_name;
+              /* Update the user's account */
+              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {last_name:last_name, institution:institution, full_name:full_name}}, async function(result){
+                /* Set the email content */
+                var email_content = {
+                  html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and institution were recently changed to ' + full_name + ' and ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                  error_mess: "Error in updating Name and Institution! Please Try again later.",
+                  success_mess: "Successfully updated Last Name and Institution to " + last_name + " and " + institution + "!"
+                };
+                /* Send the email */
+                sendEmail(req, res, email_content, req.session.curr_user.email, result);
+              });
             }
-          }else if(institution.length >= 1){
+          }else if(paramLast == 1){
+            if(paramInsti == 1){
+              var full_name = first_name + " " + req.session.curr_user.last_name;
+              /* Update the user's account */
+              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, full_name:full_name}}, async function(result){
+                /* Set the email content */
+                var email_content = {
+                  html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                  error_mess: "Error in updating Name! Please Try again later.",
+                  success_mess: "Successfully updated First Name to " + first_name + "!"
+                };
+                /* Send the email */
+                sendEmail(req, res, email_content, req.session.curr_user.email, result);
+              });
+            }else{
+              var full_name = first_name + " " + req.session.curr_user.last_name;
+              /* Update the user's account */
+              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, full_name:full_name, institution:institution}}, async function(result){
+                /* Set the email content */
+                var email_content = {
+                  html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + ' and your institution was changed to ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                  error_mess: "Error in updating Name! Please Try again later.",
+                  success_mess: "Successfully updated First Name and Institution to " + first_name + " and " + institution + "!"
+                };
+                /* Send the email */
+                sendEmail(req, res, email_content, req.session.curr_user.email, result);
+              });
+            }
+          }else if(paramInsti == 1){
+            var full_name = first_name + " " + last_name;
             /* Update the user's account */
-            await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {institution:institution}}, async function(result){
+            await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name}}, async function(result){
               /* Set the email content */
               var email_content = {
-                html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your institution was recently changed to ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                error_mess: "Error in updating Institution! Please Try again later.",
-                success_mess: "Successfully updated Institution to " + institution + "!"
+                html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                error_mess: "Error in updating Name! Please Try again later.",
+                success_mess: "Successfully updated First Name and Last Name to " + first_name + " and " + last_name + "!"
               };
               /* Send the email */
               sendEmail(req, res, email_content, req.session.curr_user.email, result);
             });
           }else{
-            res.redirect('/settings');
-            res.end();
+            var full_name = first_name + " " + last_name;
+            /* Update the user's account */
+            await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, institution:institution}}, async function(result){
+              /* Set the email content */
+              var email_content = {
+                html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and institution were recently changed to ' + full_name + ' and ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                error_mess: "Error in updating Name and Institution! Please Try again later.",
+                success_mess: "Successfully updated First Name, Last Name, and Institution to " + first_name + ", " + last_name + ", and " + institution + "!"
+              };
+              /* Send the email */
+              sendEmail(req, res, email_content, req.session.curr_user.email, result);
+            });
           }
         }
       }else{
-        res.redirect('/settings');
-        res.end();
+        var full_name = first_name + " " + last_name;
+        /* Update the user's account */
+        await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, institution:institution}}, async function(result){
+          /* Set the email content */
+          var email_content = {
+            html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and institution were recently changed to ' + full_name + ' and ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+            error_mess: "Error in updating Name and Institution! Please Try again later.",
+            success_mess: "Successfully updated First Name, Last Name, and Institution to " + first_name + ", " + last_name + ", and " + institution + "!"
+          };
+          /* Send the email */
+          sendEmail(req, res, email_content, req.session.curr_user.email, result);
+        });
       }
     }else{
       goHome(req, res);
@@ -311,52 +310,48 @@ const settings_controller = {
       var curr = sanitize(req.body.current_pass);
       var passOne = sanitize(req.body.password);
       var passTwo = sanitize(req.body.confirm_pass);
-      /* If not all are filled up, redirect back to the settings page */
-      if(curr.length < 1 || passOne.length < 1 || passTwo.length < 1){
+      var errors = validationResult(req);
+      if (!errors.isEmpty()){
         req.session.settings_fields = {new_user:0, new_mail:0, new_first:0, new_last:0, new_insti:0, pass:1};
         res.redirect('/settings');
         res.end();
-      }else if(passOne === passTwo){ /* If new password and confirm password are equal, proceed */
-        /* Find the user's account */
-        await db.findOne(user_collection, {username:req.session.curr_user.username}, async function(result){
-          if(result){ /* If the user's account is found, proceed */
-            var given_salt = result.password.salt;
-            var pass = result.password.newPassword;
-            /* Check if the entered current password is valid */
-            if(checkHash(pass, curr, given_salt)){
-              /* Check if the new password and confirm password entered are 8 characters or more and do not contain whitespaces or any invalid characters */
-              if (passOne.length < 8 || passTwo.length < 8){
-                req.session.settings_fields = {new_user:0, new_mail:0, new_first:0, new_last:0, new_insti:0, pass:1};
-                res.redirect('/settings');
-                res.end();
-              }else{
-                var updated_pass = createHash(passOne);
-                /* Update the account of the user and get the result */
-                await db.findOneAndUpdate(user_collection, {username:req.session.curr_user.username}, {$set: {password:updated_pass}}, async function(result){
-                  /* Set the email content */
-                  var email_content = {
-                    html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your password was recently changed. Didn\'t change your password? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                    error_mess: "Error in updating Password! Please Try again later.",
-                    success_mess: "Successfully updated Password!"
-                  };
-                  /* Send the email */
-                  sendEmail(req, res, email_content, req.session.curr_user.email, result);
-                });
-              }
-            }else{
-              req.session.settings_fields = {new_user:0, new_mail:0, new_first:0, new_last:0, new_insti:0, pass:1};
-              res.redirect('/settings');
-              res.end();
-            }
-          }else{
-            req.session.message = "Error in updating Password! Please Try again later.";
-            goMessage(req, res);
-          }
-        });
       }else{
-        req.session.settings_fields = {new_user:0, new_mail:0, new_first:0, new_last:0, new_insti:0, pass:1};
-        res.redirect('/settings');
-        res.end();
+        if(passOne === passTwo){ /* If new password and confirm password are equal, proceed */
+          /* Find the user's account */
+          await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
+            if(result){ /* If the user's account is found, proceed */
+              /* Check if the entered current password is valid */
+              bcrypt.compare(curr, result.password, function(err, equal){
+                if(equal){
+                  bcrypt.hash(passOne, saltRounds, async function(err, hash){
+                    /* Update the account of the user and get the result */
+                    await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {password:hash}}, async function(result){
+                      /* Set the email content */
+                      var email_content = {
+                        html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your password was recently changed. Didn\'t change your password? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                        error_mess: "Error in updating Password! Please Try again later.",
+                        success_mess: "Successfully updated Password!"
+                      };
+                      /* Send the email */
+                      sendEmail(req, res, email_content, req.session.curr_user.email, result);
+                    });
+                  });
+                }else{
+                  req.session.settings_fields = {new_user:0, new_mail:0, new_first:0, new_last:0, new_insti:0, pass:1};
+                  res.redirect('/settings');
+                  res.end();
+                }
+              });
+            }else{
+              req.session.message = "Error in updating Password! Please Try again later.";
+              goMessage(req, res);
+            }
+          });
+        }else{
+          req.session.settings_fields = {new_user:0, new_mail:0, new_first:0, new_last:0, new_insti:0, pass:1};
+          res.redirect('/settings');
+          res.end();
+        }
       }
     }else{
       goHome(req, res);
@@ -378,47 +373,113 @@ const settings_controller = {
   /* Delete the user's account */
   confirmDelete: async function(req, res){
     if(req.session.curr_user){
+      const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       var username = req.session.curr_user.username;
       var full_name = req.session.curr_user.full_name;
       var email = req.session.curr_user.email;
+
       var fillerUser = {
         username: 'No User',
-        full_name: 'No User'
+        first_name: 'No User',
+        last_name: 'No User',
+        full_name: 'No User',
+        email: 'No User',
+        institution: 'No User'
       };
       /* Update all of the teams of the user */
-      await db.findMany(teams_collection, {"first.username":username}, async function(result){
+      await db.findMany(Team, {"first.username":username}, async function(result){
         if(result){
           for(i = 0; i < result.length; i++){
+            var count = 1;
             var deleteUpdate = {
               teamname: result[i].teamname,
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Leader deleted]"
             };
-            updateUpdates(result.first, result.second, result.third, deleteUpdate);
-            await db.updateOne(teams_collection, {teamname:result[i].teamname}, {$set:{"first":{username:'No User', full_name:'No User'}}});
+            if(result.second){
+              if(result.second.username != 'No User' && emailFormat.test(result.second.username))
+                await db.updateOne(User, {username:result.second.username}, {$push:{"updates":deleteUpdate}});
+              else
+                count = count + 1;
+            }else{
+              count = count + 1;
+            }
+            if(result.third){
+              if(result.third.username != 'No User' && emailFormat.test(result.third.username))
+                await db.updateOne(User, {username:result.third.username}, {$push:{"updates":deleteUpdate}});
+              else
+                count = count + 1;
+            }else{
+              count = count + 1;
+            }
+            if(count >= 3){
+              await db.deleteOne(Team, {teamname:result[i].teamname});
+            }else{
+              await db.updateOne(Team, {teamname:result[i].teamname}, {$set:{"first":fillerUser}});
+            }
           }
         }
       });
-      await db.findMany(teams_collection, {"second.username":username}, async function(result){
+      await db.findMany(Team, {"second.username":username}, async function(result){
         if(result){
           for(i = 0; i < result.length; i++){
+            var count = 1;
             var deleteUpdate = {
               teamname: result[i].teamname,
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Deputy Leader deleted]"
             };
-            updateUpdates(result.first, result.second, result.third, deleteUpdate);
-            await db.updateOne(teams_collection, {teamname:result[i].teamname}, {$set:{"second":{username:'No User', full_name:'No User'}}});
+            if(result.first){
+              if(result.second.username != 'No User' && emailFormat.test(result.first.username))
+                await db.updateOne(User, {username:result.first.username}, {$push:{"updates":deleteUpdate}});
+              else
+                count = count + 1;
+            }else{
+              count = count + 1;
+            }
+            if(result.third){
+              if(result.third.username != 'No User' && emailFormat.test(result.third.username))
+                await db.updateOne(User, {username:result.third.username}, {$push:{"updates":deleteUpdate}});
+              else
+                count = count + 1;
+            }else{
+              count = count + 1;
+            }
+            if(count >= 3){
+              await db.deleteOne(Team, {teamname:result[i].teamname});
+            }else{
+              await db.updateOne(Team, {teamname:result[i].teamname}, {$set:{"second":fillerUser}});
+            }
           }
         }
       });
-      await db.findMany(teams_collection, {"third.username":username}, async function(result){
+      await db.findMany(Team, {"third.username":username}, async function(result){
         if(result){
           for(i = 0; i < result.length; i++){
+            var count = 1;
             var deleteUpdate = {
               teamname: result[i].teamname,
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Whip deleted]"
             };
-            updateUpdates(result.first, result.second, result.third, deleteUpdate);
-            await db.updateOne(teams_collection, {teamname:result[i].teamname}, {$set:{"third":{username:'No User', full_name:'No User'}}});
+            if(result.first){
+              if(result.second.username != 'No User' && emailFormat.test(result.first.username))
+                await db.updateOne(User, {username:result.first.username}, {$push:{"updates":deleteUpdate}});
+              else
+                count = count + 1;
+            }else{
+              count = count + 1;
+            }
+            if(result.second){
+              if(result.second.username != 'No User' && emailFormat.test(result.second.username))
+                await db.updateOne(User, {username:result.second.username}, {$push:{"updates":deleteUpdate}});
+              else
+                count = count + 1;
+            }else{
+              count = count + 1;
+            }
+            if(count >= 3){
+              await db.deleteOne(Team, {teamname:result[i].teamname});
+            }else{
+              await db.updateOne(Team, {teamname:result[i].teamname}, {$set:{"third":fillerUser}});
+            }
           }
         }
       });
@@ -441,7 +502,7 @@ const settings_controller = {
           req.session.message = "Error in deleting account Please Try again later.";
           goMessage(req, res);
         }else{
-          await db.deleteOne(user_collection, {username:username});
+          await db.deleteOne(User, {username:username});
           req.session.destroy((err)=>{
             if(err) throw err;
           });
@@ -458,34 +519,6 @@ const settings_controller = {
   }
 }
 
-/* Get the user's password and turn it into a hashed password to store */
-function createHash(password){
-  var salt = crypto.randomBytes(Math.ceil(16/2)).toString('hex').slice(0,16);
-
-  //Create the hashed password by adding the salt to the password
-  var hashPassword = function(password, salt){
-    var hash = crypto.createHmac('sha512', salt);
-    hash.update(password);
-    var value = hash.digest('hex');
-    return{salt: salt, newPassword: value}
-  };
-
-  return hashPassword(password, salt);
-}
-
-/* Check if the password entered during login matches their stored password */
-function checkHash(password, log_pass, given_salt){
-  var salt = given_salt;
-  var hashPassword = function(password, log_pass, salt){
-    var hash = crypto.createHmac('sha512', salt);
-    hash.update(log_pass);
-    var value = hash.digest('hex');
-    return(password == value);
-  };
-
-  return hashPassword(password, log_pass, given_salt);
-}
-
 /* Make sure all indicated variables are set to 0, null, or their default value */
 function reset(req){
   req.session.reg_fields = null;
@@ -497,7 +530,6 @@ function reset(req){
   req.session.create_fields = null;
   req.session.choosing = 0;
   req.session.edit_fields = null;
-  req.session.current_edit = null;
   req.session.edit_team = null;
   req.session.roundID = null;
   req.session.status = null;
@@ -527,11 +559,43 @@ function goHome(req, res){
   res.end();
 }
 
-/* Update the updates array of users */
-async function updateUpdates(first, second, third, updateAdd){
-  await db.updateOne(user_collection, {username:first.username}, {$push:{"updates":updateAdd}});
-  await db.updateOne(user_collection, {username:second.username}, {$push:{"updates":updateAdd}});
-  await db.updateOne(user_collection, {username:third.username}, {$push:{"updates":updateAdd}});
+/* Update both email and user */
+async function updateUserMail(req, res, uname, mail){
+  /* Find the user's account */
+  await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
+    if(result){
+      /* See if there are any users registered with the username and/or email entered */
+      await db.findOne(User, {username:uname}, async function(found_user){
+        await db.findOne(User, {email:mail}, async function(found_email){
+          if(found_user || found_email){ /* if no user is registered with the indicated username and email, proceed with the process */
+            if(found_user){
+              req.session.settings_fields.new_user = 1;
+            }
+            if(found_email){
+              req.session.settings_fields.new_mail = 1;
+            }
+            res.redirect('/settings');
+            res.end();
+          }else{ /* Update the account of the user and get the result */
+            await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {username:uname, email: mail}}, async function(result){
+              /* Set the email content */
+              var email_content = {
+                text_content: "Hey, " + req.session.curr_user.full_name + "!\n\nYour email and username were recently changed to " + mail + " and " + uname + ".",
+                html_content: '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your email and username were recently changed to ' + mail + ' and ' + uname + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                error_mess: "Error in updating Email and username! Please Try again later.",
+                success_mess: "Successfully updated Email and username to " + mail + " and " + uname + "!"
+              };
+              /* Send the email */
+              sendEmail(req, res, email_content, req.session.curr_user.email, result);
+            });
+          }
+        });
+      });
+    }else{ /* If the user's account cannot be found, bring up an error message */
+      req.session.message = "Error in updating Email and username! Please Try again later.";
+      goMessage(req, res);
+    }
+  });
 }
 
 /* Send email notification about changes */
@@ -555,15 +619,15 @@ async function sendEmail(req, res, email_content, mail, updated){
       req.session.message = email_content.error_mess;
       goMessage(req, res);
     }else{
-      await db.updateMany(teams_collection, {"first.username":req.session.curr_user.username}, {$set:{"first":updated}});
-      await db.updateMany(teams_collection, {"second.username":req.session.curr_user.username}, {$set:{"second":updated}});
-      await db.updateMany(teams_collection, {"third.username":req.session.curr_user.username}, {$set:{"third":updated}});
-      await db.updateMany(match_collection, {"gov.first.username":req.session.curr_user.username}, {$set:{"gov.first":updated}});
-      await db.updateMany(match_collection, {"gov.second.username":req.session.curr_user.username}, {$set:{"gov.second":updated}});
-      await db.updateMany(match_collection, {"gov.third.username":req.session.curr_user.username}, {$set:{"gov.third":updated}});
-      await db.updateMany(match_collection, {"opp.first.username":req.session.curr_user.username}, {$set:{"opp.first":updated}});
-      await db.updateMany(match_collection, {"opp.second.username":req.session.curr_user.username}, {$set:{"opp.second":updated}});
-      await db.updateMany(match_collection, {"opp.third.username":req.session.curr_user.username}, {$set:{"opp.third":updated}});
+      await db.updateMany(Team, {"first.username":req.session.curr_user.username}, {$set:{"first":updated}});
+      await db.updateMany(Team, {"second.username":req.session.curr_user.username}, {$set:{"second":updated}});
+      await db.updateMany(Team, {"third.username":req.session.curr_user.username}, {$set:{"third":updated}});
+      await db.updateMany(Match, {"gov.first.username":req.session.curr_user.username}, {$set:{"gov.first":updated}});
+      await db.updateMany(Match, {"gov.second.username":req.session.curr_user.username}, {$set:{"gov.second":updated}});
+      await db.updateMany(Match, {"gov.third.username":req.session.curr_user.username}, {$set:{"gov.third":updated}});
+      await db.updateMany(Match, {"opp.first.username":req.session.curr_user.username}, {$set:{"opp.first":updated}});
+      await db.updateMany(Match, {"opp.second.username":req.session.curr_user.username}, {$set:{"opp.second":updated}});
+      await db.updateMany(Match, {"opp.third.username":req.session.curr_user.username}, {$set:{"opp.third":updated}});
       req.session.curr_user = updated;
       req.session.message = email_content.success_mess;
       goMessage(req, res);
@@ -583,7 +647,7 @@ async function renderPage(req, res, render, pagedetails){
   var updateCount = 0, roundCount = 0;
   var updateRem = 0, roundRem = 0;
   /* Find the user's account */
-  await db.findOne(user_collection, {username:req.session.curr_user.username}, async function(result){
+  await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
     if(result){
       /* If they have team updates, store at most 5 updates in an array */
       if(result.updates){
@@ -611,7 +675,7 @@ async function renderPage(req, res, render, pagedetails){
       }
       var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
       /* If they have debate invites, store them in an array */
-      await db.findMany(match_collection, wholeQuery, function(result){
+      await db.findMany(Match, wholeQuery, function(result){
         if(result){
           for(i = 0; i < result.length; i++){
             if(roundCount < 5){

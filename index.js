@@ -44,13 +44,15 @@ app.use(session({
 async function func(){
   const {MongoClient} = require('mongodb');
   const uri = "mongodb+srv://dbUser:p@ssword@cluster-1.ayffn.gcp.mongodb.net/db?retryWrites=true&w=majority";
-  const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
-
-  try{
-    await client.connect();
-  }catch (e){
-    console.error(e);
-  }
+  const options = {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+      useFindAndModify: false
+  };
+  await mongoose.connect(uri, options, function(error) {
+    if(error) throw error;
+    console.log('Connected to:\t'+uri);
+  });
 }
 
 /* Routes */
@@ -104,4 +106,5 @@ io.on('connection', function(socket){
 
 http.listen(port, function(){
   console.log('listening on *:' + port);
+  func();
 });

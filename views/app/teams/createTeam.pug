@@ -11,6 +11,7 @@ block content
               p.text-primary.m-0.font-weight-bold Create a New Team
             .card-body
               form.user(action="/checkInfo", method="post")
+                input#current_user(type='hidden' value=pagedetails.curr_user.username)
                 .form-row
                   .col
                     .form-group
@@ -20,90 +21,101 @@ block content
                   .form-row
                     .col
                       .form-group
-                        label(for='teamname')
+                        label(for='create_teamname')
                           strong Team Name
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Team Name...' name='teamname' id='teamname')
+                        input.form-control#create_teamname(style='border: 1px solid #d66' type='text' placeholder='Enter Team Name...' name='create_teamname')
                         .text-center.small Can only contain letters and spaces
+                        .text-center.small#invalid_createTeam(style="color: #d66")
                     .col
                       .form-group
-                        label(for='first_username')
+                        label(for='create_first')
                           strong Leader Username
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Leader...' name='first_username' id='first_username')
+                        input.form-control#create_first(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Leader...' name='create_first')
+                        .text-center.small#invalid_createFirst(style="color: #d66")
                   .form-row
                     .col
                       .form-group
-                        label(for='second_username')
+                        label(for='create_second')
                           strong Deputy Username
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Deputy...' name='second_username' id='second_username')
+                        input.form-control#create_second(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Deputy...' name='create_second')
+                        .text-center.small#invalid_createSecond(style="color: #d66")
                     .col
                       .form-group
-                        label(for='third_username')
+                        label(for='create_third')
                           strong Whip Username
-                        input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Whip...' name='third_username' id='third_username')
+                        input.form-control#create_third(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Whip...' name='create_third')
+                        .text-center.small#invalid_createThird(style="color: #d66")
                   if (pagedetails.team == 2)
-                    .text-center.small(style="color: #d66") Team Already Exists
+                    .text-center.small#invalid_createAll(style="color: #d66") Team Already Exists
                   else if (pagedetails.team == 3)
-                    .text-center.small(style="color: #d66") #{pagedetails.curr_user.full_name} needs to be in the team
+                    .text-center.small#invalid_createAll(style="color: #d66") #{pagedetails.curr_user.full_name} needs to be in the team
                   else if (pagedetails.team == 4)
-                    .text-center.small(style="color: #d66") No two users can be the same
+                    .text-center.small#invalid_createAll(style="color: #d66") Users cannot have more than one role
                   else if (pagedetails.team == 5)
-                    .text-center.small(style="color: #d66") All fields need to be filled
-                  .form-group
-                    button.btn.btn-primary.btn-sm(type='submit') Create Team
+                    .text-center.small#invalid_createAll(style="color: #d66") All fields need to be filled
+                  .form-group.text-center
+                    button.btn.btn-primary.btn-block.btn-success#create(type='submit') Create Team
+                    br
+                    a.card-link.btn.btn-primary(href='/teamPage') Cancel
                 else
                   .form-row
                     .col
                       if (pagedetails.team == 1)
                         .form-group
-                          label(for='teamname')
+                          label(for='create_teamname')
                             strong Team Name
-                          input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Team Name...' name='teamname' id='teamname')
+                          input.form-control#create_teamname(style='border: 1px solid #d66' type='text' placeholder='Enter Team Name...' name='create_teamname')
                           .text-center.small Can only contain letters and spaces
-                          .text-center.small(style="color: #d66") Invalid Team Name
+                          .text-center.small#invalid_createTeam(style="color: #d66") Invalid Team Name
                       else
                         .form-group
-                          label(for='teamname')
+                          label(for='create_teamname')
                             strong Team Name
-                          input.form-control(type='text' placeholder='Enter Team Name...' name='teamname' id='teamname')
+                          input.form-control#create_teamname(type='text' placeholder='Enter Team Name...' name='create_teamname')
                           .text-center.small Can only contain letters and spaces
+                          .text-center.small#invalid_createTeam(style="color: #d66")
                     .col
                       if (pagedetails.lead == 1)
                         .form-group
-                          label(for='first_username')
+                          label(for='create_first')
                             strong Leader Username
-                          input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Leader...' name='first_username' id='first_username')
-                          .text-center.small(style="color: #d66") Invalid Username / Email Address
+                          input.form-control#create_first(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Leader...' name='create_first')
+                          .text-center.small#invalid_createFirst(style="color: #d66") Invalid Username / Email Address
                       else
                         .form-group
-                          label(for='first_username')
+                          label(for='create_first')
                             strong Leader Username
-                          input.form-control(type='text' placeholder='Enter Username of Leader...' name='first_username' id='first_username')
+                          input.form-control#create_first(type='text' placeholder='Enter Username of Leader...' name='create_first')
+                          .text-center.small#invalid_createFirst(style="color: #d66")
                   .form-row
                     .col
                       if (pagedetails.dep == 1)
                         .form-group
-                          label(for='second_username')
+                          label(for='create_second')
                             strong Deputy Username
-                          input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Deputy...' name='second_username' id='second_username')
-                          .text-center.small(style="color: #d66") Invalid Username / Email Address
+                          input.form-control#create_second(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Deputy...' name='create_second')
+                          .text-center.small#invalid_createSecond(style="color: #d66") Invalid Username / Email Address
                       else
                         .form-group
-                          label(for='second_username')
+                          label(for='create_second')
                             strong Deputy Username
-                          input.form-control(type='text' placeholder='Enter Username of Deputy...' name='second_username' id='second_username')
+                          input.form-control#create_second(type='text' placeholder='Enter Username of Deputy...' name='create_second')
+                          .text-center.small#invalid_createSecond(style="color: #d66")
                     .col
                       if (pagedetails.whip == 1)
                         .form-group
-                          label(for='third_username')
+                          label(for='create_third')
                             strong Whip Username
-                          input.form-control(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Whip...' name='third_username' id='third_username')
-                          .text-center.small(style="color: #d66") Invalid Username / Email Address
+                          input.form-control#create_third(style='border: 1px solid #d66' type='text' placeholder='Enter Username of Whip...' name='create_third')
+                          .text-center.small#invalid_createThird(style="color: #d66") Invalid Username / Email Address
                       else
                         .form-group
-                          label(for='third_username')
+                          label(for='create_third')
                             strong Whip Username
-                          input.form-control(type='text' placeholder='Enter Username of Whip...' name='third_username' id='third_username')
+                          input.form-control#create_third(type='text' placeholder='Enter Username of Whip...' name='create_third')
+                          .text-center.small#invalid_createThird(style="color: #d66")
+                  .text-center.small#invalid_createAll(style="color: #d66")
                   .form-group.text-center
-                    button.btn.btn-primary.btn-block.btn-success(type='submit') Create Team
+                    button.btn.btn-primary.btn-block.btn-success#create(type='submit') Create Team
                     br
                     a.card-link.btn.btn-primary(href='/teamPage') Cancel

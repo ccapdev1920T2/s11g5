@@ -1,143 +1,58 @@
-const mongodb = require('mongodb');
-
-const client = mongodb.MongoClient;
-const url = "mongodb+srv://dbUser:p@ssword@cluster-1.ayffn.gcp.mongodb.net/db?retryWrites=true&w=majority";
-const dbName = "database";
-
-const options = { useUnifiedTopology: true };
-
 const database = {
-  createDatabase: function() {
-      client.connect(url, options, function (err, db) {
-          if(err) throw err;
-          db.close();
+    insertOne: function(model, doc) {
+      model.create(doc, function(error, result) {
+        if(error) throw error;
       });
-  },
-  createCollection: function(collection) {
-        client.connect(url, options, function(err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.createCollection(collection, function (err, res) {
-                if(err) throw err;
-                db.close();
-            });
-        });
     },
-    insertOne: function(collection, doc) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).insertOne(doc, function (err, res) {
-                if(err) throw err;
-                db.close();
-            });
-        });
+    insertOneCallback: function(model, doc, callback) {
+      model.create(doc, function(error, result) {
+        if(error) return callback(false);
+        return callback(true);
+      });
     },
-    insertOneCallback: function(collection, doc, callback) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).insertOne(doc, function (err, res) {
-                if(err) throw err;
-                db.close();
-                return callback(res.ops[0]);
-            });
-        });
+    insertMany: function(model, docs) {
+      model.insertMany(docs, function(error, result) {
+        if(error) return callback(false);
+        return callback(true);
+      });
     },
-    insertMany: function(collection, docs) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).insertMany(docs, function (err, res) {
-                if(err) throw err;
-                db.close();
-            });
-        });
+    findOne: function(model, query, callback) {
+      model.findOne(query, '', function(error, result) {
+        if(error) return callback(false);
+        return callback(result);
+      });
     },
-    findOne: function(collection, query, callback) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).findOne(query, function (err, result) {
-                if(err) throw err;
-                db.close();
-                return callback(result);
-            });
-        });
+    findMany: function(model, query, callback) {
+      model.find(query, '', function(error, result) {
+        if(error) return callback(false);
+        return callback(result);
+      });
     },
-    findMany: function(collection, query, callback) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            var hold = null;
-            database.collection(collection).find(query, {projection: hold})
-            .sort(hold).toArray(function (err, result) {
-                if(err) throw err;
-                db.close();
-                return callback(result);
-            });
-        });
+    deleteOne: function(model, filter) {
+      model.deleteOne(filter, function(error, result) {
+        if(error) throw error;
+      });
     },
-    deleteOne: function(collection, filter) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).deleteOne(filter, function (err, res) {
-                if(err) throw err;
-                db.close();
-            });
-        });
+    deleteMany: function(model, filter) {
+      model.deleteOne(filter, function(error, result) {
+        if(error) throw error;
+      });
     },
-    deleteMany: function(collection, filter) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).deleteMany(filter, function(err, res) {
-                if(err) throw err;
-                db.close();
-            });
-        });
+    findOneAndUpdate: function(model, filter, update, callback) {
+      model.findOneAndUpdate(filter, update, {returnOriginal:false}, function (error, result) {
+        if(error) throw err;
+        return callback(result);
+      });
     },
-    dropCollection: function(collection) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).drop(function (err, res) {
-                if(err) throw err;
-                db.close();
-            });
-        });
+    updateOne: function(model, filter, update) {
+      model.updateOne(filter, update, function(error, result) {
+        if(error) throw error;
+      });
     },
-    findOneAndUpdate: function(collection, filter, update, callback) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).findOneAndUpdate(filter, update, {returnOriginal:false}, function (err, result) {
-                if(err) throw err;
-                db.close();
-                return callback(result.value);
-            });
-        });
-    },
-    updateOne: function(collection, filter, update) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).updateOne(filter, update, function (err, res) {
-                if(err) throw err;
-                db.close();
-            });
-        });
-    },
-    updateMany: function(collection, filter, update) {
-        client.connect(url, options, function (err, db) {
-            if(err) throw err;
-            var database = db.db(dbName);
-            database.collection(collection).updateMany(filter, update, function (err, res) {
-                if(err) throw err;
-                db.close();
-            });
-        });
+    updateMany: function(model, filter, update) {
+      model.updateMany(filter, update, function(error, result) {
+        if(error) throw error;
+      });
     }
 }
 
