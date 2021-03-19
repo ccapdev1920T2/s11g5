@@ -65,6 +65,8 @@ $(document).ready(function () {
         $('#create').prop('disabled', true);
       }else{
         $.get('/checkName', {teamname:teamname}, function(result){
+          $('#create_teamname').css('border', '1px solid #cccccc');
+          $('#invalid_createTeam').text('');
           if(result.teamname == teamname){
             $('#create_teamname').css('border', '1px solid #d66');
             $('#invalid_createTeam').text('Team Name is Already Taken');
@@ -80,7 +82,6 @@ $(document).ready(function () {
         });
       }
     }else{
-      resetEverything();
       $('#create').prop('disabled', true);
     }
   });
@@ -94,6 +95,8 @@ $(document).ready(function () {
         $('#create').prop('disabled', true);
       }else if(validator.matches(first, userFormat) && !validator.isEmail(first)){
         $.get('/checkUsername', {username:first}, function(result){
+          $('#create_first').css('border', '1px solid #cccccc');
+          $('#invalid_createFirst').text('');
           if(result.username == first){
             $('#create_first').css('border', '1px solid #cccccc');
             $('#invalid_createFirst').text('');
@@ -112,6 +115,8 @@ $(document).ready(function () {
         });
       }else if(validator.isEmail(first)){
         $.get('/checkEmail', {email:first}, function(result){
+          $('#create_first').css('border', '1px solid #cccccc');
+          $('#invalid_createFirst').text('');
           if(result.email == first){
             $('#create_first').css('border', '1px solid #d66');
             $('#invalid_createFirst').text('Invalid Email');
@@ -130,7 +135,6 @@ $(document).ready(function () {
         });
       }
     }else{
-      resetEverything();
       $('#create').prop('disabled', true);
     }
   });
@@ -144,6 +148,8 @@ $(document).ready(function () {
         $('#create').prop('disabled', true);
       }else if(validator.matches(second, userFormat) && !validator.isEmail(second)){
         $.get('/checkUsername', {username:second}, function(result){
+          $('#create_second').css('border', '1px solid #cccccc');
+          $('#invalid_createSecond').text('');
           if(result.username == second){
             $('#create_second').css('border', '1px solid #cccccc');
             $('#invalid_createSecond').text('');
@@ -167,6 +173,8 @@ $(document).ready(function () {
         });
       }else if(validator.isEmail(second)){
         $.get('/checkEmail', {email:second}, function(result){
+          $('#create_second').css('border', '1px solid #cccccc');
+          $('#invalid_createSecond').text('');
           if(result.email == second){
             $('#create_second').css('border', '1px solid #d66');
             $('#invalid_createSecond').text('Invalid Email');
@@ -199,6 +207,8 @@ $(document).ready(function () {
         $('#create').prop('disabled', true);
       }else if(validator.matches(third, userFormat) && !validator.isEmail(third)){
         $.get('/checkUsername', {username:third}, function(result){
+          $('#create_third').css('border', '1px solid #cccccc');
+          $('#invalid_createThird').text('');
           if(result.username == third){
             $('#create_third').css('border', '1px solid #cccccc');
             $('#invalid_createThird').text('');
@@ -217,6 +227,8 @@ $(document).ready(function () {
         });
       }else if(validator.isEmail(third)){
         $.get('/checkEmail', {email:third}, function(result){
+          $('#create_third').css('border', '1px solid #cccccc');
+          $('#invalid_createThird').text('');
           if(result.email == third){
             $('#create_third').css('border', '1px solid #d66');
             $('#invalid_createThird').text('Invalid Email');
@@ -235,7 +247,6 @@ $(document).ready(function () {
         });
       }
     }else{
-      resetEverything();
       $('#create').prop('disabled', true);
     }
   });

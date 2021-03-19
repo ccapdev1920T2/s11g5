@@ -114,8 +114,11 @@ $(document).ready(function () {
   }
 
   var status = $('#current_status').val();
-  if(!validator.isEmpty(status) && validator.equals(status, 'Creating')){
-    $('#round_next').prop('disabled', true);
+  if(!validator.isEmpty(status)){
+    if(validator.equals(status, 'Creating'))
+      $('#round_next').prop('disabled', true);
+    else
+      $('#round_next').prop('disabled', false);
   }else{
     $('#round_next').prop('disabled', false);
   }
