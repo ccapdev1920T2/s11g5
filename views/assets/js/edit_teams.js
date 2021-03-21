@@ -47,7 +47,6 @@ $(document).ready(function () {
       if(current == first || current == second || current == third){
         if(first != second && first != third && second != third){
           $.get('/checkTeam', {first:first, second:second, third:third}, function(result){
-            console.log(result);
             if(result != false && result.teamname != current_teamname){
               $('#edit_first').css('border', '1px solid #d66');
               $('#edit_second').css('border', '1px solid #d66');
