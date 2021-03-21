@@ -24,7 +24,7 @@ $(document).ready(function () {
       if(current == first || current == second || current == third){
         if(first != second && first != third && second != third){
           $.get('/checkTeam', {first:first, second:second, third:third}, function(result){
-            if(!validator.isEmpty(result)){
+            if(result != false){
               $('#create_first').css('border', '1px solid #d66');
               $('#create_second').css('border', '1px solid #d66');
               $('#create_third').css('border', '1px solid #d66');
