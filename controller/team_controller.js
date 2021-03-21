@@ -162,13 +162,13 @@ const team_controller = {
                   var team = team_res;
                   await db.findOne(User, findOne, async function(first_res){
                     var first = first_res;
-                    console.log('controller:\n'+first);
+                    console.log('first user:\n'+first);
                     await db.findOne(User, findTwo, async function(second_res){
                       var second = second_res;
-                      console.log('controller:\n'+second);
+                      console.log('second user:\n'+second);
                       await db.findOne(User, findThree, async function(third_res){
                         var third = third_res;
-                        console.log('controller:\n'+third);
+                        console.log('third user:\n'+third);
                         /* If all users are registered and found and there is no team with the same name, proceed */
                         if((first && !validator.isEmail(userfirst)) && (second && !validator.isEmail(usersecond)) && (third && !validator.isEmail(userthird)) && (!team)){
                           /* Create the team */
