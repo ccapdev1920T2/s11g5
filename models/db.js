@@ -7,7 +7,7 @@ const database = {
     insertOneCallback: function(model, doc, callback) {
       model.create(doc, function(error, result) {
         if(error) return callback(false);
-        return callback(true);
+        return callback(result);
       });
     },
     insertMany: function(model, docs) {
