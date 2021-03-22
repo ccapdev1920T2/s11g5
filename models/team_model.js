@@ -4,9 +4,24 @@ var UserSchema = require('./user_model.js');
 
 var TeamSchema = new mongoose.Schema({
   teamname: String,
-  first: {type: Object, ref: 'users'},
-  second: {type: Object, ref: 'users'},
-  third: {type: Object, ref: 'users'},
+  first: {
+    username: {type: String},
+    email: {type: String},
+    full_name: {type: String},
+    institution: {type: String},
+  },
+  second: {
+    username: {type: String},
+    email: {type: String},
+    full_name: {type: String},
+    institution: {type: String},
+  },
+  third: {
+    username: {type: String},
+    email: {type: String},
+    full_name: {type: String},
+    institution: {type: String},
+  },
   numdebates: Number,
   wins: mongoose.Mixed,
   loses: mongoose.Mixed,

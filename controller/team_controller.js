@@ -191,16 +191,14 @@ const team_controller = {
                             numdebates: 0,
                             status: 'Active'
                           };
-                          await db.insertOneCallback(Team, newTeam, async function(result){
-                            console.log(result);
-                            /* Update the users of the newly created team */
-                            updateUpdates(first, second, third, createUpdate);
-                            req.session.header = 'Create Team';
-                            req.session.message = name + ' Successfully Created!';
-                            req.session.link = '/teamPage';
-                            req.session.back = 'Teams Dashboard';
-                            goMessage(req, res);
-                          });
+                          db.insertOne(Team, newTeam);
+                          /* Update the users of the newly created team */
+                          updateUpdates(first, second, third, createUpdate);
+                          req.session.header = 'Create Team';
+                          req.session.message = name + ' Successfully Created!';
+                          req.session.link = '/teamPage';
+                          req.session.back = 'Teams Dashboard';
+                          goMessage(req, res);
                         }else{
                           var name = 0, lead = 0, dep = 0, whip = 0;
                           var maillist = [];
