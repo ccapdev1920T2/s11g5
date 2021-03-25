@@ -7,12 +7,65 @@ var MatchSchema = new mongoose.Schema({
   status: String,
   roundID: String,
   motion: String,
-  gov: {type: Object, ref: 'teams'},
-  opp: {type: Object, ref: 'teams'},
-  adjudicator: {type: Object, ref: 'users'},
-  creator: {type: Object, ref: 'users'},
+  gov: {
+    teamname: {type: String},
+    first: {
+      username: {type: String},
+      email: {type: String},
+      full_name: {type: String},
+      institution: {type: String},
+    },
+    second: {
+      username: {type: String},
+      email: {type: String},
+      full_name: {type: String},
+      institution: {type: String},
+    },
+    third: {
+      username: {type: String},
+      email: {type: String},
+      full_name: {type: String},
+      institution: {type: String},
+    }
+  },
+  opp: {
+    teamname: {type: String},
+    first: {
+      username: {type: String},
+      email: {type: String},
+      full_name: {type: String},
+      institution: {type: String},
+    },
+    second: {
+      username: {type: String},
+      email: {type: String},
+      full_name: {type: String},
+      institution: {type: String},
+    },
+    third: {
+      username: {type: String},
+      email: {type: String},
+      full_name: {type: String},
+      institution: {type: String},
+    }
+  },
+  adjudicator: {
+    username: {type: String},
+    email: {type: String},
+    full_name: {type: String},
+    institution: {type: String},
+  },
+  creator: {
+    username: {type: String},
+    email: {type: String},
+    full_name: {type: String},
+    institution: {type: String},
+  },
   creatorRole: String,
-  speaker: {name_speaker:String, num_speaker:Number},
+  speaker: {
+    name_speaker: {type:String},
+    num_speaker: {type:Number}
+  },
   date_Match: String,
   comments: String,
   govFirstScore: Number,
