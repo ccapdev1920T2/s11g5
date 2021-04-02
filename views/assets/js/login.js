@@ -22,7 +22,7 @@ $(document).ready(function () {
     }else{
       $('#username').css('border', '1px solid #cccccc');
       $('#text_message').text('');
-      $('#login_btn').prop('disabled', false);
+      $('#login_btn').prop('disabled', true);
     }
   });
 

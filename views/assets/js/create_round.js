@@ -22,21 +22,29 @@ $(document).ready(function () {
       gov = $('#gov').val();
     }else if(!validator.equals($('#edit_gov').val(), 'Enter Goverment Team Name...')){
       gov = $('#edit_gov').val();
+    }else{
+      gov = $('#gov').val();
     }
     if(!validator.isEmpty($('#opp').val())){
       opp = $('#opp').val();
-    }else if(!validator.equals($('#edit_opp').val(), 'Enter Goverment Team Name...')){
+    }else if(!validator.equals($('#edit_opp').val(), 'Enter Opposition Team Name...')){
       opp = $('#edit_opp').val();
+    }else{
+      opp = $('#opp').val();
     }
     if(!validator.isEmpty($('#user_role').val())){
       user_role = $('#user_role').val();
     }else if(!validator.equals($('#edit_role').val(), 'Choose Your Role')){
       user_role = $('#edit_role').val();
+    }else{
+      user_role = $('#user_role').val();
     }
     if(!validator.isEmpty($('#motion').val())){
       motion = $('#motion').val();
     }else if(!validator.equals($('#edit_motion').val(), 'Enter Motion...')){
       motion = $('#edit_motion').val();
+    }else{
+      motion = $('#motion').val();
     }
     var curr_user = $('#current_user').val();
     if(!validator.isEmpty(gov) && !validator.isEmpty(opp)){
@@ -49,67 +57,67 @@ $(document).ready(function () {
                   if(checkMembers(curr_user, gov_res) && checkMembers(curr_user, opp_res)){
                     resetEverything();
                     if(!validator.isEmpty(motion)){
-                      return true;
+                      $('#round_next').prop('disabled', false);
                     }else{
-                      return false;
+                      $('#round_next').prop('disabled', true);
                     }
                   }else{
                     $('#user_role').css('border', '1px solid #d66');
                     $('#gov').css('border', '1px solid #d66');
                     $('#opp').css('border', '1px solid #d66');
                     $('#invalid_opp').text('Adjudicator cannot be in any teams');
-                    return false;
+                    $('#round_next').prop('disabled', true);
                   }
                 }else if(user_role == 'gov'){
                   if(!checkMembers(curr_user, gov_res) && checkMembers(curr_user, opp_res)){
                     resetEverything();
                     if(!validator.isEmpty(motion)){
-                      return true;
+                      $('#round_next').prop('disabled', false);
                     }else{
-                      return false;
+                      $('#round_next').prop('disabled', true);
                     }
                   }else{
                     $('#gov').css('border', '1px solid #d66');
                     $('#opp').css('border', '1px solid #d66');
                     $('#invalid_opp').text('User can only be in Government Team');
-                    return false;
+                    $('#round_next').prop('disabled', true);
                   }
                 }else if(user_role == 'opp'){
                   if(checkMembers(curr_user, gov_res) && !checkMembers(curr_user, opp_res)){
                     resetEverything();
                     if(!validator.isEmpty(motion)){
-                      return true;
+                      $('#round_next').prop('disabled', false);
                     }else{
-                      return false;
+                      $('#round_next').prop('disabled', true);
                     }
                   }else{
                     $('#gov').css('border', '1px solid #d66');
                     $('#opp').css('border', '1px solid #d66');
                     $('#invalid_opp').text('User can only be in Opposition Team');
-                    return false;
+                    $('#round_next').prop('disabled', true);
                   }
                 }else{
-                  return false;
+                  $('#round_next').prop('disabled', true);
                 }
               }else{
-                return false;
+                $('#round_next').prop('disabled', true);
               }
             }else{
               $('#gov').css('border', '1px solid #d66');
               $('#opp').css('border', '1px solid #d66');
               $('#invalid_opp').text('Members cannot be in both teams');
-              return false;
+              $('#round_next').prop('disabled', true);
             }
           }else{
             $('#gov').css('border', '1px solid #d66');
             $('#opp').css('border', '1px solid #d66');
             $('#invalid_opp').text('Invalid Teams');
-            return false;
+            $('#round_next').prop('disabled', true);
           }
         });
       });
     }else{
-      return false;
+      $('#round_next').prop('disabled', true);
     }
   }
 
@@ -128,12 +136,7 @@ $(document).ready(function () {
     if(!validator.isEmpty(user_role)){
       $('#user_role').css('border', '1px solid #cccccc');
       $('#invalid_role').text('');
-      if(!checkEverything()){
-        $('#create').prop('disabled', true);
-      }else{
-        resetEverything();
-        $('#create').prop('disabled', false);
-      }
+      checkEverything();
     }else{
       $('#user_role').css('border', '1px solid #d66');
       $('#invalid_role').text('Invalid Role');
@@ -146,12 +149,7 @@ $(document).ready(function () {
     if(!validator.isEmpty(motion)){
       $('#motion').css('border', '1px solid #cccccc');
       $('#invalid_motion').text('');
-      if(!checkEverything()){
-        $('#round_next').prop('disabled', true);
-      }else{
-        resetEverything();
-        $('#round_next').prop('disabled', false);
-      }
+      checkEverything();
     }else{
       $('#motion').css('border', '1px solid #cccccc');
       $('#invalid_motion').text('');
@@ -169,12 +167,9 @@ $(document).ready(function () {
       }else{
         $.get('/checkName', {teamname:gov}, function(result){
           if(result.teamname == gov){
-            resetEverything();
-            if(!checkEverything()){
-              $('#create').prop('disabled', true);
-            }else{
-              $('#create').prop('disabled', false);
-            }
+            $('#gov').css('border', '1px solid #cccccc');
+            $('#invalid_gov').text('');
+            checkEverything();
           }else{
             $('#gov').css('border', '1px solid #d66');
             $('#invalid_gov').text('Invalid Team Name');
@@ -197,12 +192,9 @@ $(document).ready(function () {
       }else{
         $.get('/checkName', {teamname:opp}, function(result){
           if(result.teamname == opp){
-            resetEverything();
-            if(!checkEverything()){
-              $('#create').prop('disabled', true);
-            }else{
-              $('#create').prop('disabled', false);
-            }
+            $('#opp').css('border', '1px solid #cccccc');
+            $('#invalid_opp').text('');
+            checkEverything();
           }else{
             $('#opp').css('border', '1px solid #d66');
             $('#invalid_opp').text('Invalid Team Name');
