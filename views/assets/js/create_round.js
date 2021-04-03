@@ -153,7 +153,7 @@ $(document).ready(function () {
     }else{
       $('#motion').css('border', '1px solid #cccccc');
       $('#invalid_motion').text('');
-      $('#round_next').prop('disabled', false);
+      $('#round_next').prop('disabled', true);
     }
   });
 

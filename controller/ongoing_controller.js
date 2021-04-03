@@ -20,23 +20,20 @@ const ongoing_controller = {
         errors = errors.errors;
         for(i = 0; i < errors.length; i++){
           if(errors[i].msg == 'empty'){
-            if(errors[i].param == 'roundID'){
-              paramRoundID = 1;
-            }
+            paramRoundID = 1;
           }else{
-            if(errors[i].param == 'roundID'){
-              validRoundID = 1;
-            }
+            validRoundID = 1;
           }
         }
       }
-      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID)){
         /* Get the round ID */
         var roundID;
         if(paramRoundID == 0 && validRoundID == 0){
           roundID = sanitize(req.query.roundID);
         }else if(req.session.gradeID){
-          roundID = req.session.gradeID;
+          if(validator.isAlphanumeric(req.session.roundID))
+            roundID = req.session.gradeID;
         }
         if(roundID){
           /* Find the round */
@@ -205,23 +202,20 @@ const ongoing_controller = {
         errors = errors.errors;
         for(i = 0; i < errors.length; i++){
           if(errors[i].msg == 'empty'){
-            if(errors[i].param == 'roundID'){
-              paramRoundID = 1;
-            }
+            paramRoundID = 1;
           }else{
-            if(errors[i].param == 'roundID'){
-              validRoundID = 1;
-            }
+            validRoundID = 1;
           }
         }
       }
-      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID)){
         /* Get the round ID */
         var roundID;
         if(paramRoundID == 0 && validRoundID == 0){
           roundID = sanitize(req.query.roundID);
         }else if(req.session.roundID){
-          roundID = req.session.roundID;
+          if(validator.isAlphanumeric(req.session.roundID))
+            roundID = req.session.roundID;
         }
         if(roundID){
           /* Find the round */
