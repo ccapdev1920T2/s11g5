@@ -109,7 +109,7 @@ $(document).ready(function () {
             }
           }else{
             $('#create_first').css('border', '1px solid #d66');
-            $('#invalid_createFirst').text('Invalid Username');
+            $('#invalid_createFirst').text('User Not Found');
             $('#create').prop('disabled', true);
           }
         });
@@ -167,7 +167,7 @@ $(document).ready(function () {
             }
           }else{
             $('#create_second').css('border', '1px solid #d66');
-            $('#invalid_createSecond').text('Invalid Username');
+            $('#invalid_createSecond').text('User Not Found');
             $('#create').prop('disabled', true);
           }
         });
@@ -221,7 +221,7 @@ $(document).ready(function () {
             }
           }else{
             $('#create_third').css('border', '1px solid #d66');
-            $('#invalid_createThird').text('Invalid Username');
+            $('#invalid_createThird').text('User Not Found');
             $('#create').prop('disabled', true);
           }
         });

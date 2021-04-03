@@ -21,6 +21,9 @@ block content
                           h4.text-dark.mb-0 Enter Adjudicator for the Round:
                           h6.text-dark.mb-0 (Enter the User Name)
                           br
+                          input#roundID(type='hidden' value=pagedetails.match.roundID)
+                          input#current_status(type='hidden' value=pagedetails.match.status)
+                          input#edit_adj(type='hidden' value=pagedetails.match.adjudicator.username)
                           if(pagedetails.ad == 1)
                             input.form-control#ad(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.adjudicator.full_name}` name='ad')
                             .text-center.small#invalid_ad(style="color: #d66") Invalid User Name

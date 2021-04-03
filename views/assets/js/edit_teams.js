@@ -184,7 +184,7 @@ $(document).ready(function () {
                 }
               }else{
                 $('#edit_first').css('border', '1px solid #d66');
-                $('#invalid_editFirst').text('Invalid Username');
+                $('#invalid_editFirst').text('User Not Found');
                 $('#edit').prop('disabled', true);
               }
             });
@@ -243,7 +243,7 @@ $(document).ready(function () {
                 }
               }else{
                 $('#edit_second').css('border', '1px solid #d66');
-                $('#invalid_editSecond').text('Invalid Username');
+                $('#invalid_editSecond').text('User Not Found');
                 $('#edit').prop('disabled', true);
               }
             });
@@ -302,7 +302,7 @@ $(document).ready(function () {
                 }
               }else{
                 $('#edit_third').css('border', '1px solid #d66');
-                $('#invalid_editThird').text('Invalid Username');
+                $('#invalid_editThird').text('User Not Found');
                 $('#edit').prop('disabled', true);
               }
             });

@@ -7,9 +7,6 @@ const { validationResult } = require('express-validator');
 var validator = require('validator');
 var sanitize = require('mongo-sanitize');
 
-/* Regex for checking */
-const numberFormat = /^\d+$/;
-
 const ongoing_controller = {
   /* Confirm the round information and change the status to waiting (waiting for the round to start) */
   confirmRoundInfo: async function(req, res){
@@ -484,23 +481,20 @@ const ongoing_controller = {
         errors = errors.errors;
         for(i = 0; i < errors.length; i++){
           if(errors[i].msg == 'empty'){
-            if(errors[i].param == 'roundID'){
-              paramRoundID = 1;
-            }
+            paramRoundID = 1;
           }else{
-            if(errors[i].param == 'roundID'){
-              validRoundID = 1;
-            }
+            validRoundID = 1;
           }
         }
       }
-      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID && validator.isAlphanumeric(req.session.roundID))){
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.gradeID)){
         /* Get the round ID */
         var roundID;
         if(paramRoundID == 0 && validRoundID == 0){
           roundID = sanitize(req.query.roundID);
         }else if(req.session.gradeID){
-          roundID = req.session.gradeID;
+          if(validator.isAlphanumeric(req.session.gradeID))
+            roundID = req.session.gradeID;
         }
         if(roundID){
           /* Find the round to grade */
@@ -564,138 +558,136 @@ const ongoing_controller = {
   teamScores: async function(req, res){
     reset(req);
     if(req.session.curr_user){
-      /* Get the round ID */
-      var roundID;
-      if(req.query.roundID){
-        roundID = sanitize(req.query.roundID);
-      }else if(req.session.gradeID){
-        roundID = req.session.gradeID;
+      var errors = validationResult(req);
+      var paramRoundID = 0, paramfirstGov = 0, paramsecondGov = 0, paramthirdGov = 0, paramComment = 0;
+      var validRoundID = 0, paramfirstOpp = 0, paramsecondOpp = 0, paramthirdOpp = 0, validComment = 0;
+      var validfirstGov = 0, validsecondGov = 0, validthirdGov = 0;
+      var validfirstOpp = 0, validsecondOpp = 0, validthirdOpp = 0;
+      if (!errors.isEmpty()){
+        errors = errors.errors;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            if(errors[i].param == 'roundID'){
+              paramRoundID = 1;
+            }else if(errors[i].param == 'firstgov'){
+              paramfirstGov = 1;
+            }else if(errors[i].param == 'secondgov'){
+              paramsecondGov = 1;
+            }else if(errors[i].param == 'thirdgov'){
+              paramthirdGov = 1;
+            }else if(errors[i].param == 'firstopp'){
+              paramfirstOpp = 1;
+            }else if(errors[i].param == 'secondopp'){
+              paramsecondOpp = 1;
+            }else if(errors[i].param == 'thirdopp'){
+              paramthirdOpp = 1;
+            }else if(errors[i].param == 'comment'){
+              paramComment = 1;
+            }
+          }else if(errors[i].msg != 'float'){
+            if(errors[i].param == 'roundID'){
+              validRoundID = 1;
+            }else if(errors[i].param == 'firstgov'){
+              validfirstGov = 1;
+            }else if(errors[i].param == 'secondgov'){
+              validsecondGov = 1;
+            }else if(errors[i].param == 'thirdgov'){
+              validthirdGov = 1;
+            }else if(errors[i].param == 'firstopp'){
+              validfirstOpp = 1;
+            }else if(errors[i].param == 'secondopp'){
+              validsecondOpp = 1;
+            }else if(errors[i].param == 'thirdopp'){
+              validthirdOpp = 1;
+            }else if(errors[i].param == 'comment'){
+              validComment = 1;
+            }
+          }
+        }
+      }else{
+        validfirstGov = 1;
+        validsecondGov = 1;
+        validthirdGov = 1;
+        validfirstOpp = 1;
+        validsecondOpp = 1;
+        validthirdOpp = 1;
       }
-      if(roundID){
-        /* If all fields are filled up, proceed */
-        await db.findOne(Match, {roundID:roundID}, async function(gradeMatch){
-          if(gradeMatch){
-            var govOne = 0, govTwo = 0, govThree = 0, oppOne = 0, oppTwo = 0, oppThree = 0;
-            var firstgov, secondgov, thirdgov, firstopp, secondopp, thirdopp;
-            var govCount = 0, oppCount = 0;
-            if(gradeMatch.gov.first.full_name != 'No User' && req.body.firstgov){
-              govOne = 0;
-              firstgov = sanitize(req.body.firstgov);
-              govCount = govCount + 1;
-            }else if(gradeMatch.gov.first.full_name == 'No User'){
-              govOne = 0;
-              firstgov = null;
-            }else{
-              govOne = 1;
-            }
-            if(gradeMatch.gov.second.full_name != 'No User' && req.body.secondgov){
-              govTwo = 0;
-              secondgov = sanitize(req.body.secondgov);
-              govCount = govCount + 1;
-            }else if(gradeMatch.gov.second.full_name == 'No User'){
-              govTwo = 0;
-              secondgov = null;
-            }else{
-              govTwo = 1;
-            }
-            if(gradeMatch.gov.third.full_name != 'No User' && req.body.thirdgov){
-              govThree = 0;
-              thirdgov = sanitize(req.body.thirdgov);
-              govCount = govCount + 1;
-            }else if(gradeMatch.gov.third.full_name == 'No User'){
-              govThree = 0;
-              thirdgov = null;
-            }else{
-              govThree = 1;
-            }
-            if(gradeMatch.opp.first.full_name != 'No User' && req.body.firstopp){
-              oppOne = 0;
-              firstopp = sanitize(req.body.firstopp);
-              oppCount = oppCount + 1;
-            }else if(gradeMatch.opp.first.full_name == 'No User'){
-              oppOne = 0;
-              firstopp = null;
-            }else{
-              oppOne = 1;
-            }
-            if(gradeMatch.opp.second.full_name != 'No User' && req.body.secondopp){
-              oppTwo = 0;
-              secondopp = sanitize(req.body.secondopp);
-              oppCount = oppCount + 1;
-            }else if(gradeMatch.opp.second.full_name == 'No User'){
-              oppTwo = 0;
-              secondopp = null;
-            }else{
-              oppTwo = 1;
-            }
-            if(gradeMatch.opp.third.full_name != 'No User' && req.body.thirdopp){
-              oppThree = 0;
-              thirdopp = sanitize(req.body.thirdopp);
-              oppCount = oppCount + 1;
-            }else if(gradeMatch.opp.third.full_name == 'No User'){
-              oppThree = 0;
-              thirdopp = null;
-            }else{
-              oppThree = 1;
-            }
-            if(govOne == 0 && govTwo == 0 && govThree == 0 && oppOne == 0 && oppTwo == 0 && oppThree ==0 && req.body.comment){
-              var comm = sanitize(req.body.comment);
-              var validOne = 0, validTwo = 0, validThree = 0, validFour = 0, validFive = 0, validSix = 0, validCom = 0;
-              /* Check the government leader's score entered */
-              if(firstgov){
-                if (!numberFormat.test(firstgov)){
-                  validOne = 1;
-                }else{
-                  validOne = 0;
-                }
-              }
-              /* Check the government deputy leader's score entered */
-              if(secondgov){
-                if (!numberFormat.test(secondgov)){
-                  validTwo = 1;
-                }else{
-                  validTwo = 0;
-                }
-              }
-              /* Check the government whip's score entered */
-              if(thirdgov){
-                if (!numberFormat.test(thirdgov)){
-                  validThree = 1;
-                }else{
-                  validThree = 0;
-                }
-              }
-              /* Check the opposition leader's score entered */
-              if(firstopp){
-                if (!numberFormat.test(firstopp)){
-                  validFour = 1;
-                }else{
-                  validFour = 0;
-                }
-              }
-              /* Check the opposition deputy leader's score entered */
-              if(secondopp){
-                if (!numberFormat.test(secondopp)){
-                  validFive = 1;
-                }else{
-                  validFive = 0;
-                }
-              }
-              /* Check the opposition whip's score entered */
-              if(thirdopp){
-                if (!numberFormat.test(thirdopp)){
-                  validSix = 1;
-                }else{
-                  validSix = 0;
-                }
-              }
-              /* If there were any invalid characters entered, redirect back to the grade a round page */
-              if(validOne == 1 || validTwo == 1 || validThree == 1 || validFour == 1 || validFive == 1 || validSix == 1 || validCom == 1){
-                req.session.gradeID = roundID;
-                req.session.gradeFields = {all:0, govFirst:validOne, govSecond:validTwo, govThird:validThree, oppFirst:validFour, oppSecond:validFive, oppThird:validSix, comments:validCom};
-                res.redirect('/gradeRound');
-                res.end();
+      if((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.gradeID)){
+        /* Get the round ID */
+        var roundID;
+        if(req.query.roundID){
+          roundID = sanitize(req.query.roundID);
+        }else if(req.session.gradeID){
+          roundID = req.session.gradeID;
+        }
+        if(roundID){
+          /* If all fields are filled up, proceed */
+          await db.findOne(Match, {roundID:roundID}, async function(gradeMatch){
+            if(gradeMatch){
+              var govOne = 0, govTwo = 0, govThree = 0, oppOne = 0, oppTwo = 0, oppThree = 0;
+              var firstgov, secondgov, thirdgov, firstopp, secondopp, thirdopp;
+              var govCount = 0, oppCount = 0;
+              if(gradeMatch.gov.first.full_name != 'No User' && paramfirstGov == 0 && validfirstGov == 0){
+                govOne = 0;
+                firstgov = sanitize(req.body.firstgov);
+                govCount = govCount + 1;
+              }else if(gradeMatch.gov.first.full_name == 'No User'){
+                govOne = 0;
+                firstgov = null;
               }else{
+                govOne = 1;
+              }
+              if(gradeMatch.gov.second.full_name != 'No User' && paramsecondGov == 0 && validsecondGov == 0){
+                govTwo = 0;
+                secondgov = sanitize(req.body.secondgov);
+                govCount = govCount + 1;
+              }else if(gradeMatch.gov.second.full_name == 'No User'){
+                govTwo = 0;
+                secondgov = null;
+              }else{
+                govTwo = 1;
+              }
+              if(gradeMatch.gov.third.full_name != 'No User' && paramthirdGov == 0 && validthirdGov == 0){
+                govThree = 0;
+                thirdgov = sanitize(req.body.thirdgov);
+                govCount = govCount + 1;
+              }else if(gradeMatch.gov.third.full_name == 'No User'){
+                govThree = 0;
+                thirdgov = null;
+              }else{
+                govThree = 1;
+              }
+              if(gradeMatch.opp.first.full_name != 'No User' && paramfirstOpp == 0 && validfirstOpp == 0){
+                oppOne = 0;
+                firstopp = sanitize(req.body.firstopp);
+                oppCount = oppCount + 1;
+              }else if(gradeMatch.opp.first.full_name == 'No User'){
+                oppOne = 0;
+                firstopp = null;
+              }else{
+                oppOne = 1;
+              }
+              if(gradeMatch.opp.second.full_name != 'No User' && paramsecondOpp == 0 && validsecondOpp == 0){
+                oppTwo = 0;
+                secondopp = sanitize(req.body.secondopp);
+                oppCount = oppCount + 1;
+              }else if(gradeMatch.opp.second.full_name == 'No User'){
+                oppTwo = 0;
+                secondopp = null;
+              }else{
+                oppTwo = 1;
+              }
+              if(gradeMatch.opp.third.full_name != 'No User' && paramthirdOpp == 0 && validthirdOpp == 0){
+                oppThree = 0;
+                thirdopp = sanitize(req.body.thirdopp);
+                oppCount = oppCount + 1;
+              }else if(gradeMatch.opp.third.full_name == 'No User'){
+                oppThree = 0;
+                thirdopp = null;
+              }else{
+                oppThree = 1;
+              }
+              if(govOne == 0 && govTwo == 0 && govThree == 0 && oppOne == 0 && oppTwo == 0 && oppThree == 0 && paramComment == 0 && validComment == 0){
                 /* Set the scores of all debaters and the total of each team */
                 var govFirst, govSecond, govThird, oppFirst, oppSecond, oppTotal;
                 if(firstgov)
@@ -726,137 +718,107 @@ const ongoing_controller = {
                   oppThird = 0;
                 var oppTotal = (oppFirst + oppSecond + oppThird).toFixed(2);
 
-                var comments = comm;
+                var comments = sanitize(req.body.comment);
                 var winner = '';
                 var winner_side = '';
 
-                var validOne = 0, validTwo = 0, validThree = 0, validFour = 0, validFive = 0, validSix = 0, validCom = 0;
-                /* Check the government leader's score entered */
-                if ((govFirst > 100 || govFirst < 1) && firstgov){
-                  validOne = 1;
-                }else{
-                  validOne = 0;
-                }
-                /* Check the government deputy leader's score entered */
-                if ((govSecond > 100 || govSecond < 1) && secondgov){
-                  validTwo = 1;
-                }else{
-                  validTwo = 0;
-                }
-                /* Check the government whip's score entered */
-                if ((govThird > 100 || govThird < 1) && thirdgov){
-                  validThree = 1;
-                }else{
-                  validThree = 0;
-                }
-                /* Check the opposition leader's score entered */
-                if ((oppFirst > 100 || oppFirst < 1) && firstopp){
-                  validFour = 1;
-                }else{
-                  validFour = 0;
-                }
-                /* Check the opposition deputy leader's score entered */
-                if ((oppSecond > 100 || oppSecond < 1) && secondopp){
-                  validFive = 1;
-                }else{
-                  validFive = 0;
-                }
-                /* Check the opposition whip's score entered */
-                if ((oppThird > 100 || oppThird < 1) && thirdopp){
-                  validSix = 1;
-                }else{
-                  validSix = 0;
-                }
-                /* If there were any scores entered beyond the range indicated, redirect back the grade a round */
-                if(validOne == 1 || validTwo == 1 || validThree == 1 || validFour == 1 || validFive == 1 || validSix == 1 || validCom == 1){
-                  req.session.gradeID = roundID;
-                  req.session.gradeFields = {all:0, govFirst:validOne, govSecond:validTwo, govThird:validThree, oppFirst:validFour, oppSecond:validFive, oppThird:validSix, comments:validCom};
-                  res.redirect('/gradeRound');
-                  res.end();
-                }else{
-                  /* Find the round */
-                  await db.findOne(Match, {roundID:roundID}, async function(result){
-                    if(result){
-                      /* Set the winner and winner side */
-                      if(govCount != oppCount){
-                        govTotal = (govTotal / govCount).toFixed(2);
-                        oppTotal = (oppTotal / oppCount).toFixed(2);
-                        if(govTotal > oppTotal){
-                          winner = result.gov.teamname;
-                          winner_side = 'Gov';
-                        }else if(govTotal < oppTotal){
-                          winner = result.opp.teamname;
-                          winner_side = 'Opp'
-                        }else{
-                          winner = 'Draw';
-                          winner_side = 'Draw';
-                        }
+                /* Find the round */
+                await db.findOne(Match, {roundID:roundID}, async function(result){
+                  if(result){
+                    /* Set the winner and winner side */
+                    if(govCount != oppCount){
+                      govTotal = (govTotal / govCount).toFixed(2);
+                      oppTotal = (oppTotal / oppCount).toFixed(2);
+                      if(govTotal > oppTotal){
+                        winner = result.gov.teamname;
+                        winner_side = 'Gov';
+                      }else if(govTotal < oppTotal){
+                        winner = result.opp.teamname;
+                        winner_side = 'Opp'
                       }else{
-                        if(govTotal > oppTotal){
-                          winner = result.gov.teamname;
-                          winner_side = 'Gov';
-                        }else if(govTotal < oppTotal){
-                          winner = result.opp.teamname;
-                          winner_side = 'Opp'
-                        }else{
-                          winner = 'Draw';
-                          winner_side = 'Draw';
-                        }
+                        winner = 'Draw';
+                        winner_side = 'Draw';
                       }
-                      /* Update all the users in the round with the scores */
-                      await updateUsers(roundID, result.gov, result.opp, winner_side, result.date_match);
-                      /* Update the match information */
-                      await db.findOneAndUpdate(Match, {roundID:roundID}, {$set:{
-                        winner: winner,
-                        winner_side: winner_side,
-                        govFirstScore: govFirst,
-                        govSecondScore: govSecond,
-                        govThirdScore: govThird,
-                        govTotal: govTotal,
-                        oppFirstScore: oppFirst,
-                        oppSecondScore: oppSecond,
-                        oppThirdScore: oppThird,
-                        oppTotal: oppTotal,
-                        comments: comments,
-                        status:'Done'
-                      }}, async function(match){
-                        reset(req);
-                        req.session.roundID = match.roundID;
-                        res.redirect('/roundroomStatistics');
-                        res.end();
-                      });
                     }else{
-                      req.session.pagename = 'Grade a Round';
-                      req.session.header = 'Grade a Round';
-                      req.session.message = 'Error in Grade a Round! Round ID: ' + roundID + ' cannot be found.';
-                      req.session.link = '/dashboard';
-                      req.session.back = 'Dashboard';
-                      res.redirect('/message');
-                      res.end();
+                      if(govTotal > oppTotal){
+                        winner = result.gov.teamname;
+                        winner_side = 'Gov';
+                      }else if(govTotal < oppTotal){
+                        winner = result.opp.teamname;
+                        winner_side = 'Opp'
+                      }else{
+                        winner = 'Draw';
+                        winner_side = 'Draw';
+                      }
                     }
-                  });
+                    /* Update all the users in the round with the scores */
+                    await updateUsers(roundID, result.gov, result.opp, winner_side, result.date_match);
+                    /* Update the match information */
+                    await db.findOneAndUpdate(Match, {roundID:roundID}, {$set:{
+                      winner: winner,
+                      winner_side: winner_side,
+                      govFirstScore: govFirst,
+                      govSecondScore: govSecond,
+                      govThirdScore: govThird,
+                      govTotal: govTotal,
+                      oppFirstScore: oppFirst,
+                      oppSecondScore: oppSecond,
+                      oppThirdScore: oppThird,
+                      oppTotal: oppTotal,
+                      comments: comments,
+                      status:'Done'
+                    }}, async function(match){
+                      reset(req);
+                      req.session.roundID = match.roundID;
+                      res.redirect('/roundroomStatistics');
+                      res.end();
+                    });
+                  }else{
+                    req.session.pagename = 'Grade a Round';
+                    req.session.header = 'Grade a Round';
+                    req.session.message = 'Error in Grade a Round! Round ID: ' + roundID + ' cannot be found.';
+                    req.session.link = '/dashboard';
+                    req.session.back = 'Dashboard';
+                    res.redirect('/message');
+                    res.end();
+                  }
+                });
+              }else{
+                req.session.gradeID = roundID;
+                if(govOne == 1 && govTwo == 1 && govThree == 1 && oppOne == 1 && oppTwo == 1 && oppThree == 1 && (paramComment == 1 || validComment == 1)){
+                  req.session.gradeFields = {all:1, govFirst:0, govSecond:0, govThird:0, oppFirst:0, oppSecond:0, oppThird:0, comments:0};
+                }else{
+                  if(paramComment == 1)
+                    req.session.gradeFields = {all:0, govFirst:govOne, govSecond:govTwo, govThird:govThree, oppFirst:oppOne, oppSecond:oppTwo, oppThird:oppThree, comments:paramComment};
+                  else
+                    req.session.gradeFields = {all:0, govFirst:govOne, govSecond:govTwo, govThird:govThree, oppFirst:oppOne, oppSecond:oppTwo, oppThird:oppThree, comments:validComment};
                 }
+                res.redirect('/gradeRound');
+                res.end();
               }
             }else{
-              req.session.gradeID = roundID;
-              req.session.gradeFields = {all:1, govFirst:0, govSecond:0, govThird:0, oppFirst:0, oppSecond:0, oppThird:0, comments:0};
-              res.redirect('/gradeRound');
+              req.session.pagename = 'Grade a Round';
+              req.session.header = 'Grade a Round';
+              req.session.message = 'Error in Grade a Round! Please try again later.';
+              req.session.link = '/dashboard';
+              req.session.back = 'Dashboard';
+              res.redirect('/message');
               res.end();
             }
-          }else{
-            req.session.pagename = 'Grade a Round';
-            req.session.header = 'Grade a Round';
-            req.session.message = 'Error in Grade a Round! Please try again later.';
-            req.session.link = '/dashboard';
-            req.session.back = 'Dashboard';
-            res.redirect('/message');
-            res.end();
-          }
-        });
+          });
+        }else{
+          req.session.pagename = 'Grade a Round';
+          req.session.header = 'Grade a Round';
+          req.session.message = 'Error in Grade a Round! No valid Round ID entered.';
+          req.session.link = '/dashboard';
+          req.session.back = 'Dashboard';
+          res.redirect('/message');
+          res.end();
+        }
       }else{
         req.session.pagename = 'Grade a Round';
         req.session.header = 'Grade a Round';
-        req.session.message = 'Error in Grade a Round! Round ID: ' + roundID + ' cannot be found.';
+        req.session.message = 'Error in Grade a Round! No valid Round ID entered.';
         req.session.link = '/dashboard';
         req.session.back = 'Dashboard';
         res.redirect('/message');

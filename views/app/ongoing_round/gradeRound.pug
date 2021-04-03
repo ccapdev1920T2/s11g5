@@ -12,7 +12,7 @@ block content
             .card-body
               ul.list-group.list-group-flush
                 li.list-group-item
-                  h3.text-dark.mb-0.text-center Minimum score possible is 1 and the maximum is 100.
+                  h3.text-dark.mb-0.text-center Minimum score is 1 and the maximum is 100.
                   br
                 form.user(action="/teamScores?roundID="+pagedetails.match.roundID, method="post")
                   li.list-group-item
@@ -175,7 +175,7 @@ block content
                       if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.comments == 1)
                         textarea.form-control#comment(style='border: 1px solid #d66' name='comment')
                         if(pagedetails.gradeFields.comments == 1)
-                          .text-center.small#invalid_comment(style="color: #d66") Invalid Comment/s.
+                          .text-center.small#invalid_comment(style="color: #d66") Invalid character/s in comment.
                       else
                         textarea.form-control#comment(name='comment')
                         .text-center.small#invalid_comment(style="color: #d66")

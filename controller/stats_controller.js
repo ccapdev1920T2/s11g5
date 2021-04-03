@@ -89,14 +89,12 @@ const stats_controller = {
         roundID = req.session.roundID;
       }
       var errors = validationResult(req);
-      console.log(errors.errors);
       if (!errors.isEmpty() && !req.session.roundID){
         errors = errors.errors;
         var empty = 0;
         for(i = 0; i < errors.length; i++){
           if(errors[i].msg == 'empty'){
             empty = 1;
-            break;
           }
         }
         if(empty == 1){

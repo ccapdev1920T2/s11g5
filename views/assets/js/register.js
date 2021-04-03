@@ -1,17 +1,17 @@
-function checkAll(){
-  var first = $('#first_name').val();
-  var last = $('#last_name').val()
-  var institution = $('#institution').val();
-  var username = $('#username').val();
-  var email = $('#email').val();
-  var password = $('#password').val();
-  var confirm = $('#confirm_pass').val();
-  return (!validator.isEmpty(first) && !validator.isEmpty(last) && !validator.isEmpty(institution) && !validator.isEmpty(username) && !validator.isEmpty(email) && !validator.isEmpty(password) && !validator.isEmpty(confirm))
-}
-
 $(document).ready(function () {
   const nameFormat = /^[a-zA-Z][a-zA-Z\s]*$/;
   const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
+
+  function checkAll(){
+    var first = $('#first_name').val();
+    var last = $('#last_name').val()
+    var institution = $('#institution').val();
+    var username = $('#username').val();
+    var email = $('#email').val();
+    var password = $('#password').val();
+    var confirm = $('#confirm_pass').val();
+    return (!validator.isEmpty(first) && !validator.isEmpty(last) && !validator.isEmpty(institution) && !validator.isEmpty(username) && !validator.isEmpty(email) && !validator.isEmpty(password) && !validator.isEmpty(confirm))
+  }
 
   $('#submit').prop('disabled', true);
   $('#first_name').keyup(function () {

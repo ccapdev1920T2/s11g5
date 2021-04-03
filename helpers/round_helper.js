@@ -1,6 +1,7 @@
 const { check, query, oneOf } = require('express-validator');
 const nameFormat = /^[a-zA-Z][a-zA-Z\s]*$/;
 const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
+const sentenceFormat = /^[a-zA-Z0-9]([a-zA-Z0-9\s\-\.\!\?\,\']?)+$/;
 
 const round_helper = {
   roundIDValidation: function () {
@@ -25,6 +26,7 @@ const round_helper = {
       query('status', 'format').isAlpha(),
       check('user_role', 'empty').notEmpty(),
       check('motion', 'empty').notEmpty(),
+      check('motion').matches(sentenceFormat),
       check('gov', 'empty').notEmpty(),
       check('gov', 'format').matches(nameFormat),
       check('opp', 'empty').notEmpty(),

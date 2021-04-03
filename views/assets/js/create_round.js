@@ -1,5 +1,6 @@
 $(document).ready(function () {
   const nameFormat = /^[a-zA-Z][a-zA-Z\s]*$/;
+  const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
 
   function resetEverything(){
     $('#user_role').css('border', '1px solid #cccccc');
@@ -13,11 +14,12 @@ $(document).ready(function () {
   }
 
   function checkMembers(user, team){
-    return (user != team.first.username && user != team.second.username && user != team.third.username)
+    return (user != team.first.username && user != team.second.username && user != team.third.username);
   }
 
   function checkEverything(){
     var gov, opp, user_role, motion;
+    const sentenceFormat = /^[a-zA-Z0-9]([a-zA-Z0-9\s\-\.\!\?\,\']?)+$/;
     if(!validator.isEmpty($('#gov').val())){
       gov = $('#gov').val();
     }else if(!validator.equals($('#edit_gov').val(), 'Enter Goverment Team Name...')){
@@ -56,7 +58,7 @@ $(document).ready(function () {
                 if(user_role == 'ad'){
                   if(checkMembers(curr_user, gov_res) && checkMembers(curr_user, opp_res)){
                     resetEverything();
-                    if(!validator.isEmpty(motion)){
+                    if(!validator.isEmpty(motion) && validator.matches(motion, sentenceFormat)){
                       $('#round_next').prop('disabled', false);
                     }else{
                       $('#round_next').prop('disabled', true);
@@ -71,7 +73,7 @@ $(document).ready(function () {
                 }else if(user_role == 'gov'){
                   if(!checkMembers(curr_user, gov_res) && checkMembers(curr_user, opp_res)){
                     resetEverything();
-                    if(!validator.isEmpty(motion)){
+                    if(!validator.isEmpty(motion) && validator.matches(motion, sentenceFormat)){
                       $('#round_next').prop('disabled', false);
                     }else{
                       $('#round_next').prop('disabled', true);
@@ -85,7 +87,7 @@ $(document).ready(function () {
                 }else if(user_role == 'opp'){
                   if(checkMembers(curr_user, gov_res) && !checkMembers(curr_user, opp_res)){
                     resetEverything();
-                    if(!validator.isEmpty(motion)){
+                    if(!validator.isEmpty(motion) && validator.matches(motion, sentenceFormat)){
                       $('#round_next').prop('disabled', false);
                     }else{
                       $('#round_next').prop('disabled', true);
@@ -121,16 +123,31 @@ $(document).ready(function () {
     }
   }
 
-  var status = $('#current_status').val();
-  if(!validator.isEmpty(status)){
-    if(validator.equals(status, 'Creating'))
-      $('#round_next').prop('disabled', true);
-    else
+  function enableNext(){
+    var status = $('#current_status').val();
+    if(!validator.isEmpty(status)){
+      if(validator.equals(status, 'Creating')){
+        $('#round_next').prop('disabled', true);
+        $('#adj_next').prop('disabled', true);
+      }else{
+        $('#round_next').prop('disabled', false);
+        var curr_ad = $('#edit_adj').val();
+        if(!validator.isEmpty(curr_ad)){
+          if(validator.matches(curr_ad, "No User")){
+            $('#adj_next').prop('disabled', true);
+          }else{
+            $('#adj_next').prop('disabled', false);
+          }
+        }else{
+          $('#adj_next').prop('disabled', true);
+        }
+      }
+    }else{
       $('#round_next').prop('disabled', false);
-  }else{
-    $('#round_next').prop('disabled', false);
+    }
   }
 
+  enableNext();
   $('#user_role').change(function () {
     var user_role = $('#user_role').val();
     if(!validator.isEmpty(user_role)){
@@ -145,15 +162,22 @@ $(document).ready(function () {
   });
 
   $('#motion').keyup(function () {
+    const sentenceFormat = /^[a-zA-Z0-9]([a-zA-Z0-9\s\-\.\!\?\,\']?)+$/;
     var motion = $('#motion').val();
     if(!validator.isEmpty(motion)){
-      $('#motion').css('border', '1px solid #cccccc');
-      $('#invalid_motion').text('');
-      checkEverything();
+      if(!validator.matches(motion, sentenceFormat)){
+        $('#motion').css('border', '1px solid #d66');
+        $('#invalid_motion').text('Invalid character/s in motion');
+        $('#round_next').prop('disabled', true);
+      }else{
+        $('#motion').css('border', '1px solid #cccccc');
+        $('#invalid_motion').text('');
+        checkEverything();
+      }
     }else{
       $('#motion').css('border', '1px solid #cccccc');
       $('#invalid_motion').text('');
-      $('#round_next').prop('disabled', true);
+      enableNext();
     }
   });
 
@@ -172,13 +196,15 @@ $(document).ready(function () {
             checkEverything();
           }else{
             $('#gov').css('border', '1px solid #d66');
-            $('#invalid_gov').text('Invalid Team Name');
+            $('#invalid_gov').text('Team Not Found');
             $('#round_next').prop('disabled', true);
           }
         });
       }
     }else{
-      $('#round_next').prop('disabled', true);
+      $('#gov').css('border', '1px solid #cccccc');
+      $('#invalid_gov').text('');
+      enableNext();
     }
   });
 
@@ -197,13 +223,57 @@ $(document).ready(function () {
             checkEverything();
           }else{
             $('#opp').css('border', '1px solid #d66');
-            $('#invalid_opp').text('Invalid Team Name');
+            $('#invalid_opp').text('Team Not Found');
             $('#round_next').prop('disabled', true);
           }
         });
       }
     }else{
-      $('#round_next').prop('disabled', true);
+      $('#opp').css('border', '1px solid #cccccc');
+      $('#invalid_opp').text('');
+      enableNext();
+    }
+  });
+
+  $('#ad').keyup(function () {
+    var ad = $('#ad').val();
+    var roundID = $('#roundID').val();
+    if(!validator.isEmpty(ad)){
+      if(!validator.matches(ad, userFormat)){
+        $('#ad').css('border', '1px solid #d66');
+        $('#invalid_ad').text('Invalid User');
+        $('#adj_next').prop('disabled', true);
+      }else{
+        $.get('/checkMatch', {roundID:roundID}, function (match) {
+          if(match){
+            $.get('/checkUsername', {username:ad}, function (adjudicator) {
+              if(adjudicator.username == ad){
+                if(checkMembers(ad, match.gov) && checkMembers(ad, match.opp)){
+                  $('#ad').css('border', '1px solid #cccccc');
+                  $('#invalid_ad').text('');
+                  $('#adj_next').prop('disabled', false);
+                }else{
+                  $('#ad').css('border', '1px solid #d66');
+                  $('#invalid_ad').text('User cannot be a Debater in this round');
+                  $('#adj_next').prop('disabled', true);
+                }
+              }else{
+                $('#ad').css('border', '1px solid #d66');
+                $('#invalid_ad').text('User not Found');
+                $('#adj_next').prop('disabled', true);
+              }
+            });
+          }else{
+            $('#ad').css('border', '1px solid #d66');
+            $('#invalid_ad').text('Cannot find Round ID. Please Try Again Later.');
+            $('#adj_next').prop('disabled', true);
+          }
+        });
+      }
+    }else{
+      $('#ad').css('border', '1px solid #cccccc');
+      $('#invalid_ad').text('');
+      enableNext();
     }
   });
 });

@@ -163,6 +163,7 @@ app.get('/adjudicatorInfo', new_controller.adjudicatorInfo);
 app.post('/adjudicatorInfo', new_controller.adjudicatorInfo);
 app.get('/matchAdjudicator', round_helper.adjValidation(), new_controller.matchAdjudicator);
 app.post('/matchAdjudicator', round_helper.adjValidation(), new_controller.matchAdjudicator);
+app.get('/checkMatch', new_controller.checkMatch);
 app.get('/currentInfo',  round_helper.roundIDValidation(), new_controller.currentInfo);
 app.post('/currentInfo', round_helper.roundIDValidation(), new_controller.currentInfo);
 app.get('/editRound', round_helper.roundIDValidation(), new_controller.editRound);

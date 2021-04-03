@@ -7,10 +7,6 @@ const { validationResult } = require('express-validator');
 var validator = require('validator');
 var sanitize = require('mongo-sanitize');
 
-/* Regex for checking */
-const nameFormat = /^[a-zA-Z][a-zA-Z\s]*$/;
-const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
-
 const new_controller = {
   /* Load the create a round page */
   createRound: function(req, res){
@@ -307,7 +303,7 @@ const new_controller = {
                       proceed = 0;
                       req.session.roundID = roundID;
                       req.session.status = 'Editing';
-                      req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:1};
+                      req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
                     }
                   }else{
                     proceed = 0;
@@ -385,6 +381,7 @@ const new_controller = {
                 if(!req.session.fields){
                   req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
                 }
+                req.session.roundID = match.roundID;
                 var render = 'app/create_round/roundAdjudicator';
                 var pagedetails = {
                   pagename: 'Start a New Round',
@@ -442,7 +439,7 @@ const new_controller = {
       if(((paramRoundID == 0 && validRoundID == 0) || (paramRoundID == 1 && req.session.roundID)) && paramStatus == 0 && validStatus == 0){
         /* Get round ID */
         var roundID;
-        if(paramRoundID == 0 && validRoundID){
+        if(paramRoundID == 0 && validRoundID == 0){
           roundID = sanitize(req.query.roundID);
         }else if(paramRoundID == 1 && req.session.roundID){
           roundID = req.session.roundID;
@@ -461,14 +458,11 @@ const new_controller = {
                       /* Update the match information */
                       await db.findOneAndUpdate(Match, {roundID:roundID}, {$set:{adjudicator:newAd}}, async function(updated){
                         if(updated){ /* If successfully updated, proceed */
-                          req.session.roundID = roundID;
+                          req.session.roundID = updated.roundID;
                           res.redirect('/currentInfo');
                           res.end();
                         }else{
-                          req.session.roundID = roundID;
-                          req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:1};
-                          res.redirect('/adjudicatorInfo');
-                          res.end();
+                          goMessage(req, res, 'Error in Creating a Round! Error in updating RoundID: ' + roundID + '. Please try again later.');
                         }
                       });
                     }else{
@@ -495,8 +489,7 @@ const new_controller = {
             res.end();
           }
         }else{
-          res.redirect('/createRound');
-          res.end();
+          goMessage(req, res, 'Error in Creating a Round! No valid Round ID entered.');
         }
       }
     }else{
@@ -563,6 +556,23 @@ const new_controller = {
       }
     }else{
       goHome(req, res);
+    }
+  },
+
+  /* Find the match */
+  checkMatch: async function(req, res){
+    if(req.session.curr_user){
+      if(req.query.roundID){
+        var roundID = sanitize(req.query.roundID);
+        await db.findOne(Match, {roundID:roundID}, function(result){
+          if(result)
+            res.send(result);
+          else
+            res.send(false);
+        });
+      }
+    }else{
+      res.send(false);
     }
   },
 

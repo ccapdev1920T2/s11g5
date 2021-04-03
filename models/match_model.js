@@ -66,7 +66,7 @@ var MatchSchema = new mongoose.Schema({
     name_speaker: {type:String},
     num_speaker: {type:Number}
   },
-  date_Match: String,
+  date_match: String,
   comments: String,
   govFirstScore: Number,
   govSecondScore: Number,
