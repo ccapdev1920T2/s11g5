@@ -28,15 +28,15 @@ const ongoing_controller = {
         var roundID;
         if(paramRoundID == 0 && validRoundID == 0){
           roundID = sanitize(req.query.roundID);
-        }else if(req.session.gradeID){
+        }else if(req.session.roundID){
           if(validator.isAlphanumeric(req.session.roundID))
-            roundID = req.session.gradeID;
+            roundID = req.session.roundID;
         }
         if(roundID){
           /* Find the round */
           await db.findOne(Match, {roundID:roundID}, async function(foundRound){
             if(foundRound){
-              if(foundRound.creator.username == req.session.curr_user.username){ /* If round is found and the user is the creator, proceed */
+              if(foundRound.creator._id == req.session.curr_user._id){ /* If round is found and the user is the creator, proceed */
                 var firstSpeaker, num_speaker;
                 if(foundRound.gov.first && foundRound.gov.first.full_name != 'No User'){
                   firstSpeaker = foundRound.gov.first.full_name;
@@ -140,7 +140,7 @@ const ongoing_controller = {
     reset(req);
     if (req.session.curr_user){
       /* Build the query to find the rounds the user is in which are waiting or ongoing */
-      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
+      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first._id":req.session.curr_user._id}, {"gov.second._id":req.session.curr_user._id}, {"gov.third._id":req.session.curr_user._id}, {"opp.first._id":req.session.curr_user._id}, {"opp.second._id":req.session.curr_user._id}, {"opp.third._id":req.session.curr_user._id}, {"adjudicator._id":req.session.curr_user._id}]}]};
       /* Find the rounds */
       await db.findMany(Match, wholeQuery, function(result){
         if(result){ /* If rounds are found, proceed */
@@ -221,7 +221,7 @@ const ongoing_controller = {
               /* If the round is found and the status is waiting or ongoing, proceed */
               if(result.status == 'Ongoing'){
                 /* If round information is already complete, proceed */
-                if(result.motion && result.gov && result.opp && result.adjudicator.full_name != 'No Adjudicator Entered.'){
+                if(result.motion && result.gov && result.opp && result.adjudicator.full_name != "No User"){
                   var username;
                   if(req.session.curr_user)
                     username = req.session.curr_user.username;
@@ -249,7 +249,7 @@ const ongoing_controller = {
                   }else{
                     req.session.pagename = 'Join a Round';
                     req.session.header = 'Join a Round';
-                    req.session.message = 'Error in Join a Round! You are not invited in Round ID: ' + result.roundID + '.';
+                    req.session.message = 'Error in Join a Round! You are not invited to join Round ID: ' + result.roundID + '.';
                     req.session.link = '/dashboard';
                     req.session.back = 'Dashboard';
                     res.redirect('/message');
@@ -383,21 +383,19 @@ const ongoing_controller = {
         var roundID;
         if(req.query.roundID){
           roundID = sanitize(req.query.roundID);
-        }else if(req.session.gradeID){
-          roundID = req.session.gradeID;
+        }else if(req.session.roundID){
+          roundID = req.session.roundID;
         }
         if(roundID){
           /* Find the round */
           await db.findOne(Match, {roundID:roundID}, async function(result){
             if(result){ /* If found and the status is Grading, proceed */
               if(result.status == 'Grading'){
-                var username;
+                var curr_user;
                 if(req.session.curr_user)
-                  username = req.session.curr_user.username;
-                else
-                  username = req.session.guest_user.username;
+                  curr_user = req.session.curr_user._id;
                 /* If the user is the adjudicator, proceed to the grade a round page */
-                if(result.adjudicator.username == username){
+                if(result.adjudicator._id == curr_user){
                   req.session.gradeID = roundID;
                   res.redirect('/gradeRound');
                   res.end();
@@ -456,9 +454,9 @@ const ongoing_controller = {
   findGrade: async function(req, res){
     reset(req);
     if (req.session.curr_user){
-      var current = req.session.curr_user.username;
+      var current = req.session.curr_user._id;
       /* Find the rounds wherein the status is Grading and the user is the adjudicator */
-      await db.findMany(Match, {"adjudicator.username": current, status:"Grading"}, function(result){
+      await db.findMany(Match, {"adjudicator._id": current, status:"Grading"}, function(result){
         var render = 'app/ongoing_round/findGrade';
         var pagedetails = {
           pagename: 'Grade Rounds',
@@ -500,7 +498,7 @@ const ongoing_controller = {
           /* Find the round to grade */
           await db.findOne(Match, {roundID:roundID}, async function(result){
             if(result){ /* If found and the user is the adjudicator, proceed */
-              if(result.adjudicator.username == req.session.curr_user.username){
+              if(result.adjudicator._id == req.session.curr_user._id){
                 if(!req.session.gradeFields){
                   req.session.gradeFields = {all:0, govFirst:0, govSecond:0, govThird:0, oppFirst:0, oppSecond:0, oppThird:0, comments:0};
                 }
@@ -1015,6 +1013,7 @@ async function renderPage(req, res, render, pagedetails){
             else
               link = '/teamInfo'
             var temp = {
+              teamID: result.updates[i].teamID,
               teamname: result.updates[i].teamname,
               teamupdate: result.updates[i].update,
               link: link,
@@ -1029,7 +1028,7 @@ async function renderPage(req, res, render, pagedetails){
           }
         }
       }
-      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
+      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first._id":req.session.curr_user._id}, {"gov.second._id":req.session.curr_user._id}, {"gov.third._id":req.session.curr_user._id}, {"opp.first._id":req.session.curr_user._id}, {"opp.second._id":req.session.curr_user._id}, {"opp.third._id":req.session.curr_user._id}, {"adjudicator._id":req.session.curr_user._id}]}]};
       /* If they have debate invites, store them in an array */
       await db.findMany(Match, wholeQuery, function(result){
         if(result){

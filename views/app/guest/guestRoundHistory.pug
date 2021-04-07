@@ -1,10 +1,10 @@
-extends ../layout/base.pug
+extends ../layout/base_guest.pug
 
 block content
   .container-fluid
     .card.shadow
       .card-header.py-3
-        p.text-primary.m-0.font-weight-bold Match History for #{pagedetails.curr_user.full_name}
+        p.text-primary.m-0.font-weight-bold Round History for #{pagedetails.curr_user.full_name}
       .card-body
         #dataTable.table-responsive.table.mt-2(role='grid' aria-describedby='dataTable_info')
           table#dataTable.table.dataTable.my-0
@@ -48,8 +48,8 @@ block content
                       td #{match.oppTotal}
                       td #{match.winner_side}
                   tr
-                    td.text-center(colspan=10) You have no more matches
+                    td.text-center(colspan=10) You have no more rounds
                 else
                   tr
                     td
-                      td.text-center(colspan=10) No Rounds to show. Click on Create a Round to Get Started!
+                      td.text-center(colspan=10) No Rounds to show for #{pagedetails.curr_user.full_name}

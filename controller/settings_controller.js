@@ -373,7 +373,7 @@ const settings_controller = {
   /* Delete the user's account */
   confirmDelete: async function(req, res){
     if(req.session.curr_user){
-      const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      var userID = req.session.curr_user._id;
       var username = req.session.curr_user.username;
       var full_name = req.session.curr_user.full_name;
       var email = req.session.curr_user.email;
@@ -387,16 +387,17 @@ const settings_controller = {
         institution: 'No User'
       };
       /* Update all of the teams of the user */
-      await db.findMany(Team, {"first.username":username}, async function(result){
+      await db.findMany(Team, {"first._id":userID}, async function(result){
         if(result){
           for(i = 0; i < result.length; i++){
             var count = 1;
             var deleteUpdate = {
+              teamID: result[i]._id,
               teamname: result[i].teamname,
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Leader deleted]"
             };
             if(result.second){
-              if(result.second.username != 'No User' && emailFormat.test(result.second.username))
+              if(result.second.username != 'No User' && validator.isEmail(result.second.username))
                 await db.updateOne(User, {username:result.second.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -404,7 +405,7 @@ const settings_controller = {
               count = count + 1;
             }
             if(result.third){
-              if(result.third.username != 'No User' && emailFormat.test(result.third.username))
+              if(result.third.username != 'No User' && validator.isEmail(result.third.username))
                 await db.updateOne(User, {username:result.third.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -419,16 +420,17 @@ const settings_controller = {
           }
         }
       });
-      await db.findMany(Team, {"second.username":username}, async function(result){
+      await db.findMany(Team, {"second._id":userID}, async function(result){
         if(result){
           for(i = 0; i < result.length; i++){
             var count = 1;
             var deleteUpdate = {
+              teamID: result[i]._id,
               teamname: result[i].teamname,
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Deputy Leader deleted]"
             };
             if(result.first){
-              if(result.second.username != 'No User' && emailFormat.test(result.first.username))
+              if(result.second.username != 'No User' && validator.isEmail(result.first.username))
                 await db.updateOne(User, {username:result.first.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -436,7 +438,7 @@ const settings_controller = {
               count = count + 1;
             }
             if(result.third){
-              if(result.third.username != 'No User' && emailFormat.test(result.third.username))
+              if(result.third.username != 'No User' && validator.isEmail(result.third.username))
                 await db.updateOne(User, {username:result.third.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -451,16 +453,17 @@ const settings_controller = {
           }
         }
       });
-      await db.findMany(Team, {"third.username":username}, async function(result){
+      await db.findMany(Team, {"third._id":userID}, async function(result){
         if(result){
           for(i = 0; i < result.length; i++){
             var count = 1;
             var deleteUpdate = {
+              teamID: result[i]._id,
               teamname: result[i].teamname,
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Whip deleted]"
             };
             if(result.first){
-              if(result.second.username != 'No User' && emailFormat.test(result.first.username))
+              if(result.second.username != 'No User' && validator.isEmail(result.first.username))
                 await db.updateOne(User, {username:result.first.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -468,7 +471,7 @@ const settings_controller = {
               count = count + 1;
             }
             if(result.second){
-              if(result.second.username != 'No User' && emailFormat.test(result.second.username))
+              if(result.second.username != 'No User' && validator.isEmail(result.second.username))
                 await db.updateOne(User, {username:result.second.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -499,7 +502,7 @@ const settings_controller = {
       /* Send a farewell message through email */
       transpo.sendMail(mailDetails, async function(err, result){
         if(err){
-          req.session.message = "Error in deleting account Please Try again later.";
+          req.session.message = "Error in Deleting Account! Please Try again later.";
           goMessage(req, res);
         }else{
           await db.deleteOne(User, {username:username});
@@ -619,15 +622,15 @@ async function sendEmail(req, res, email_content, mail, updated){
       req.session.message = email_content.error_mess;
       goMessage(req, res);
     }else{
-      await db.updateMany(Team, {"first.username":req.session.curr_user.username}, {$set:{"first":updated}});
-      await db.updateMany(Team, {"second.username":req.session.curr_user.username}, {$set:{"second":updated}});
-      await db.updateMany(Team, {"third.username":req.session.curr_user.username}, {$set:{"third":updated}});
-      await db.updateMany(Match, {"gov.first.username":req.session.curr_user.username}, {$set:{"gov.first":updated}});
-      await db.updateMany(Match, {"gov.second.username":req.session.curr_user.username}, {$set:{"gov.second":updated}});
-      await db.updateMany(Match, {"gov.third.username":req.session.curr_user.username}, {$set:{"gov.third":updated}});
-      await db.updateMany(Match, {"opp.first.username":req.session.curr_user.username}, {$set:{"opp.first":updated}});
-      await db.updateMany(Match, {"opp.second.username":req.session.curr_user.username}, {$set:{"opp.second":updated}});
-      await db.updateMany(Match, {"opp.third.username":req.session.curr_user.username}, {$set:{"opp.third":updated}});
+      await db.updateMany(Team, {"first._id":req.session.curr_user._id}, {$set:{"first":updated}});
+      await db.updateMany(Team, {"second._id":req.session.curr_user._id}, {$set:{"second":updated}});
+      await db.updateMany(Team, {"third._id":req.session.curr_user._id}, {$set:{"third":updated}});
+      await db.updateMany(Match, {"gov.first._id":req.session.curr_user._id}, {$set:{"gov.first":updated}});
+      await db.updateMany(Match, {"gov.second._id":req.session.curr_user._id}, {$set:{"gov.second":updated}});
+      await db.updateMany(Match, {"gov.third._id":req.session.curr_user._id}, {$set:{"gov.third":updated}});
+      await db.updateMany(Match, {"opp.first._id":req.session.curr_user._id}, {$set:{"opp.first":updated}});
+      await db.updateMany(Match, {"opp.second._id":req.session.curr_user._id}, {$set:{"opp.second":updated}});
+      await db.updateMany(Match, {"opp.third._id":req.session.curr_user._id}, {$set:{"opp.third":updated}});
       req.session.curr_user = updated;
       req.session.message = email_content.success_mess;
       goMessage(req, res);
@@ -659,6 +662,7 @@ async function renderPage(req, res, render, pagedetails){
             else
               link = '/teamInfo'
             var temp = {
+              teamID: result.updates[i].teamID,
               teamname: result.updates[i].teamname,
               teamupdate: result.updates[i].update,
               link: link,
@@ -673,7 +677,7 @@ async function renderPage(req, res, render, pagedetails){
           }
         }
       }
-      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
+      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first._id":req.session.curr_user._id}, {"gov.second._id":req.session.curr_user._id}, {"gov.third._id":req.session.curr_user._id}, {"opp.first._id":req.session.curr_user._id}, {"opp.second._id":req.session.curr_user._id}, {"opp.third._id":req.session.curr_user._id}, {"adjudicator._id":req.session.curr_user._id}]}]};
       /* If they have debate invites, store them in an array */
       await db.findMany(Match, wholeQuery, function(result){
         if(result){

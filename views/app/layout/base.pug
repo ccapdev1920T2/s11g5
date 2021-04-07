@@ -50,9 +50,9 @@ html
                 i.fa.fa-area-chart
                 span Round Statistics
             li.nav-item(role='presentation')
-              a.nav-link(href='/matchHistory', class=(cur === "matchHistory" ? "active" : undefined))
+              a.nav-link(href='/roundHistory', class=(cur === "matchHistory" ? "active" : undefined))
                 i.fa.fa-table
-                span Match History
+                span Round History
             li.nav-item(role='presentation', class=(cur === "settings" ? "active" : undefined))
               a.nav-link(href='/teamPage')
                 i.fas.fa-users
@@ -73,11 +73,11 @@ html
                 .nav-item.dropdown.no-arrow
                   a.dropdown-toggle.nav-link(data-toggle="dropdown" aria-expanded="false" href="#")
                     i.fas.fa-envelope.fa-fw
-                    if (rounds.length > 0)
+                    if (numRounds > 0)
                       span.badge.badge-danger.badge-counter #{numRounds}
                   .dropdown-menu.dropdown-menu-right.dropdown-list.dropdown-menu-right.animated--grow-in(role="menu")
                     h6.dropdown-header Join Round
-                    if (rounds.length > 0)
+                    if (numRounds > 0)
                       each round in rounds
                         a.d-flex.align-items-center.dropdown-item(href='/ongoingRound?roundID='+round.roundID)
                           .font-weight-bold
@@ -99,13 +99,13 @@ html
                 .nav-item.dropdown.no-arrow
                   a.dropdown-toggle.nav-link(data-toggle="dropdown" aria-expanded="false" href="#")
                     i.fas.fa-users
-                    if (updates.length > 0)
+                    if (numUpdates > 0)
                       span.badge.badge-danger.badge-counter #{numUpdates}
                   .dropdown-menu.dropdown-menu-right.dropdown-list.dropdown-menu-right.animated--grow-in(role="menu")
                     h6.dropdown-header Team Updates
-                    if (updates.length > 0)
+                    if (numUpdates > 0)
                       each update in updates
-                        a.d-flex.align-items-center.dropdown-item(href=update.link+'?teamname='+update.teamname)
+                        a.d-flex.align-items-center.dropdown-item(href=update.link+'?team='+update.teamID)
                           .font-weight-bold
                             .text-truncate
                               span #{update.teamupdate}

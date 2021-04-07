@@ -27,24 +27,24 @@ const stats_controller = {
   },
 
   /* Find all previous and done debates and display them */
-  matchHistory: async function(req, res){
+  roundHistory: async function(req, res){
     reset(req);
     if (req.session.curr_user){
-      var current = req.session.curr_user.username;
+      var current = req.session.curr_user._id;
       var wholeQuery = {$and:
         [{'status':'Done'}, {$or: [
-        {"adjudicator.username": current},
-        {"gov.first.username": current},
-        {"gov.second.username": current},
-        {"gov.third.username": current},
-        {"opp.first.username": current},
-        {"opp.second.username": current},
-        {"opp.third.username": current}]}]
+        {"adjudicator._id": current},
+        {"gov.first._id": current},
+        {"gov.second._id": current},
+        {"gov.third._id": current},
+        {"opp.first._id": current},
+        {"opp.second._id": current},
+        {"opp.third._id": current}]}]
       };
       await db.findMany(Match, wholeQuery, function(result){
-        var render = "app/statistics/matchHistory";
+        var render = "app/statistics/roundHistory";
         var pagedetails = {
-          pagename: 'Match History',
+          pagename: 'Round History',
           matches:result,
           curr_user:req.session.curr_user
         };
@@ -62,9 +62,9 @@ const stats_controller = {
         {"opp.third.email": current}]}]
       };
       await db.findMany(Match, wholeQuery, function(result){
-        var render = "app/guest/guestMatchHistory";
+        var render = "app/guest/guestRoundHistory";
         var pagedetails = {
-          pagename: 'Match History',
+          pagename: 'Round History',
           matches:result,
           curr_user:req.session.guest_user
         };
@@ -268,6 +268,7 @@ async function renderPage(req, res, render, pagedetails){
             else
               link = '/teamInfo'
             var temp = {
+              teamID: result.updates[i].teamID,
               teamname: result.updates[i].teamname,
               teamupdate: result.updates[i].update,
               link: link,
@@ -282,7 +283,7 @@ async function renderPage(req, res, render, pagedetails){
           }
         }
       }
-      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
+      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first._id":req.session.curr_user._id}, {"gov.second._id":req.session.curr_user._id}, {"gov.third._id":req.session.curr_user._id}, {"opp.first._id":req.session.curr_user._id}, {"opp.second._id":req.session.curr_user._id}, {"opp.third._id":req.session.curr_user._id}, {"adjudicator._id":req.session.curr_user._id}]}]};
       /* If they have debate invites, store them in an array */
       await db.findMany(Match, wholeQuery, function(result){
         if(result){

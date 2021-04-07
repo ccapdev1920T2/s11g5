@@ -66,14 +66,14 @@ block content
               li.list-group-item
                 .text-center
                   br
-                  a.card-link.btn.btn-primary.btn-sm(href='/editTeams?teamname='+pagedetails.team.teamname)
+                  a.card-link.btn.btn-primary.btn-sm(href='/editTeams?team='+pagedetails.team._id)
                     i.fa.fa-pencil
                     |   Edit Team
                   if(pagedetails.leave == 1)
-                    a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmLeave?teamname='+pagedetails.team.teamname)
+                    a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmLeave?team='+pagedetails.team._id)
                       i.fa.fa-user-times
                       |   Leave Team
-                  a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmDeleteTeam?teamname='+pagedetails.team.teamname)
+                  a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmDeleteTeam?team='+pagedetails.team._id)
                     i.fa.fa-trash-o
                     |   Delete Team
     if(pagedetails.part == 1)
@@ -90,7 +90,7 @@ block content
                       td
                       td #{update.update}
                       td
-                        a.text-center.btn.btn-danger(href='/deleteUpdate?index='+update.index+'&teamname='+update.teamname)
+                        a.text-center.btn.btn-danger(href='/deleteUpdate?index='+update.index)
                           i.fa.fa-trash-o
                   tr
                     td
@@ -99,7 +99,7 @@ block content
                   tr
                     td
                     td(style='text-align:center')
-                      a.text-center.btn.btn-danger.btn-sm(href='/deleteAllUpdates?teamname='+pagedetails.team.teamname)
+                      a.text-center.btn.btn-danger.btn-sm(href='/deleteAllUpdates?team='+pagedetails.team._id)
                         i.fa.fa-trash-o
                         |  Delete All
                     td

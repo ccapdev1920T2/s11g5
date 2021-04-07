@@ -10,17 +10,33 @@ const team_helper = {
     return validation;
   },
 
+  teamIDValidation: function () {
+    var validation = [
+      query('team', 'empty').notEmpty(),
+      query('team', 'format').isAlphanumeric()
+    ];
+    return validation;
+  },
+
+  indexValidation: function () {
+    var validation = [
+      query('index', 'empty').notEmpty(),
+      query('index', 'format').isNumeric()
+    ];
+    return validation;
+  },
+
   editTeamValidation: function () {
     var validation = [
       oneOf([
         check('edit_choose').notEmpty(),
         check('current_team').notEmpty(),
-        query('teamname').notEmpty(),
+        query('team').notEmpty(),
       ], 'empty'),
       oneOf([
         check('edit_choose').matches(nameFormat),
         check('current_team').matches(nameFormat),
-        query('teamname').matches(nameFormat)
+        query('team').isAlphanumeric()
       ], 'format'),
     ];
     return validation;

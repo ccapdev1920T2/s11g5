@@ -28,7 +28,7 @@ const new_controller = {
     reset(req);
     if(req.session.curr_user){
       /* Build the query to find all rounds */
-      var wholeQuery = {$and: [{'status':{$in:['Creating', 'Editing']}}, {'creator.username':req.session.curr_user.username}]};
+      var wholeQuery = {$and: [{'status':{$in:['Creating', 'Editing']}}, {'creator._id':req.session.curr_user._id}]};
       /* Find all rounds */
       await db.findMany(Match, wholeQuery, function(result){
         var render = 'app/create_round/roundsCreated';
@@ -130,7 +130,6 @@ const new_controller = {
               validStatus = 1;
               paramRoundID = 1;
               paramStatus = 1;
-              break;
             }else{
               if(errors[i].param == 'user_role'){
                 paramRole = 1;
@@ -143,12 +142,11 @@ const new_controller = {
               }
             }
           }else{
-            if(errors[i].param == 'roundID' || errors[i].param == 'status'){
+            if(errors[i].param == 'roundID' || (errors[i].param == 'status' || errors[i].msg == 'choices')){
               validRoundID = 1;
               validStatus = 1;
               paramRoundID = 1;
               paramStatus = 1;
-              break;
             }else if(errors[i].param == 'user_role'){
               validRole = 1;
             }else if(errors[i].param == 'motion'){
@@ -204,48 +202,52 @@ const new_controller = {
             }
           }else if(status == 'Editing'){ /* If the current status is editing, proceed */
             if(foundMatch && foundMatch.status == 'Editing'){ /* If round is found, proceed */
-              var role, motion, gov, opp;
-              var validRole = 0, validMotion = 0, validGov = 0, validOpp = 0;
-              /* If a new role is entered, process */
-              if(validRole == 0 && paramRole == 0){
-                role = sanitize(req.body.user_role);
+              if(foundMatch.creator._id == req.session.curr_user._id){
+                var role, motion, gov, opp;
+                var validRole = 0, validMotion = 0, validGov = 0, validOpp = 0;
+                /* If a new role is entered, process */
+                if(validRole == 0 && paramRole == 0){
+                  role = sanitize(req.body.user_role);
+                }else{
+                  role = foundMatch.creatorRole
+                }
+                /* If a new motion is entered, process */
+                if(validMotion == 0 && paramMotion == 0){
+                  motion = sanitize(req.body.motion);
+                }else{
+                  motion = foundMatch.motion
+                }
+                /* If a new role is government team, process */
+                if(validGov == 0 && paramGov == 0){
+                  gov = sanitize(req.body.gov);
+                }else{
+                  gov = foundMatch.gov.teamname
+                }
+                /* If a new role is opposition team, process */
+                if(validOpp == 0 && paramOpp == 0){
+                  opp = sanitize(req.body.opp);
+                }else{
+                  opp = foundMatch.opp.teamname
+                }
+                if((validRole == 1 && paramRole == 0) || (validMotion == 1  && paramMotion == 0) || (validGov == 1 && paramGov == 0) || (validOpp == 1 && paramOpp == 0)){
+                  req.session.roundID = roundID;
+                  req.session.status = 'Creating';
+                  req.session.fields = {all: 0, role: validRole, motion: validMotion, gov: validGov, opp: validOpp, ad:0};
+                  res.redirect('/startNew');
+                  res.end();
+                }else{
+                  var match_info = {
+                    roundID: foundMatch.roundID,
+                    user_role: role,
+                    motion: motion,
+                    gov: gov,
+                    opp: opp
+                  };
+                  /* Process the information entered */
+                  checkInfo(req, res, match_info, 'Editing');
+                }
               }else{
-                role = foundMatch.creatorRole
-              }
-              /* If a new motion is entered, process */
-              if(validMotion == 0 && paramMotion == 0){
-                motion = sanitize(req.body.motion);
-              }else{
-                motion = foundMatch.motion
-              }
-              /* If a new role is government team, process */
-              if(validGov == 0 && paramGov == 0){
-                gov = sanitize(req.body.gov);
-              }else{
-                gov = foundMatch.gov.teamname
-              }
-              /* If a new role is opposition team, process */
-              if(validOpp == 0 && paramOpp == 0){
-                opp = sanitize(req.body.opp);
-              }else{
-                opp = foundMatch.opp.teamname
-              }
-              if((validRole == 1 && paramRole == 0) || (validMotion == 1  && paramMotion == 0) || (validGov == 1 && paramGov == 0) || (validOpp == 1 && paramOpp == 0)){
-                req.session.roundID = roundID;
-                req.session.status = 'Creating';
-                req.session.fields = {all: 0, role: validRole, motion: validMotion, gov: validGov, opp: validOpp, ad:0};
-                res.redirect('/startNew');
-                res.end();
-              }else{
-                var match_info = {
-                  roundID: foundMatch.roundID,
-                  user_role: role,
-                  motion: motion,
-                  gov: gov,
-                  opp: opp
-                };
-                /* Process the information entered */
-                checkInfo(req, res, match_info, 'Editing');
+                goMessage(req, res, 'Error in Edit a Round! You are not the creator of Round: ' + roundID + '.');
               }
             }else{
               goMessage(req, res, 'Error in editing ' + roundID + '! Please try again later.');
@@ -377,7 +379,7 @@ const new_controller = {
           /* Find the round */
           await db.findOne(Match, {roundID:roundID}, async function(match){
             if(match){ /* If round is found, proceed */
-              if(match.creator.username == req.session.curr_user.username){ /* If the user is the creator, proceed */
+              if(match.creator._id == req.session.curr_user._id){ /* If the user is the creator, proceed */
                 if(!req.session.fields){
                   req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
                 }
@@ -491,6 +493,8 @@ const new_controller = {
         }else{
           goMessage(req, res, 'Error in Creating a Round! No valid Round ID entered.');
         }
+      }else{
+        goMessage(req, res, 'Error in Creating a Round! Pleade Try Again Later.');
       }
     }else{
       goHome(req, res);
@@ -528,7 +532,7 @@ const new_controller = {
           /* Find the round and set the status to 'Editing' */
           await db.findOneAndUpdate(Match, {roundID:roundID}, {$set: {status:'Editing'}}, function(result){
             if(result){ /* If round was found and status was successfully updated to 'Editing', proceed */
-              if(result.creator.username == req.session.curr_user.username){ /* If the user is the creator of the round, proceed */
+              if(result.creator._id == req.session.curr_user._id){ /* If the user is the creator of the round, proceed */
                 if(!req.session.fields){
                   req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
                 }
@@ -587,7 +591,7 @@ const new_controller = {
         /* Find the round */
         await db.findOne(Match, {roundID:roundID}, async function(foundMatch){
           if(foundMatch){ /* If round is found, proceed */
-            if(foundMatch.creator.username == req.session.curr_user.username){ /* If user is the creator, proceed */
+            if(foundMatch.creator._id == req.session.curr_user._id){ /* If user is the creator, proceed */
               var render = 'app/create_round/cancelRound';
               var pagedetails = {
                 pagename: 'Cancel Round',
@@ -621,7 +625,7 @@ const new_controller = {
         /* Find the round */
         await db.findOne(Match, {roundID:roundID}, async function(result){
           if(result){ /* If round is found, proceed */
-            if(result.creator.username == req.session.curr_user.username){ /* If user is the creator, proceed */
+            if(result.creator._id == req.session.curr_user._id){ /* If user is the creator, proceed */
               await db.deleteOne(Match, {roundID:roundID});
               goMessage(req, res, "Successfully cancelled the round!");
             }else{
@@ -656,7 +660,7 @@ const new_controller = {
   /* Delete all creating/editing rounds of the user */
   confirmDeleteAllPending: async function(req, res){
     if(req.session.curr_user){
-      var wholeQuery = {$and: [{'status':{$in:['Creating', 'Editing']}}, {'creator.username':req.session.curr_user.username}]};
+      var wholeQuery = {$and: [{'status':{$in:['Creating', 'Editing']}}, {'creator._id':req.session.curr_user._id}]};
       await db.deleteMany(Match, wholeQuery);
       goMessage(req, res, "Successfully cancelled all pending rounds!");
     }else{
@@ -850,6 +854,7 @@ async function renderPage(req, res, render, pagedetails){
             else
               link = '/teamInfo'
             var temp = {
+              teamID: result.updates[i].teamID,
               teamname: result.updates[i].teamname,
               teamupdate: result.updates[i].update,
               link: link,
@@ -864,7 +869,7 @@ async function renderPage(req, res, render, pagedetails){
           }
         }
       }
-      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
+      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first._id":req.session.curr_user._id}, {"gov.second._id":req.session.curr_user._id}, {"gov.third._id":req.session.curr_user._id}, {"opp.first._id":req.session.curr_user._id}, {"opp.second._id":req.session.curr_user._id}, {"opp.third._id":req.session.curr_user._id}, {"adjudicator._id":req.session.curr_user._id}]}]};
       /* If they have debate invites, store them in an array */
       await db.findMany(Match, wholeQuery, function(result){
         if(result){

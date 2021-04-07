@@ -5,18 +5,21 @@ var UserSchema = require('./user_model.js');
 var TeamSchema = new mongoose.Schema({
   teamname: String,
   first: {
+    _id: {type: mongoose.ObjectId},
     username: {type: String},
     email: {type: String},
     full_name: {type: String},
     institution: {type: String},
   },
   second: {
+    _id: {type: mongoose.ObjectId},
     username: {type: String},
     email: {type: String},
     full_name: {type: String},
     institution: {type: String},
   },
   third: {
+    _id: {type: mongoose.ObjectId},
     username: {type: String},
     email: {type: String},
     full_name: {type: String},

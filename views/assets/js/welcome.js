@@ -34,7 +34,7 @@ $(document).ready( function () {
       //
       $("#specifics_second_icon").removeClass().addClass('fa');
       $("#specifics_second_icon").addClass('fa-table');
-      $("#specifics_second_details").text('Match History - To see a list of your previous rounds, head on over to this tab to find all of them.');
+      $("#specifics_second_details").text('Round History - To see a list of your previous rounds, head on over to this tab to find all of them.');
       //
       $("#specifics_third_icon").removeClass().addClass('fas');
       $("#specifics_third_icon").addClass('fa-users');
@@ -101,7 +101,7 @@ $(document).ready( function () {
       //
       $("#specifics_fourth_icon").removeClass().addClass('fa');
       $("#specifics_fourth_icon").addClass('fa-table');
-      $("#specifics_fourth_details").text('Match History - To see a list of your previous rounds, head on over to this tab to find all of them.');
+      $("#specifics_fourth_details").text('Round History - To see a list of your previous rounds, head on over to this tab to find all of them.');
     }else if($("#welcome_count").val() == 5){
       $('#wel_photo').css("background-image", 'url(assets/img/tutorial/teamsDash.jpg)');
       $("#specifics_title").text('Lastly, the Teams Dashboard!');
@@ -189,7 +189,7 @@ $(document).ready( function () {
       //
       $("#specifics_second_icon").removeClass().addClass('fa');
       $("#specifics_second_icon").addClass('fa-table');
-      $("#specifics_second_details").text('Match History - To see a list of your previous rounds, head on over to this tab to find all of them.');
+      $("#specifics_second_details").text('Round History - To see a list of your previous rounds, head on over to this tab to find all of them.');
       //
       $("#specifics_third_icon").removeClass().addClass('fas');
       $("#specifics_third_icon").addClass('fa-users');
@@ -254,7 +254,7 @@ $(document).ready( function () {
       //
       $("#specifics_fourth_icon").removeClass().addClass('fa');
       $("#specifics_fourth_icon").addClass('fa-table');
-      $("#specifics_fourth_details").text('Match History - To see a list of your previous rounds, head on over to this tab to find all of them.');
+      $("#specifics_fourth_details").text('Round History - To see a list of your previous rounds, head on over to this tab to find all of them.');
     }else{
       $("#welcome_count").val(5);
       $('#wel_photo').css("background-image", 'url(assets/img/tutorial/teamsDash.jpg)');

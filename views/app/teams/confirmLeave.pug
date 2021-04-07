@@ -10,12 +10,12 @@ block content
             .card-header.py-3
               p.text-primary.m-0.font-weight-bold Confirm Leave Team
             .card-body
-              h4.text-dark.mb-0 You are leaving the team: #{pagedetails.teamname}.
+              h4.text-dark.mb-0 You are leaving the team: #{pagedetails.team.teamname}.
               br
               h6.text-dark.mb-0 Kindly click Confirm Leave to proceed.
               br
               h6.text-dark.mb-0 The rest of the team would be informed about you leaving.
               br
               br
-              a.card-link.btn.btn-primary.btn-danger(href='/leaveTeam?teamname='+pagedetails.teamname) Confirm Leave
-              a.card-link.btn.btn-primary(href='/teamInfo?teamname='+pagedetails.teamname) Cancel
+              a.card-link.btn.btn-primary.btn-danger(href='/leaveTeam?team='+pagedetails.team._id) Confirm Leave
+              a.card-link.btn.btn-primary(href='/teamInfo?team='+pagedetails.team._id) Cancel

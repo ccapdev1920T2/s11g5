@@ -34,7 +34,7 @@ const database = {
       });
     },
     deleteMany: function(model, filter) {
-      model.deleteOne(filter, function(error, result) {
+      model.deleteMany(filter, function(error, result) {
         if(error) throw error;
       });
     },

@@ -19,7 +19,7 @@ block content
                   each team in pagedetails.teams
                     tr
                       td
-                        a(href='/teamInfo?teamname='+team.teamname) #{team.teamname}
+                        a(href='/teamInfo?team='+team._id) #{team.teamname}
                       td #{team.first.full_name}
                       td #{team.second.full_name}
                       td #{team.third.full_name}

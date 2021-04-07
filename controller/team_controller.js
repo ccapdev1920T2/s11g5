@@ -170,12 +170,6 @@ const team_controller = {
                         if((first && !validator.isEmail(userfirst)) && (second && !validator.isEmail(usersecond)) && (third && !validator.isEmail(userthird)) && (!team)){
                           /* Create the team */
                           var name = teamname;
-                          var full = req.session.curr_user.full_name;
-                          var user = req.session.curr_user.username;
-                          var createUpdate = {
-                            teamname: name,
-                            update: name + ' was created by ' + full + ' (' + user + ').'
-                          };
                           var newTeam = {
                             teamname: name,
                             first:first,
@@ -191,14 +185,30 @@ const team_controller = {
                             numdebates: 0,
                             status: 'Active'
                           };
-                          db.insertOne(Team, newTeam);
-                          /* Update the users of the newly created team */
-                          updateUpdates(first, second, third, createUpdate);
-                          req.session.header = 'Create Team';
-                          req.session.message = name + ' Successfully Created!';
-                          req.session.link = '/teamPage';
-                          req.session.back = 'Teams Dashboard';
-                          goMessage(req, res);
+                          await db.insertOneCallback(Team, newTeam, async function(new_team){
+                            if(new_team){
+                              var full = req.session.curr_user.full_name;
+                              var user = req.session.curr_user.username;
+                              var createUpdate = {
+                                teamID: new_team._id,
+                                teamname: new_team.teamname,
+                                update: new_team.teamname + ' was created by ' + full + ' (' + user + ').'
+                              };
+                              /* Update the users of the newly created team */
+                              updateUpdates(first, second, third, createUpdate);
+                              req.session.header = 'Create Team';
+                              req.session.message = name + ' Successfully Created!';
+                              req.session.link = '/teamPage';
+                              req.session.back = 'Teams Dashboard';
+                              goMessage(req, res);
+                            }else{
+                              req.session.header = 'Create Team';
+                              req.session.message = 'Error in Creating a Team! Please Try Again Later.';
+                              req.session.link = '/teamPage';
+                              req.session.back = 'Teams Dashboard';
+                              goMessage(req, res);
+                            }
+                          });
                         }else{
                           var name = 0, lead = 0, dep = 0, whip = 0;
                           var maillist = [];
@@ -269,10 +279,6 @@ const team_controller = {
                                     res.end();
                                   }else{
                                     /* Create the team */
-                                    var createUpdate = {
-                                      teamname: teamname,
-                                      update: teamname + ' was created by ' + req.session.curr_user.full_name + ' (' + req.session.curr_user.username + ').'
-                                    };
                                     var newTeam = {
                                       teamname: teamname,
                                       first:first,
@@ -288,14 +294,30 @@ const team_controller = {
                                       numdebates: 0,
                                       status: 'Active'
                                     };
-                                    db.insertOne(Team, newTeam);
-                                    /* Update the users of the newly created team */
-                                    updateUpdates(first, second, third, createUpdate);
-                                    req.session.header = 'Create Team';
-                                    req.session.message = teamname + ' Successfully Created!';
-                                    req.session.link = '/teamPage';
-                                    req.session.back = 'Teams Dashboard';
-                                    goMessage(req, res);
+                                    await db.insertOneCallback(Team, newTeam, async function(new_team){
+                                      if(new_team){
+                                        var full = req.session.curr_user.full_name;
+                                        var user = req.session.curr_user.username;
+                                        var createUpdate = {
+                                          teamID: new_team._id,
+                                          teamname: new_team.teamname,
+                                          update: new_team.teamname + ' was created by ' + full + ' (' + user + ').'
+                                        };
+                                        /* Update the users of the newly created team */
+                                        updateUpdates(first, second, third, createUpdate);
+                                        req.session.header = 'Create Team';
+                                        req.session.message = new_team.teamname + ' Successfully Created!';
+                                        req.session.link = '/teamPage';
+                                        req.session.back = 'Teams Dashboard';
+                                        goMessage(req, res);
+                                      }else{
+                                        req.session.header = 'Create Team';
+                                        req.session.message = 'Error in Creating a Team! Please Try Again Later.';
+                                        req.session.link = '/teamPage';
+                                        req.session.back = 'Teams Dashboard';
+                                        goMessage(req, res);
+                                      }
+                                    });
                                   }
                                 });
                               }
@@ -339,14 +361,14 @@ const team_controller = {
         req.session.back = 'Team Dashboard';
         goMessage(req, res);
       }else{
-        var teamname = sanitize(req.query.teamname);
+        var teamID = sanitize(req.query.team);
         /* Find the account of the user */
-        await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
+        await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
           if(result){ /* If found, proceed */
             /* Find the team */
-            await db.findOne(Team, {teamname:teamname}, function(foundTeam){
+            await db.findOne(Team, {_id:teamID}, function(foundTeam){
               if(foundTeam){ /* If found, proceed */
-                if(req.session.curr_user.username == foundTeam.first.username || req.session.curr_user.username == foundTeam.second.username || req.session.curr_user.username == foundTeam.third.username){
+                if(req.session.curr_user._id == foundTeam.first._id || req.session.curr_user._id == foundTeam.second._id || req.session.curr_user._id == foundTeam.third._id){
                   part = 1;
                 }else{
                   part = 0;
@@ -369,45 +391,33 @@ const team_controller = {
                 var temp_first, temp_second, temp_third;
                 var leave;
                 /* If any members are non-existent, replace temporarily with "No User" */
-                if(!foundTeam.first){
+                if(!foundTeam.first)
                   temp_first = {full_name:"No User"};
-                  if((!foundTeam.second || foundTeam.second.username == 'No User' || validator.isEmail(foundTeam.second.username)) && (!foundTeam.third || foundTeam.third.username == 'No User' || validator.isEmail(foundTeam.third.username)))
-                    leave = 0;
-                  else
-                    leave = 1;
-                }else{
+                else
                   temp_first = foundTeam.first;
-                  if((!foundTeam.second || foundTeam.second.username == 'No User' || validator.isEmail(foundTeam.second.username)) && (!foundTeam.third || foundTeam.third.username == 'No User' || validator.isEmail(foundTeam.third.username)))
-                    leave = 0;
-                  else
-                    leave = 1;
-                }
-                if(!foundTeam.second){
+                if((!foundTeam.second || foundTeam.second.username == 'No User' || validator.isEmail(foundTeam.second.username)) && (!foundTeam.third || foundTeam.third.username == 'No User' || validator.isEmail(foundTeam.third.username)))
+                  leave = 0;
+                else
+                  leave = 1;
+
+                if(!foundTeam.second)
                   temp_second = {full_name:"No User"};
-                  if((!foundTeam.first || foundTeam.first.username == 'No User' || validator.isEmail(foundTeam.first.username)) && (!foundTeam.third || foundTeam.third.username == 'No User' || validator.isEmail(foundTeam.third.username)))
-                    leave = 0;
-                  else
-                    leave = 1;
-                }else{
+                else
                   temp_second = foundTeam.second;
-                  if((!foundTeam.first || foundTeam.first.username == 'No User' || validator.isEmail(foundTeam.first.username)) && (!foundTeam.third || foundTeam.third.username == 'No User' || validator.isEmail(foundTeam.third.username)))
-                    leave = 0;
-                  else
-                    leave = 1;
-                }
-                if(!foundTeam.third){
+                if((!foundTeam.first || foundTeam.first.username == 'No User' || validator.isEmail(foundTeam.first.username)) && (!foundTeam.third || foundTeam.third.username == 'No User' || validator.isEmail(foundTeam.third.username)))
+                  leave = 0;
+                else
+                  leave = 1;
+
+                if(!foundTeam.third)
                   temp_third = {full_name:"No User"};
-                  if((!foundTeam.first || foundTeam.first.username == 'No User' || validator.isEmail(foundTeam.first.username)) && (!foundTeam.second || foundTeam.second.username == 'No User' || validator.isEmail(foundTeam.second.username)))
-                    leave = 0;
-                  else
-                    leave = 1;
-                }else{
+                else
                   temp_third = foundTeam.third;
-                  if((!foundTeam.first || foundTeam.first.username == 'No User' || validator.isEmail(foundTeam.first.username)) && (!foundTeam.second || foundTeam.second.username == 'No User' || validator.isEmail(foundTeam.second.username)))
-                    leave = 0;
-                  else
-                    leave = 1;
-                }
+                if((!foundTeam.first || foundTeam.first.username == 'No User' || validator.isEmail(foundTeam.first.username)) && (!foundTeam.second || foundTeam.second.username == 'No User' || validator.isEmail(foundTeam.second.username)))
+                  leave = 0;
+                else
+                  leave = 1;
+
                 final_info.first = temp_first;
                 final_info.second = temp_second;
                 final_info.third = temp_third;
@@ -424,7 +434,7 @@ const team_controller = {
                 renderPage(req, res, render, pagedetails);
               }else{
                 req.session.header = 'Team Information';
-                req.session.message = "Error in loading Team Information! The name of the team may have been changed or the team has been deleted.";
+                req.session.message = "Error in loading Team Information! Cannot find the team.";
                 req.session.link = '/teamPage';
                 req.session.back = 'Team Dashboard';
                 goMessage(req, res);
@@ -432,7 +442,7 @@ const team_controller = {
             });
           }else{
             req.session.header = 'Team Information';
-            req.session.message = "Error in loading Team Information of " + teamname + "! Please Try again later.";
+            req.session.message = "Error in loading Team Information! Please Try again later.";
             req.session.link = '/teamPage';
             req.session.back = 'Team Dashboard';
             goMessage(req, res);
@@ -451,9 +461,9 @@ const team_controller = {
         req.session.choosing = 0;
       }
       /* Build the query to find all the teams of the user */
-      first_query = {"first.username":req.session.curr_user.username};
-      second_query = {"second.username":req.session.curr_user.username};
-      third_query = {"third.username":req.session.curr_user.username};
+      first_query = {"first._id":req.session.curr_user._id};
+      second_query = {"second._id":req.session.curr_user._id};
+      third_query = {"third._id":req.session.curr_user._id};
       team_query = {"teamname": {$ne: null}};
       whole_query = {$and: [team_query, {$or: [first_query, second_query, third_query]}]};
       /* Find the teams of the user */
@@ -476,36 +486,33 @@ const team_controller = {
   editTeams: async function(req, res){
     if(req.session.curr_user){
       var errors = validationResult(req);
-      if (!errors.isEmpty() && (!req.session.edit_team || !validator.matches(req.session.edit_team, nameFormat))){
+      if (!errors.isEmpty() && (!req.session.edit_team || !validator.isAlphanumeric(req.session.edit_team))){
         req.session.choosing = 1;
         res.redirect('/chooseTeam');
         res.end();
       }else{
-        var teamname;
+        var teamID;
         /* Store the team name in variable teamname */
         if(req.body.edit_choose && req.body.edit_choose != 'choose'){
-          teamname = sanitize(req.body.edit_choose);
-          req.session.edit_team = teamname;
-        }else if(req.body.current_team && req.body.current_team != 'choose'){
-          teamname = sanitize(req.body.current_team);
-          req.session.edit_team = teamname;
-        }else if(req.query.teamname && req.query.teamname != 'choose'){
-          teamname = sanitize(req.query.teamname);
-          req.session.edit_team = teamname;
+          teamnID = sanitize(req.body.edit_choose);
+          req.session.edit_team = teamID;
+        }else if(req.query.team){
+          teamID = sanitize(req.query.team);
+          req.session.edit_team = teamID;
         }else if(req.session.edit_team && req.session.edit_team != 'choose'){
-          teamname = req.session.edit_team;
+          teamID = req.session.edit_team;
         }
         /* If no team name was entered/chosen/etc., redirect to the choose a team page */
-        if(!teamname){
+        if(!teamID){
           req.session.choosing = 1;
           res.redirect('/chooseTeam');
           res.end();
         }else{
           /* Find the team */
-          await db.findOne(Team, {teamname:teamname}, async function(result){
+          await db.findOne(Team, {_id:teamID}, async function(result){
             if(result){
-              var current_user = req.session.curr_user.username;
-              if(result.first.username == current_user || result.second.username == current_user || result.third.username == current_user){
+              var current_user = req.session.curr_user._id;
+              if(result.first._id == current_user || result.second._id == current_user || result.third._id == current_user){
                 var final_info = result;
                 var temp_first, temp_second, temp_third;
                 if(!result.first){
@@ -546,14 +553,14 @@ const team_controller = {
                 renderPage(req, res, render, pagedetails);
               }else{
                 req.session.header = 'Edit a Team';
-                req.session.message = 'Cannot edit ' + teamname + '! You are not in ' + teamname + '.';
+                req.session.message = 'Cannot edit ' + result.teamname + '! You are not in ' + result.teamname + '.';
                 req.session.link = '/teamPage';
                 req.session.back = 'Teams Dashboard';
                 goMessage(req, res);
               }
             }else{
               req.session.header = 'Edit a Team';
-              req.session.message = 'Error in Edit a Team! Cannot find ' + teamname + '.';
+              req.session.message = 'Error in Edit a Team! Team not found.';
               req.session.link = '/teamPage';
               req.session.back = 'Teams Dashboard';
               goMessage(req, res);
@@ -665,25 +672,34 @@ const team_controller = {
                           reset(req);
                           updateMembers(req, res, current, new_teamname);
                         }else{
-                          /* If the new team name is not taken, proceed with updating */
-                          var editUpdate = {
-                            teamname: current.teamname,
-                            update: current.teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Change Team Name]"
-                          };
-                          /* Send an update to the users */
-                          updateUpdates(current.first, current.second, current.third, editUpdate);
-                          /* Update the team */
-                          await db.updateOne(Team, {teamname:current.teamname}, {$set: {teamname:new_teamname}});
-                          reset(req);
-                          /* Update the team name of updates connected */
-                          updateTeamname(current.teamname, new_teamname, current.first.username);
-                          updateTeamname(current.teamname, new_teamname, current.second.username);
-                          updateTeamname(current.teamname, new_teamname, current.third.username);
-                          req.session.header = 'Edit a Team';
-                          req.session.message = 'Successfully changed team name of ' + current.teamname + ' to ' + new_teamname + '!';
-                          req.session.link = '/teamPage';
-                          req.session.back = 'Teams Dashboard';
-                          goMessage(req, res);
+                          await db.findOneAndUpdate(Team, {teamname:current.teamname}, {$set: {teamname:new_teamname}}, async function(new_team){
+                            if(new_team){
+                              /* If the new team name is not taken, proceed with updating */
+                              var editUpdate = {
+                                teamID: new_team._id,
+                                teamname: new_team.teamname,
+                                update: current.teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Change Team Name]"
+                              };
+                              /* Send an update to the users */
+                              updateUpdates(new_team.first, new_team.second, new_team.third, editUpdate);
+                              reset(req);
+                              /* Update the team name of updates connected */
+                              updateTeamname(new_team._id, new_teamname, new_team.first.username);
+                              updateTeamname(new_team._id, new_teamname, new_team.second.username);
+                              updateTeamname(new_team._id, new_teamname, new_team.third.username);
+                              req.session.header = 'Edit a Team';
+                              req.session.message = 'Successfully changed team name of ' + current.teamname + ' to ' + new_teamname + '!';
+                              req.session.link = '/teamPage';
+                              req.session.back = 'Teams Dashboard';
+                              goMessage(req, res);
+                            }else{
+                              req.session.header = 'Edit a Team';
+                              req.session.message = 'Error in Editing Team '+current.teamname+'! Please Try Again Later.';
+                              req.session.link = '/teamPage';
+                              req.session.back = 'Teams Dashboard';
+                              goMessage(req, res);
+                            }
+                          });
                         }
                       }
                     });
@@ -730,25 +746,34 @@ const team_controller = {
                         reset(req);
                         updateMembers(req, res, current, new_teamname);
                       }else{
-                        /* If the new team name is not taken, proceed with updating */
-                        var editUpdate = {
-                          teamname: current.teamname,
-                          update: current.teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Change Team Name]"
-                        };
-                        /* Send an update to the users */
-                        updateUpdates(current.first, current.second, current.third, editUpdate);
-                        /* Update the team */
-                        await db.updateOne(Team, {teamname:current.teamname}, {$set: {teamname:new_teamname}});
-                        reset(req);
-                        /* Update the team name of updates connected */
-                        updateTeamname(current.teamname, new_teamname, current.first.username);
-                        updateTeamname(current.teamname, new_teamname, current.second.username);
-                        updateTeamname(current.teamname, new_teamname, current.third.username);
-                        req.session.header = 'Edit a Team';
-                        req.session.message = 'Successfully changed team name of ' + current.teamname + ' to ' + new_teamname + '!';
-                        req.session.link = '/teamPage';
-                        req.session.back = 'Teams Dashboard';
-                        goMessage(req, res);
+                        await db.findOneAndUpdate(Team, {teamname:current.teamname}, {$set: {teamname:new_teamname}}, async function(new_team){
+                          if(new_team){
+                            /* If the new team name is not taken, proceed with updating */
+                            var editUpdate = {
+                              teamID: new_team._id,
+                              teamname: new_team.teamname,
+                              update: current.teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Change Team Name]"
+                            };
+                            /* Send an update to the users */
+                            updateUpdates(new_team.first, new_team.second, new_team.third, editUpdate);
+                            reset(req);
+                            /* Update the team name of updates connected */
+                            updateTeamname(new_team._id, new_team.teamname, new_team.first.username);
+                            updateTeamname(new_team._id, new_team.teamname, new_team.second.username);
+                            updateTeamname(new_team._id, new_team.teamname, new_team.third.username);
+                            req.session.header = 'Edit a Team';
+                            req.session.message = 'Successfully changed team name of ' + current.teamname + ' to ' + new_teamname + '!';
+                            req.session.link = '/teamPage';
+                            req.session.back = 'Teams Dashboard';
+                            goMessage(req, res);
+                          }else{
+                            req.session.header = 'Edit a Team';
+                            req.session.message = 'Error in Editing Team '+current.teamname+'! Please Try Again Later.';
+                            req.session.link = '/teamPage';
+                            req.session.back = 'Teams Dashboard';
+                            goMessage(req, res);
+                          }
+                        });
                       }
                     }
                   });
@@ -789,12 +814,13 @@ const team_controller = {
         req.session.back = 'Team Dashboard';
         goMessage(req, res);
       }else{
-        var name = sanitize(req.query.teamname);
         if(validator.matches(name, nameFormat)){
+          var teamID = sanitize(req.query.team);
           /* Find the team */
-          await db.findOne(Team, {teamname:name}, async function(result){
+          await db.findOne(Team, {_id:teamID}, async function(result){
             if(result){ /* If team is found, proceed */
-              if(result.first.username == req.session.curr_user.username || result.second.username == req.session.curr_user.username || result.third.username == req.session.curr_user.username){
+              var name = result.teamname
+              if(result.first._id == req.session.curr_user._id || result.second._id == req.session.curr_user._id || result.third._id == req.session.curr_user._id){
                 var validLeave;
                 /* If More than one is a guest or a non-existent member, leaving the team would not be permitted */
                 if(!result.first || result.first.username == 'No User' || validator.isEmail(result.first.username)){
@@ -825,7 +851,7 @@ const team_controller = {
                   var pagedetails = {
                     pagename: 'Confirm Leave',
                     curr_user:req.session.curr_user,
-                    teamname: name
+                    team: result
                   };
                   renderPage(req, res, render, pagedetails);
                 }
@@ -838,7 +864,7 @@ const team_controller = {
               }
             }else{
               req.session.header = 'Team Information';
-              req.session.message = "Error in leaving " + name + "! Team not found.";
+              req.session.message = "Error in leaving team! Team not found.";
               req.session.link = '/teamPage';
               req.session.back = 'Team Dashboard';
               goMessage(req, res);
@@ -868,93 +894,90 @@ const team_controller = {
         req.session.back = 'Team Dashboard';
         goMessage(req, res);
       }else{
-        var name = req.query.teamname;
-        if(validator.matches(name, nameFormat)){
-          /* Find the team */
-          await db.findOne(Team, {teamname:name}, async function(result){
-            if(result){ /* If team is found, proceed */
-              if(result.first.username == req.session.curr_user.username || result.second.username == req.session.curr_user.username || result.third.username == req.session.curr_user.username){
-                var validLeave;
-                /* If More than one is a guest or a non-existent member, leaving the team would not be permitted */
-                if(!result.first || result.first.username == 'No User' || validator.isEmail(result.first.username)){
-                  if((!result.second || result.second.username == 'No User' || validator.isEmail(result.second.username)) || (!result.third || result.third.username == 'No User' || validator.isEmail(result.third.username)))
-                    validLeave = 1;
-                  else
-                    validLeave = 0;
-                }else if(!result.second || result.second.username == 'No User' || validator.isEmail(result.second.username)){
-                  if((!result.first || result.first.username == 'No User' || validator.isEmail(result.first.username)) || (!result.third || result.third.username == 'No User' || validator.isEmail(result.third.username)))
-                    validLeave = 1;
-                  else
-                    validLeave = 0;
-                }else if(!result.third || result.third.username == 'No User' || validator.isEmail(result.third.username)){
-                  temp_third = {full_name:"No User"};
-                  if((!result.first || result.first.username == 'No User' || validator.isEmail(result.first.username)) || (!result.second || result.second.username == 'No User' || validator.isEmail(result.second.username)))
-                    validLeave = 1;
-                  else
-                    validLeave = 0;
-                }
-                if(validLeave == 1){
-                  req.session.header = 'Team Information';
-                  req.session.message = "Cannot leave " + name + "! Teams need at least one registered user remaining.";
-                  req.session.link = '/teamPage';
-                  req.session.back = 'Team Dashboard';
-                  goMessage(req, res);
-                }else{
-                  var current = req.session.curr_user.username;
-                  /* Determine which user is the current user then create an update, send to the other users, and update the team count of the current user */
-                  if(result.first.username === current){
-                    var leaveUpdate = {
-                      teamname: result.teamname,
-                      update: req.session.curr_user.full_name + " ("+ current +") has left " + result.teamname + ". [Leader Left]"
-                    };
-                    updateUpdates(result.first, result.second, result.third, leaveUpdate);
-                    await db.updateOne(Team, {teamname:result.teamname}, {$set:{"first":{username:'No User', full_name:'No User'}}});
-                  }else if(result.second.username === current){
-                    var leaveUpdate = {
-                      teamname: result.teamname,
-                      update: req.session.curr_user.full_name + " ("+ current +") has left " + result.teamname + ". [Deputy Leader Left]"
-                    };
-                    updateUpdates(result.first, result.second, result.third, leaveUpdate);
-                    await db.updateOne(Team, {teamname:result.teamname}, {$set:{"second":{username:'No User', full_name:'No User'}}});
-                  }else if(result.third.username === current){
-                    var leaveUpdate = {
-                      teamname: result.teamname,
-                      update: req.session.curr_user.full_name + " ("+ current +") has left " + result.teamname + ". [Whip Left]"
-                    };
-                    updateUpdates(result.first, result.second, result.third, leaveUpdate);
-                    await db.updateOne(Team, {teamname:result.teamname}, {$set:{"third":{username:'No User', full_name:'No User'}}});
-                  }
-                  await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
-                    req.session.curr_user = result;
-                    req.session.header = 'Leave Team';
-                    req.session.message = 'Successfully Left ' + name + '!';
-                    req.session.link = '/teamPage';
-                    req.session.back = 'Teams Dashboard';
-                    goMessage(req, res);
-                  });
-                }
-              }else{
+        var teamID = sanitize(req.query.teamname);
+        /* Find the team */
+        await db.findOne(Team, {_id:teamID}, async function(result){
+          if(result){ /* If team is found, proceed */
+            var name = result.teamname;
+            if(result.first._id == req.session.curr_user._id || result.second._id == req.session.curr_user._id || result.third._id == req.session.curr_user._id){
+              var validLeave;
+              /* If More than one is a guest or a non-existent member, leaving the team would not be permitted */
+              if(!result.first || result.first.username == 'No User' || validator.isEmail(result.first.username)){
+                if((!result.second || result.second.username == 'No User' || validator.isEmail(result.second.username)) || (!result.third || result.third.username == 'No User' || validator.isEmail(result.third.username)))
+                  validLeave = 1;
+                else
+                  validLeave = 0;
+              }else if(!result.second || result.second.username == 'No User' || validator.isEmail(result.second.username)){
+                if((!result.first || result.first.username == 'No User' || validator.isEmail(result.first.username)) || (!result.third || result.third.username == 'No User' || validator.isEmail(result.third.username)))
+                  validLeave = 1;
+                else
+                  validLeave = 0;
+              }else if(!result.third || result.third.username == 'No User' || validator.isEmail(result.third.username)){
+                temp_third = {full_name:"No User"};
+                if((!result.first || result.first.username == 'No User' || validator.isEmail(result.first.username)) || (!result.second || result.second.username == 'No User' || validator.isEmail(result.second.username)))
+                  validLeave = 1;
+                else
+                  validLeave = 0;
+              }
+              if(validLeave == 1){
                 req.session.header = 'Team Information';
-                req.session.message = "Cannot leave " + name + " since you're not in the team!";
+                req.session.message = "Cannot leave " + name + "! Teams need at least one registered user remaining.";
                 req.session.link = '/teamPage';
                 req.session.back = 'Team Dashboard';
                 goMessage(req, res);
+              }else{
+                var current_id = req.session.curr_user._id;
+                var current_name = req.session.curr_user.username;
+                /* Determine which user is the current user then create an update, send to the other users, and update the team count of the current user */
+                if(result.first._id == current_id){
+                  var leaveUpdate = {
+                    teamID: result[i]._id,
+                    teamname: name,
+                    update: req.session.curr_user.full_name + " ("+ current_name +") has left " + name + ". [Leader Left]"
+                  };
+                  updateUpdates(result.first, result.second, result.third, leaveUpdate);
+                  await db.updateOne(Team, {_id:teamID}, {$set:{"first":{username:'No User', full_name:'No User'}}});
+                }else if(result.second._id == current_id){
+                  var leaveUpdate = {
+                    teamID: result[i]._id,
+                    teamname: name,
+                    update: req.session.curr_user.full_name + " ("+ current_name +") has left " + name + ". [Deputy Leader Left]"
+                  };
+                  updateUpdates(result.first, result.second, result.third, leaveUpdate);
+                  await db.updateOne(Team, {_id:teamID}, {$set:{"second":{username:'No User', full_name:'No User'}}});
+                }else if(result.third._id == current_id){
+                  var leaveUpdate = {
+                    teamID: result[i]._id,
+                    teamname: name,
+                    update: req.session.curr_user.full_name + " ("+ current_name +") has left " + name + ". [Whip Left]"
+                  };
+                  updateUpdates(result.first, result.second, result.third, leaveUpdate);
+                  await db.updateOne(Team, {_id:teamID}, {$set:{"third":{username:'No User', full_name:'No User'}}});
+                }
+                await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
+                  req.session.curr_user = result;
+                  req.session.header = 'Leave Team';
+                  req.session.message = 'Successfully Left ' + name + '!';
+                  req.session.link = '/teamPage';
+                  req.session.back = 'Teams Dashboard';
+                  goMessage(req, res);
+                });
               }
             }else{
               req.session.header = 'Team Information';
-              req.session.message = "Error in leaving " + name + "! Please Try again later.";
+              req.session.message = "Cannot leave " + name + " since you're not in the team!";
               req.session.link = '/teamPage';
               req.session.back = 'Team Dashboard';
               goMessage(req, res);
             }
-          });
-        }else{
-          req.session.header = 'Team Information';
-          req.session.message = "Error in leaving team! Invalid Team Name entered.";
-          req.session.link = '/teamPage';
-          req.session.back = 'Team Dashboard';
-          goMessage(req, res);
-        }
+          }else{
+            req.session.header = 'Team Information';
+            req.session.message = "Error in leaving team! Team not found.";
+            req.session.link = '/teamPage';
+            req.session.back = 'Team Dashboard';
+            goMessage(req, res);
+          }
+        });
       }
     }else{
       goHome(req, res);
@@ -972,34 +995,33 @@ const team_controller = {
         req.session.back = 'Team Dashboard';
         goMessage(req, res);
       }else{
-        var name = sanitize(req.query.teamname);
-        if(validator.matches(name, nameFormat)){
-          await db.findOne(Team, {teamname:name}, async function(result){
-            if(result){ /* If the team is found, proceed */
-              if(result.first.username == req.session.curr_user.username || result.second.username == req.session.curr_user.username || result.third.username == req.session.curr_user.username){
-                var render = 'app/teams/confirmDeleteTeam';
-                var pagedetails = {
-                  pagename: 'Confirm Delete',
-                  curr_user:req.session.curr_user,
-                  teamname: name
-                };
-                renderPage(req, res, render, pagedetails);
-              }else{
-                req.session.header = 'Team Information';
-                req.session.message = "Cannot delete " + name + " since you're not in the team!";
-                req.session.link = '/teamPage';
-                req.session.back = 'Team Dashboard';
-                goMessage(req, res);
-              }
+        var teamID = sanitize(req.query.team);
+        await db.findOne(Team, {_id:teamID}, async function(result){
+          if(result){ /* If the team is found, proceed */
+            var name = result.teamname;
+            if(result.first._id == req.session.curr_user._id || result.second._id == req.session.curr_user._id || result.third._id == req.session.curr_user._id){
+              var render = 'app/teams/confirmDeleteTeam';
+              var pagedetails = {
+                pagename: 'Confirm Delete',
+                curr_user:req.session.curr_user,
+                team: result
+              };
+              renderPage(req, res, render, pagedetails);
+            }else{
+              req.session.header = 'Team Information';
+              req.session.message = "Cannot delete " + name + " since you're not in the team!";
+              req.session.link = '/teamPage';
+              req.session.back = 'Team Dashboard';
+              goMessage(req, res);
             }
-          });
-        }else{
-          req.session.header = 'Team Information';
-          req.session.message = "Error in leaving team! Invalid Team Name entered.";
-          req.session.link = '/teamPage';
-          req.session.back = 'Team Dashboard';
-          goMessage(req, res);
-        }
+          }else{
+            req.session.header = 'Team Information';
+            req.session.message = "Error in deleting team! Team not found.";
+            req.session.link = '/teamPage';
+            req.session.back = 'Team Dashboard';
+            goMessage(req, res);
+          }
+        });
       }
     }else{
       goHome(req, res);
@@ -1017,50 +1039,44 @@ const team_controller = {
         req.session.back = 'Team Dashboard';
         goMessage(req, res);
       }else{
-        var name = sanitize(req.query.teamname);
-        if(validator.matches(name, nameFormat)){
-          /* Find the team */
-          await db.findOne(Team, {teamname:name}, async function(result){
-            if(result){ /* If the team is found, proceed */
-              if(result.first.username == req.session.curr_user.username || result.second.username == req.session.curr_user.username || result.third.username == req.session.curr_user.username){
-                var deleteUpdate = {
-                  teamname: result.teamname,
-                  update: result.teamname+" has been deleted by " + req.session.curr_user.full_name + " ("+ req.session.curr_user.username +"). [Deleted team]"
-                };
-                /* Update the users in the team */
-                updateUpdates(result.first, result.second, result.third, deleteUpdate);
-                /* Delete the team */
-                await db.deleteOne(Team, {teamname:name});
-                await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
-                  req.session.curr_user = result;
-                  req.session.header = 'Delete Team';
-                  req.session.message = 'Team Successfully Deleted!';
-                  req.session.link = '/teamPage';
-                  req.session.back = 'Teams Dashboard';
-                  goMessage(req, res);
-                });
-              }else{
-                req.session.header = 'Team Information';
-                req.session.message = "Cannot delete " + name + " since you're not in the team!";
+        var teamID = sanitize(req.query.team);
+        /* Find the team */
+        await db.findOne(Team, {_id:teamID}, async function(result){
+          if(result){ /* If the team is found, proceed */
+            var name = result.teamname;
+            if(result.first._id == req.session.curr_user._id || result.second._id == req.session.curr_user._id || result.third._id == req.session.curr_user._id){
+              var deleteUpdate = {
+                teamID: result._id,
+                teamname: name,
+                update: name+" has been deleted by " + req.session.curr_user.full_name + " ("+ req.session.curr_user.username +"). [Deleted team]"
+              };
+              /* Update the users in the team */
+              updateUpdates(result.first, result.second, result.third, deleteUpdate);
+              /* Delete the team */
+              await db.deleteOne(Team, {teamname:name});
+              await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
+                req.session.curr_user = result;
+                req.session.header = 'Delete Team';
+                req.session.message = 'Team Successfully Deleted!';
                 req.session.link = '/teamPage';
-                req.session.back = 'Team Dashboard';
+                req.session.back = 'Teams Dashboard';
                 goMessage(req, res);
-              }
+              });
             }else{
-              req.session.header = 'Delete Team';
-              req.session.message = 'Error in Delete Team! Cannot find team ' + name + '.';
+              req.session.header = 'Team Information';
+              req.session.message = "Cannot delete " + name + " since you're not in the team!";
               req.session.link = '/teamPage';
-              req.session.back = 'Teams Dashboard';
+              req.session.back = 'Team Dashboard';
               goMessage(req, res);
             }
-          });
-        }else{
-          req.session.header = 'Team Information';
-          req.session.message = "Error in leaving team! Invalid Team Name entered.";
-          req.session.link = '/teamPage';
-          req.session.back = 'Team Dashboard';
-          goMessage(req, res);
-        }
+          }else{
+            req.session.header = 'Delete Team';
+            req.session.message = 'Error in Delete a Team! Team not found.';
+            req.session.link = '/teamPage';
+            req.session.back = 'Teams Dashboard';
+            goMessage(req, res);
+          }
+        });
       }
     }else{
       goHome(req, res);
@@ -1072,9 +1088,9 @@ const team_controller = {
     reset(req);
     if(req.session.curr_user){
       /* Build the query to find all the teams of the user */
-      first_query = {"first.username":req.session.curr_user.username};
-      second_query = {"second.username":req.session.curr_user.username};
-      third_query = {"third.username":req.session.curr_user.username};
+      first_query = {"first._id":req.session.curr_user._id};
+      second_query = {"second._id":req.session.curr_user._id};
+      third_query = {"third._id":req.session.curr_user._id};
       team_query = {"teamname": {$ne: null}};
       whole_query = {$and: [team_query, {$or: [first_query, second_query, third_query]}]};
       /* Find all of the teams of the user */
@@ -1162,12 +1178,36 @@ const team_controller = {
   teamUpdates: async function(req, res){
     reset(req);
     if(req.session.curr_user){
-      var render = 'app/teams/teamUpdates';
-      var pagedetails = {
-        pagename: "Team Updates",
-        curr_user: req.session.curr_user
-      };
-      renderPage(req, res, render, pagedetails);
+      await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
+        if(result){
+          var finalUpdates = [];
+          if(result.updates){
+            for(i = 0; i < result.updates.length; i++){
+              var temp = {
+                teamID: result.updates[i].teamID,
+                teamname: result.updates[i].teamname,
+                update: result.updates[i].update,
+                link: '/teamInfo',
+                index: i
+              };
+              finalUpdates.push(temp);
+            }
+          }
+          var render = 'app/teams/teamUpdates';
+          var pagedetails = {
+            pagename: "Team Updates",
+            curr_user: req.session.curr_user,
+            updates: finalUpdates
+          };
+          renderPage(req, res, render, pagedetails);
+        }else{
+          req.session.header = 'Team Updates';
+          req.session.message = 'Error in Team Updates! Please Try Again Later.';
+          req.session.link = '/teamPage';
+          req.session.back = 'Teams Dashboard';
+          goMessage(req, res);
+        }
+      });
     }else{
       goHome(req, res);
     }
@@ -1185,13 +1225,13 @@ const team_controller = {
         goMessage(req, res);
       }else{
         var index = sanitize(req.query.index);
-        await db.findOne(User, {username: req.session.curr_user.username}, async function(result){
+        await db.findOne(User, {_id: req.session.curr_user._id}, async function(result){
           if(result){ /* If user is found, proceed */
             var updated = result.updates;
             /* Delete the update */
             updated.splice(index, 1);
             /* Update the account of the user */
-            await db.findOneAndUpdate(User, {username: req.session.curr_user.username}, {$set:{"updates":updated}}, async function(updated_user){
+            await db.findOneAndUpdate(User, {_id: req.session.curr_user._id}, {$set:{"updates":updated}}, async function(updated_user){
               if(updated_user){
                 req.session.header = 'Team Update';
                 req.session.message = 'Team Update Successfully Deleted!';
@@ -1231,52 +1271,62 @@ const team_controller = {
         req.session.back = 'Team Dashboard';
         goMessage(req, res);
       }else{
-        var name = sanitize(req.query.teamname);
+        var teamID = sanitize(req.query.team);
         /* Find the user */
-        await db.findOne(User, {username: req.session.curr_user.username}, async function(result){
+        await db.findOne(User, {_id: req.session.curr_user._id}, async function(result){
           if(result){ /* If found, find the team within the updates array */
-            var updates = result.updates;
-            if(updates){
-              var valid = 0;
-              for(i = 0; i < updates.length; i++){
-                if(updates[i].teamname == name){
-                  valid = 1;
-                  break;
+            await db.findOne(Team, {_id:teamID}, async function(foundTeam){
+              if(foundTeam){
+                var updates = result.updates;
+                if(updates){
+                  var valid = 0;
+                  for(i = 0; i < updates.length; i++){
+                    if(updates[i].teamname == foundTeam.teamname){
+                      valid = 1;
+                      break;
+                    }
+                  }
+                  if(valid == 1){
+                    var pagedetails = {
+                      pagename: 'Delete All Team Updates',
+                      curr_user:req.session.curr_user,
+                      title: 'Delete All Team Updates',
+                      teamname: foundTeam.teamname,
+                      message_one: 'You are deleting all your team updates for',
+                      message_two: 'All Team Updates will be unrecoverable after.',
+                      message_three: 'Kindly click Confirm to proceed deleting.',
+                      proceed: 'Confirm',
+                      proceed_link: '/confirmDeleteAll?teamname='+foundTeam.teamname,
+                      cancel: 'Cancel',
+                      cancel_link: '/teamInfo?teamname='+foundTeam.teamname
+                    };
+                    var render = 'app/layout/base_teams';
+                    renderPage(req, res, render, pagedetails);
+                  }else{
+                    req.session.header = 'Delete All Team Updates';
+                    req.session.message = "No updates to delete!";
+                    req.session.link = '/teamPage';
+                    req.session.back = 'Teams Dashboard';
+                    goMessage(req, res);
+                  }
+                }else{
+                  req.session.header = 'Delete All Team Updates';
+                  req.session.message = "No updates to delete!";
+                  req.session.link = '/teamPage';
+                  req.session.back = 'Teams Dashboard';
+                  goMessage(req, res);
                 }
-              }
-              if(valid == 1){
-                var pagedetails = {
-                  pagename: 'Delete All Team Updates',
-                  curr_user:req.session.curr_user,
-                  title: 'Delete All Team Updates',
-                  teamname: name,
-                  message_one: 'You are deleting all your team updates for',
-                  message_two: 'All Team Updates will be unrecoverable after.',
-                  message_three: 'Kindly click Confirm to proceed deleting.',
-                  proceed: 'Confirm',
-                  proceed_link: '/confirmDeleteAll?teamname='+name,
-                  cancel: 'Cancel',
-                  cancel_link: '/teamInfo?teamname='+name
-                };
-                var render = 'app/layout/base_teams';
-                renderPage(req, res, render, pagedetails);
               }else{
                 req.session.header = 'Delete All Team Updates';
-                req.session.message = "No updates to delete!";
+                req.session.message = "Error in deleting updates! Cannot find team, please try again later.";
                 req.session.link = '/teamPage';
                 req.session.back = 'Teams Dashboard';
                 goMessage(req, res);
               }
-            }else{
-              req.session.header = 'Delete All Team Updates';
-              req.session.message = "No updates to delete!";
-              req.session.link = '/teamPage';
-              req.session.back = 'Teams Dashboard';
-              goMessage(req, res);
-            }
+            });
           }else{
             req.session.header = 'Delete All Team Updates';
-            req.session.message = "Error in deleting updates of the " + name + "! Please Try again later.";
+            req.session.message = "Error in deleting updates! Please Try again later.";
             req.session.link = '/teamPage';
             req.session.back = 'Teams Dashboard';
             goMessage(req, res);
@@ -1299,18 +1349,19 @@ const team_controller = {
         req.session.back = 'Team Dashboard';
         goMessage(req, res);
       }else{
-        var name = sanitize(req.query.teamname);
+        var teamID = sanitize(req.query.team);
         /* Find the team */
-        await db.findOne(Team, {teamname:name}, async function(result){
+        await db.findOne(Team, {_id:teamID}, async function(result){
           if(result){ /* If team is found, proceed */
+            var name = result.teamname;
             /* Find the user */
-            await db.findOne(User, {username:req.session.curr_user.username}, async function(foundUser){
+            await db.findOne(User, {_id:req.session.curr_user._id}, async function(foundUser){
               if(foundUser){ /* If user is found, proceed */
                 var newUpdates = [];
                 if(foundUser.updates){
                   /* Delete all team updates connected to the team */
                   for(i = 0; i < foundUser.updates.length; i++){
-                    if(foundUser.updates[i].teamname != result.teamname){
+                    if(foundUser.updates[i].teamname != name){
                       var temp = {
                         teamname: foundUser.updates[i].teamname,
                         update: foundUser.updates[i].update
@@ -1319,18 +1370,18 @@ const team_controller = {
                     }
                   }
                   /* Update the user */
-                  await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set:{"updates":newUpdates}}, async function(updated){
+                  await db.findOneAndUpdate(User, {_id:req.session.curr_user._id}, {$set:{"updates":newUpdates}}, async function(updated){
                     req.session.curr_user = updated;
                     req.session.header = 'Delete All Team Updates';
                     req.session.message = "All Team Updates for " + name + " were successfully deleted!";
-                    req.session.link = '/teamInfo?teamname='+result.teamname;
+                    req.session.link = '/teamInfo?team='+result._id;
                     req.session.back = 'Team Info';
                     goMessage(req, res);
                   });
                 }else{
                   req.session.header = 'Delete All Team Updates';
                   req.session.message = "All Team Updates for " + name + " were successfully deleted!";
-                  req.session.link = '/teamInfo?teamname='+result.teamname;
+                  req.session.link = '/teamInfo?team='+result._id;
                   req.session.back = 'Team Info';
                   goMessage(req, res);
                 }
@@ -1344,7 +1395,7 @@ const team_controller = {
             });
           }else{
             req.session.header = 'Delete All Team Updates';
-            req.session.message = "Error in deleting updates of  " + name + "! Please Try again later.";
+            req.session.message = "Error in deleting team updates! Please Try again later.";
             req.session.link = '/teamPage';
             req.session.back = 'Teams Dashboard';
             goMessage(req, res);
@@ -1632,13 +1683,16 @@ async function updateTeamname(old_team, new_team, user){
         var updated = [];
         for(i = 0; i < foundUser.updates.length; i++){
           var temp;
-          if(foundUser.updates[i].teamname == old_team){
+          if(foundUser.updates[i].teamID.toString() == old_team){
+            console.log(foundUser.updates[i].teamID);
             temp = {
+              teamID: foundUser.updates[i].teamID,
               teamname: new_team,
               update: foundUser.updates[i].update
             }
           }else{
             temp = {
+              teamID: foundUser.updates[i].teamID,
               teamname: foundUser.updates[i].teamname,
               update: foundUser.updates[i].update
             }
@@ -1661,6 +1715,7 @@ async function updateTeam(req, res, current, teamname, team){
     await db.updateOne(Team, {teamname:current.teamname}, {$set: {teamname:teamname, first:first, second:second, third:third}});
     update_teamname = teamname;
     editUpdate = {
+      teamID: current._id,
       teamname: update_teamname,
       update: update_teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Edited Members and Team Name]"
     };
@@ -1668,6 +1723,7 @@ async function updateTeam(req, res, current, teamname, team){
     await db.updateOne(Team, {teamname:current.teamname}, {$set: {first:first, second:second, third:third}});
     update_teamname = current.teamname;
     editUpdate = {
+      teamID: current._id,
       teamname: update_teamname,
       update: update_teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Edited Members]"
     };
@@ -1676,14 +1732,15 @@ async function updateTeam(req, res, current, teamname, team){
   await updateUpdates(first, second, third, editUpdate);
   /* If the team name was changed, update the updates connected */
   if(teamname){
-    updateTeamname(current.teamname, teamname, first.username);
-    updateTeamname(current.teamname, teamname, second.username);
-    updateTeamname(current.teamname, teamname, third.username);
+    updateTeamname(current._id, teamname, first.username);
+    updateTeamname(current._id, teamname, second.username);
+    updateTeamname(current._id, teamname, third.username);
   }
   /* If the previous leader is no longer in the team, create an update and send */
   if(current.first.username != first.username && current.first.username != second.username && current.first.username != third.username){
     await db.updateOne(User, {username:current.first.username}, {$push:{"updates":editUpdate}});
     var removeUpdate = {
+      teamID: current._id,
       teamname: update_teamname,
       update: current.first.full_name + " (" + current.first.username + ")" +" was removed by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Removed Member]"
     };
@@ -1696,6 +1753,7 @@ async function updateTeam(req, res, current, teamname, team){
   if(current.second.username != first.username && current.second.username != second.username && current.second.username != third.username){
     await db.updateOne(User, {username:current.second.username}, {$push:{"updates":editUpdate}});
     var removeUpdate = {
+      teamID: current._id,
       teamname: update_teamname,
       update: current.second.full_name + " (" + current.second.username + ")" +" was removed by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Removed Member]"
     };
@@ -1708,6 +1766,7 @@ async function updateTeam(req, res, current, teamname, team){
   if(current.third.username != first.username && current.third.username != second.username && current.third.username != third.username){
     await db.updateOne(User, {username:current.third.username}, {$push:{"updates":editUpdate}});
     var removeUpdate = {
+      teamID: current._id,
       teamname: update_teamname,
       update: current.third.full_name + " (" + current.third.username + ")" +" was removed by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Removed Member]"
     };
@@ -1999,6 +2058,7 @@ async function renderPage(req, res, render, pagedetails){
             else
               link = '/teamInfo'
             var temp = {
+              teamID: result.updates[i].teamID,
               teamname: result.updates[i].teamname,
               teamupdate: result.updates[i].update,
               link: link,
@@ -2013,7 +2073,7 @@ async function renderPage(req, res, render, pagedetails){
           }
         }
       }
-      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
+      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first._id":req.session.curr_user._id}, {"gov.second._id":req.session.curr_user._id}, {"gov.third._id":req.session.curr_user._id}, {"opp.first._id":req.session.curr_user._id}, {"opp.second._id":req.session.curr_user._id}, {"opp.third._id":req.session.curr_user._id}, {"adjudicator._id":req.session.curr_user._id}]}]};
       /* If they have debate invites, store them in an array */
       await db.findMany(Match, wholeQuery, function(result){
         if(result){

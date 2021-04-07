@@ -14,29 +14,26 @@ block content
           .card-header.py-3.bg-success
             .row.text-light.bg-success
               .col
-                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.gov.teamname) #{pagedetails.match.gov.teamname}
-                br
+                .text-primary.font-weight-bold.text-light.m-0 #{pagedetails.match.gov.teamname}
                 span Government
               .col
-                h1.text-right Total: #{pagedetails.match.govTotal}
+                h1.text-right #{pagedetails.match.govTotal}
         else if(pagedetails.match.winner == pagedetails.match.opp.teamname)
           .card-header.py-3.bg-danger
             .row.text-light.bg-danger
               .col
-                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.gov.teamname) #{pagedetails.match.gov.teamname}
-                br
+                .text-primary.font-weight-bold.text-light.m-0 #{pagedetails.match.gov.teamname}
                 span Government
               .col
-                h1.text-right Total: #{pagedetails.match.govTotal}
+                h1.text-right #{pagedetails.match.govTotal}
         else
           .card-header.py-3.bg-info
             .row.text-light.bg-info
               .col
-                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.gov.teamname) #{pagedetails.match.gov.teamname}
-                br
+                .text-primary.font-weight-bold.text-light.m-0 #{pagedetails.match.gov.teamname}
                 span Government
               .col
-                h1.text-right Total: #{pagedetails.match.govTotal}
+                h1.text-right #{pagedetails.match.govTotal}
         ul.list-group.list-group-flush
           li.list-group-item(style='font-size: 18px;')
             .row.align-items-center.no-gutters
@@ -71,29 +68,26 @@ block content
           .card-header.py-3.bg-success
             .row.text-light.bg-success
               .col
-                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.opp.teamname) #{pagedetails.match.opp.teamname}
-                br
+                .text-primary.font-weight-bold.text-light.m-0 #{pagedetails.match.opp.teamname}
                 span Opposition
               .col
-                h1.text-right Total: #{pagedetails.match.oppTotal}
+                h1.text-right #{pagedetails.match.oppTotal}
         else if(pagedetails.match.winner == pagedetails.match.gov.teamname)
           .card-header.py-3.bg-danger
             .row.text-light.bg-danger
               .col
-                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.opp.teamname) #{pagedetails.match.opp.teamname}
-                br
+                .text-primary.font-weight-bold.text-light.m-0 #{pagedetails.match.opp.teamname}
                 span Opposition
               .col
-                h1.text-right Total: #{pagedetails.match.oppTotal}
+                h1.text-right #{pagedetails.match.oppTotal}
         else
           .card-header.py-3.bg-info
             .row.text-light.bg-info
               .col
-                a.text-primary.font-weight-bold.text-light.m-0(href='/teamInfo?teamname='+pagedetails.match.opp.teamname) #{pagedetails.match.opp.teamname}
-                br
+                .text-primary.font-weight-bold.text-light.m-0 #{pagedetails.match.opp.teamname}
                 span Opposition
               .col
-                h1.text-right Total: #{pagedetails.match.oppTotal}
+                h1.text-right #{pagedetails.match.oppTotal}
         ul.list-group.list-group-flush
           li.list-group-item(style='font-size: 18px;')
             .row.align-items-center.no-gutters

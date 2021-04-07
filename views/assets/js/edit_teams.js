@@ -127,6 +127,7 @@ $(document).ready(function () {
     var current_teamname = $('#current_team').val();
     resetEverything();
     if(!validator.isEmpty(teamname)){
+      $('#invalid_editAll').text('');
       if(!validator.matches(teamname, nameFormat)){
         $('#edit_teamname').css('border', '1px solid #d66');
         $('#invalid_editTeam').text('Invalid Team Name');
@@ -163,6 +164,7 @@ $(document).ready(function () {
     var first = $('#edit_first').val();
     var current_first = $('#edit_firstCurrent').val();
     if(!validator.isEmpty(first)){
+      $('#invalid_editAll').text('');
       if(!validator.matches(first, userFormat) && !validator.isEmail(first)){
         $('#edit_first').css('border', '1px solid #d66');
         $('#invalid_editFirst').text('Invalid Username / Email');
@@ -222,6 +224,7 @@ $(document).ready(function () {
     var second = $('#edit_second').val();
     var current_second = $('#edit_secondCurrent').val();
     if(!validator.isEmpty(second)){
+      $('#invalid_editAll').text('');
       if(!validator.matches(second, userFormat) && !validator.isEmail(second)){
         $('#edit_second').css('border', '1px solid #d66');
         $('#invalid_editSecond').text('Invalid Username / Email');
@@ -281,6 +284,7 @@ $(document).ready(function () {
     var third = $('#edit_third').val();
     var current_third = $('#edit_thirdCurrent').val();
     if(!validator.isEmpty(third)){
+      $('#invalid_editAll').text('');
       if(!validator.matches(third, userFormat) && !validator.isEmail(third)){
         $('#edit_third').css('border', '1px solid #d66');
         $('#invalid_editThird').text('Invalid Username / Email');

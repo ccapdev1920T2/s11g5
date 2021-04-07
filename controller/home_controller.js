@@ -106,7 +106,10 @@ const home_controller = {
       if(!req.session.guest_fields){
         req.session.guest_fields = {email:0, name:0, insti:0};
       }
-      res.render('app/guest/guestLogin', {pagename: 'Guest Login', invalid:req.session.guest_fields.email});
+      res.render('app/guest/guestLogin', {
+        pagename: 'Guest Login',
+        invalid:req.session.guest_fields.email
+      });
       res.end();
     }
   },
@@ -160,7 +163,12 @@ const home_controller = {
       if(!req.session.guest_fields){
         req.session.guest_fields = {email:0, name:0, insti:0};
       }
-      res.render('app/guest/guestName', {pagename: 'Guest Name', guest_user:req.session.guest_user, name:req.session.guest_fields.name, insti:req.session.guest_fields.insti});
+      res.render('app/guest/guestName', {
+        pagename: 'Guest Name',
+        guest_user:req.session.guest_user,
+        name:req.session.guest_fields.name,
+        insti:req.session.guest_fields.insti
+      });
       res.end();
     }else{
       goHome(req, res);
@@ -275,26 +283,6 @@ const home_controller = {
         pass: req.session.reg_fields.pass
       });
       res.end();
-    }
-  },
-
-  /* Check if username is already registered */
-  checkUsername: async function(req, res){
-    if(req.query.username){
-      var username = sanitize(req.query.username);
-      await db.findOne(User, {username:username}, function(result){
-        res.send(result);
-      });
-    }
-  },
-
-  /* Check if email is already registered */
-  checkEmail: async function(req, res){
-    if(req.query.email){
-      var email = sanitize(req.query.email);
-      await db.findOne(User, {email:email}, function(result){
-        res.send(result);
-      });
     }
   },
 
@@ -434,6 +422,26 @@ const home_controller = {
     }
   },
 
+  /* Check if username is already registered */
+  checkUsername: async function(req, res){
+    if(req.query.username){
+      var username = sanitize(req.query.username);
+      await db.findOne(User, {username:username}, function(result){
+        res.send(result);
+      });
+    }
+  },
+
+  /* Check if email is already registered */
+  checkEmail: async function(req, res){
+    if(req.query.email){
+      var email = sanitize(req.query.email);
+      await db.findOne(User, {email:email}, function(result){
+        res.send(result);
+      });
+    }
+  },
+
   /* Load the tutorial page */
   welcome: function(req, res){
     reset(req);
@@ -484,6 +492,26 @@ const home_controller = {
     }
   },
 
+  /* Display the message */
+  displayMessage: function(req, res){
+    if(req.session.pagename && req.session.header && req.session.message && req.session.link && req.session.back && (req.session.curr_user || req.session.guest_user)){
+      var pagedetails = {
+        pagename: req.session.pagename,
+        header: req.session.header,
+        message: req.session.message,
+        link: req.session.link,
+        back: req.session.back
+      };
+      res.render('app/layout/message', {
+        pagedetails: pagedetails,
+        curr_user:req.session.curr_user
+      });
+      res.end();
+    }else{
+      goHome(req, res);
+    }
+  },
+
   /* Log the user out of Tabcore */
   getLogout: async function(req, res) {
     if(req.session.guest_user){
@@ -510,26 +538,6 @@ const home_controller = {
     req.logout();
     res.redirect('/');
     res.end();
-  },
-
-  /* Display the message */
-  displayMessage: function(req, res){
-    if(req.session.pagename && req.session.header && req.session.message && req.session.link && req.session.back && (req.session.curr_user || req.session.guest_user)){
-      var pagedetails = {
-        pagename: req.session.pagename,
-        header: req.session.header,
-        message: req.session.message,
-        link: req.session.link,
-        back: req.session.back
-      };
-      res.render('app/layout/message', {
-        pagedetails: pagedetails,
-        curr_user:req.session.curr_user
-      });
-      res.end();
-    }else{
-      goHome(req, res);
-    }
   }
 }
 
@@ -587,6 +595,7 @@ async function renderPage(req, res, render, pagedetails){
             else
               link = '/teamInfo'
             var temp = {
+              teamID: result.updates[i].teamID,
               teamname: result.updates[i].teamname,
               teamupdate: result.updates[i].update,
               link: link,
@@ -601,7 +610,7 @@ async function renderPage(req, res, render, pagedetails){
           }
         }
       }
-      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}, {"adjudicator.username":req.session.curr_user.username}]}]};
+      var wholeQuery = {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status:'Ongoing'}, {$or: [{"gov.first._id":req.session.curr_user._id}, {"gov.second._id":req.session.curr_user._id}, {"gov.third._id":req.session.curr_user._id}, {"opp.first._id":req.session.curr_user._id}, {"opp.second._id":req.session.curr_user._id}, {"opp.third._id":req.session.curr_user._id}, {"adjudicator._id":req.session.curr_user._id}]}]};
       /* If they have debate invites, store them in an array */
       await db.findMany(Match, wholeQuery, function(result){
         if(result){

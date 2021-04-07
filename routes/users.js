@@ -99,8 +99,8 @@ app.get('/teamList', team_controller.teamList);
 app.post('/teamList', team_controller.teamList);
 
 /* See the information about a team */
-app.get('/teamInfo', team_helper.teamValidation(), team_controller.teamInfo);
-app.post('/teamInfo', team_helper.teamValidation(), team_controller.teamInfo);
+app.get('/teamInfo', team_helper.teamIDValidation(), team_controller.teamInfo);
+app.post('/teamInfo', team_helper.teamIDValidation(), team_controller.teamInfo);
 
 /* See all the team updates of a registered user */
 app.get('/teamUpdates', team_controller.teamUpdates);
@@ -115,28 +115,28 @@ app.get('/editChosenTeam', team_controller.editChosenTeam);
 app.post('/editChosenTeam', edit_helper.editValidation(), team_controller.editChosenTeam);
 
 /* Leave a team */
-app.get('/confirmLeave', team_helper.teamValidation(), team_controller.confirmLeave);
-app.post('/confirmLeave', team_helper.teamValidation(), team_controller.confirmLeave);
-app.get('/leaveTeam', team_helper.teamValidation(), team_controller.leaveTeam);
-app.post('/leaveTeam', team_helper.teamValidation(), team_controller.leaveTeam);
+app.get('/confirmLeave', team_helper.teamIDValidation(), team_controller.confirmLeave);
+app.post('/confirmLeave', team_helper.teamIDValidation(), team_controller.confirmLeave);
+app.get('/leaveTeam', team_helper.teamIDValidation(), team_controller.leaveTeam);
+app.post('/leaveTeam', team_helper.teamIDValidation(), team_controller.leaveTeam);
 
 /* Delete a Team Update */
-app.get('/deleteUpdate', team_helper.teamValidation(), team_controller.deleteUpdate);
-app.post('/deleteUpdate', team_helper.teamValidation(), team_controller.deleteUpdate);
-app.get('/deleteAllTeamUpdates', team_helper.teamValidation(), team_controller.deleteAllTeamUpdates);
-app.post('/deleteAllTeamUpdates', team_helper.teamValidation(), team_controller.deleteAllTeamUpdates);
-app.get('/confirmDeleteAllTeam', team_helper.teamValidation(), team_controller.confirmDeleteAllTeam);
-app.post('/confirmDeleteAllTeam', team_helper.teamValidation(), team_controller.confirmDeleteAllTeam);
+app.get('/deleteUpdate', team_helper.indexValidation(), team_controller.deleteUpdate);
+app.post('/deleteUpdate', team_helper.indexValidation(), team_controller.deleteUpdate);
+app.get('/deleteAllTeamUpdates', team_helper.teamIDValidation(), team_controller.deleteAllTeamUpdates);
+app.post('/deleteAllTeamUpdates', team_helper.teamIDValidation(), team_controller.deleteAllTeamUpdates);
+app.get('/confirmDeleteAllTeam', team_helper.teamIDValidation(), team_controller.confirmDeleteAllTeam);
+app.post('/confirmDeleteAllTeam', team_helper.teamIDValidation(), team_controller.confirmDeleteAllTeam);
 app.get('/deleteAllUpdates', team_controller.deleteAllUpdates);
 app.post('/deleteAllUpdates', team_controller.deleteAllUpdates);
 app.get('/confirmDeleteAll', team_controller.confirmDeleteAll);
 app.post('/confirmDeleteAll', team_controller.confirmDeleteAll);
 
 /* Delete a Team */
-app.get('/confirmDeleteTeam', team_helper.teamValidation(), team_controller.confirmDeleteTeam);
-app.post('/confirmDeleteTeam',team_helper.teamValidation(),  team_controller.confirmDeleteTeam);
-app.get('/deleteTeam', team_helper.teamValidation(), team_controller.deleteTeam);
-app.post('/deleteTeam', team_helper.teamValidation(), team_controller.deleteTeam);
+app.get('/confirmDeleteTeam', team_helper.teamIDValidation(), team_controller.confirmDeleteTeam);
+app.post('/confirmDeleteTeam',team_helper.teamIDValidation(),  team_controller.confirmDeleteTeam);
+app.get('/deleteTeam', team_helper.teamIDValidation(), team_controller.deleteTeam);
+app.post('/deleteTeam', team_helper.teamIDValidation(), team_controller.deleteTeam);
 
 /* Find a Round's Statistics */
 app.get('/roundStats', stats_controller.getStats);
@@ -147,8 +147,8 @@ app.get('/roundroomStatistics', stats_helper.statsValidation(), stats_controller
 app.post('/roundroomStatistics', stats_helper.statsValidation(), stats_controller.roundStats);
 
 /* See all of a user's previous matches */
-app.get('/matchHistory', stats_controller.matchHistory);
-app.post('/matchHistory', stats_controller.matchHistory);
+app.get('/roundHistory', stats_controller.roundHistory);
+app.post('/roundHistory', stats_controller.roundHistory);
 
 /* Create a New Round or Continue creating / editing a round */
 app.get('/createRound', new_controller.createRound);

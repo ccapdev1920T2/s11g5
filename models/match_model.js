@@ -8,20 +8,24 @@ var MatchSchema = new mongoose.Schema({
   roundID: String,
   motion: String,
   gov: {
+    _id: {type: mongoose.ObjectId},
     teamname: {type: String},
     first: {
+      _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
       institution: {type: String},
     },
     second: {
+      _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
       institution: {type: String},
     },
     third: {
+      _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
@@ -29,20 +33,24 @@ var MatchSchema = new mongoose.Schema({
     }
   },
   opp: {
+    _id: {type: mongoose.ObjectId},
     teamname: {type: String},
     first: {
+      _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
       institution: {type: String},
     },
     second: {
+      _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
       institution: {type: String},
     },
     third: {
+      _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
@@ -50,12 +58,14 @@ var MatchSchema = new mongoose.Schema({
     }
   },
   adjudicator: {
+    _id: {type: mongoose.ObjectId},
     username: {type: String},
     email: {type: String},
     full_name: {type: String},
     institution: {type: String},
   },
   creator: {
+    _id: {type: mongoose.ObjectId},
     username: {type: String},
     email: {type: String},
     full_name: {type: String},

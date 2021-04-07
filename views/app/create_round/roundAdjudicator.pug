@@ -12,7 +12,7 @@ block content
             .card-body
               ul.list-group.list-group-flush
                 li.list-group-item
-                  h3.text-dark.mb-0.text-center ADJUDICATOR
+                  h3.text-warning.mb-0.text-center ADJUDICATOR
                   br
                   form.user(action="/matchAdjudicator?roundID="+pagedetails.match.roundID+"&status="+pagedetails.match.status, method="post")
                     .form-row
@@ -35,19 +35,19 @@ block content
                       br
                       a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/editRound?roundID='+pagedetails.match.roundID) Back
                 li.list-group-item
-                  h2.text-dark.mb-0.text-center ROUND ID
+                  h2.text-danger.mb-0.text-center ROUND ID
                   h4.text-dark.mb-0.text-center #{pagedetails.match.roundID}
                   br
                 li.list-group-item
                   br
-                  h3.text-dark.mb-0.text-center MOTION
+                  h3.text-success.mb-0.text-center MOTION
                   h6.text-dark.mb-0.text-center #{pagedetails.match.motion}
                   br
                 li.list-group-item
                   br
-                  h3.text-dark.mb-0.text-center TEAMS
+                  h3.text-primary.mb-0.text-center TEAMS
                   br
-                  h4.text-dark.mb-0.text-center GOVERNMENT
+                  h4.text-primary.mb-0.text-center GOVERNMENT
                   h6.text-dark.mb-0.text-center #{pagedetails.match.gov.teamname}
                   br
                   h6.text-dark.mb-0 Leader: #{pagedetails.match.gov.first.full_name}
@@ -57,7 +57,7 @@ block content
                   h6.text-dark.mb-0 Whip: #{pagedetails.match.gov.third.full_name}
                   br
                   br
-                  h4.text-dark.mb-0.text-center OPPOSITION
+                  h4.text-primary.mb-0.text-center OPPOSITION
                   h6.text-dark.mb-0.text-center #{pagedetails.match.opp.teamname}
                   br
                   h6.text-dark.mb-0 Leader: #{pagedetails.match.opp.first.full_name}
@@ -76,36 +76,36 @@ block content
             .card-body
               ul.list-group.list-group-flush
                 li.list-group-item
-                  h4.text-dark.mb-0.text-center Round ID
+                  h4.text-danger.mb-0.text-center Round ID
                   h6.mb-0.text-center The unique identifier of the round you are building.
                   br
                 li.list-group-item
                   br
-                  h4.text-dark.mb-0.text-center You can choose any of the following roles in a round:
+                  h4.text-dark.mb-0.text-center You may choose any of the following roles in a round:
                   br
-                  h5.mb-0.text-dark Adjudicator
+                  h5.mb-0.text-warning Adjudicator
                   h6.mb-0 - The Adjudicators are the ones to judge the round. They can call on the next speaker, end the round, give all speakers their grades, and give any comments that they may have.
                   br
-                  h5.mb-0.text-dark Government Speaker
+                  h5.mb-0.text-warning Government Speaker
                   h6.mb-0 - One of the speakers who agrees with the motion.
                   br
-                  h5.mb-0.text-dark Opposition Speaker
+                  h5.mb-0.text-warning Opposition Speaker
                   h6.mb-0 - One of the speakers who does not agree with the motion.
                   br
                 li.list-group-item
                   br
-                  h4.text-dark.mb-0.text-center Motion
+                  h4.text-success.mb-0.text-center Motion
                   h6.mb-0.text-center The Motion is the topic of this debate round.
                   br
                 li.list-group-item
                   br
-                  h4.text-dark.mb-0.text-center Teams
-                  h6.mb-0.text-center Take note! Only existing teams are allowed to participate in debates and users cannot be in both teams. Proceed to your teams dashboard if you want to enter a new team.
+                  h4.text-primary.mb-0.text-center Teams
+                  h6.mb-0.text-center.text-dark Take note! Only existing teams are allowed to participate in debates and users cannot be in both teams. Proceed to your teams dashboard if you want to enter a new team.
                   br
-                  h5.mb-0.text-dark Government Team
+                  h5.mb-0.text-primary Government Team
                   h6.mb-0 - The team consisting of members who agree with the motion.
                   br
-                  h5.mb-0.text-dark Opposition Team
+                  h5.mb-0.text-primary Opposition Team
                   h6.mb-0 - The team consisting of members who do not agree with the motion.
                   br
 

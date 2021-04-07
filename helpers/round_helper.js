@@ -23,7 +23,10 @@ const round_helper = {
       query('roundID', 'empty').notEmpty(),
       query('roundID', 'format').isAlphanumeric(),
       query('status', 'empty').notEmpty(),
-      query('status', 'format').isAlpha(),
+      oneOf([
+        query('status').equals('Creating'),
+        query('status').equals('Editing')
+      ], 'choices'),
       check('user_role', 'empty').notEmpty(),
       check('motion', 'empty').notEmpty(),
       check('motion').matches(sentenceFormat),
@@ -40,7 +43,10 @@ const round_helper = {
       query('roundID', 'empty').notEmpty(),
       query('roundID', 'format').isAlphanumeric(),
       query('status', 'empty').notEmpty(),
-      query('status', 'format').isAlpha(),
+      oneOf([
+        query('status').equals('Creating'),
+        query('status').equals('Editing')
+      ], 'choices'),
       check('ad', 'empty').notEmpty(),
       check('ad', 'format').matches(userFormat)
     ];

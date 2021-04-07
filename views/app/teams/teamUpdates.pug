@@ -14,14 +14,14 @@ block content
                 th(style='text-align:center') Updates
                 th
             tbody
-                if (updates.length > 0)
-                  each update in updates
+                if (numUpdates > 0)
+                  each update in pagedetails.updates
                     tr
                       td
-                        a(href=update.link+'?teamname='+update.teamname) #{update.teamname}
-                      td #{update.teamupdate}
+                        a(href='/teamInfo?team='+update.teamID) #{update.teamname}
+                      td #{update.update}
                       td
-                        a.text-center.btn.btn-danger(href='/deleteUpdate?index='+update.index+'&teamname='+update.teamname)
+                        a.text-center.btn.btn-danger(href='/deleteUpdate?index='+update.index)
                           i.fa.fa-trash-o
                   tr
                     td
