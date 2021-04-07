@@ -37,10 +37,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bernicebetito/EDITED.git"
+    "url": "git+https://github.com/ccapdev1920T2/s11g5.git"
   },
   "bugs": {
     "url": "https://github.com/bernicebetito/EDITED/issues"
   },
-  "homepage": "https://github.com/bernicebetito/EDITED#readme"
+  "scripts": {
+    "start": "node index.js"
+  },
+  "homepage": "https://github.com/ccapdev1920T2/s11g5#readme"
 }
