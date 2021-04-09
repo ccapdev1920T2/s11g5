@@ -78,7 +78,7 @@ const settings_controller = {
         }else{
           if(paramUser == 1){
             /* Find the user's account */
-            await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
+            await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
               if(result){
                 await db.findOne(User, {email:mail}, async function(found){
                   /* if no user is registered with the indicated email, proceed with the process */
@@ -87,7 +87,7 @@ const settings_controller = {
                     res.redirect('/settings');
                     res.end();
                   }else{ /* Update the account of the user and get the result */
-                    await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {email:mail}}, async function(updated){
+                    await db.findOneAndUpdate(User, {_id:req.session.curr_user._id}, {$set: {email:mail}}, async function(updated){
                       /* Set the email details */
                       var email_content = {
                         text_content: "Hey, " + req.session.curr_user.full_name + "!\n\nYour email was changed to " + mail + ".",
@@ -107,7 +107,7 @@ const settings_controller = {
             });
           }else if(paramMail == 1){
             /* Find the user's account */
-            await db.findOne(User, {email:req.session.curr_user.email}, async function(result){
+            await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
               if(result){
                 await db.findOne(User, {username:uname}, async function(found){
                   if(found){ /* if no user is registered with the indicated username, proceed with the process */
@@ -115,7 +115,7 @@ const settings_controller = {
                     res.redirect('/settings');
                     res.end();
                   }else{ /* Update the account of the user and get the result */
-                    await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {username:uname}}, async function(result){
+                    await db.findOneAndUpdate(User, {_id:req.session.curr_user._id}, {$set: {username:uname}}, async function(result){
                       /* Set the email content */
                       var email_content = {
                         text_content: "Hey, " + req.session.curr_user.full_name + "!\n\nYour username was changed to " + uname + ".",
@@ -287,7 +287,7 @@ const settings_controller = {
       }else{
         var full_name = first_name + " " + last_name;
         /* Update the user's account */
-        await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, institution:institution}}, async function(result){
+        await db.findOneAndUpdate(User, {_id:req.session.curr_user._id}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, institution:institution}}, async function(result){
           /* Set the email content */
           var email_content = {
             html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and institution were recently changed to ' + full_name + ' and ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -318,7 +318,7 @@ const settings_controller = {
       }else{
         if(passOne === passTwo){ /* If new password and confirm password are equal, proceed */
           /* Find the user's account */
-          await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
+          await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
             if(result){ /* If the user's account is found, proceed */
               /* Check if the entered current password is valid */
               bcrypt.compare(curr, result.password, function(err, equal){
@@ -565,7 +565,7 @@ function goHome(req, res){
 /* Update both email and user */
 async function updateUserMail(req, res, uname, mail){
   /* Find the user's account */
-  await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
+  await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
     if(result){
       /* See if there are any users registered with the username and/or email entered */
       await db.findOne(User, {username:uname}, async function(found_user){
