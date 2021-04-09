@@ -515,7 +515,7 @@ const settings_controller = {
       });
       /* Set the email content */
       const mailDetails = {
-        from: 'tabcore.ccapdev@gmail.com',
+        from: 'tabcore@outlook.com',
         to: email,
         subject: 'Farewell from Tabcore',
         text: "Hey, " + full_name + "!\n\nFarewell from Tabcore!",
