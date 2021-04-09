@@ -359,7 +359,7 @@ const home_controller = {
             updates: []
           }
           /* Find the username and email entered. If found, reload with the errors */
-          await db.findOne(User, {$or: [{email:email}, {username:username}]}, function(result){
+          await db.findOne(User, {$or: [{email:email}, {username:username}]}, async function(result){
             if(!result){
               /* Set the details of the email */
               const mailDetails = {
@@ -375,7 +375,7 @@ const home_controller = {
                 }]
               };
               /* Send an email to the user welcoming them to Tabcore */
-              transpo.sendMail(mailDetails, function(err, result){
+              transpo.sendMail(mailDetails, async function(err, result){
                 if(err){
                   res.render('app/basics/register', {
                     pagename: 'Register',
