@@ -13,7 +13,7 @@ const transpo = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'tabcore.ccapdev@gmail.com',
-    pass: 'tabcoreCCAPDEV!'
+    pass: 't2bc0re_CC4PD3V!'
   }
 });
 

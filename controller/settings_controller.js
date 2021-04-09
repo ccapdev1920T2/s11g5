@@ -13,7 +13,7 @@ const transpo = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'tabcore.ccapdev@gmail.com',
-    pass: 'tabcoreCCAPDEV!'
+    pass: 't2bc0re_CC4PD3V!'
   }
 });
 
@@ -619,7 +619,6 @@ async function sendEmail(req, res, email_content, mail, updated){
   /* Send the email */
   transpo.sendMail(mailDetails, async function(err, result){
     if(err){
-      console.log(err || result);
       req.session.message = email_content.error_mess;
       goMessage(req, res);
     }else{
