@@ -21,7 +21,7 @@ block content
                           option(value='choose') Choose an option
                           if(pagedetails.teams.length > 0)
                             each team in pagedetails.teams
-                              option(value=team._id) #{team.teamname}
+                              option(value=team._id) #{team._id}
                       else
                         select#edit_choose.form-control(name='edit_choose')
                           option(value='choose') Choose an option
