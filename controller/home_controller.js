@@ -377,7 +377,6 @@ const home_controller = {
               /* Send an email to the user welcoming them to Tabcore */
               transpo.sendMail(mailDetails, function(err, result){
                 if(err){
-                  console.log(err || result);
                   res.render('app/basics/register', {
                     pagename: 'Register',
                     all: 0,
@@ -590,6 +589,7 @@ async function renderPage(req, res, render, pagedetails){
   var updateRem = 0, roundRem = 0;
   /* Find the user's account */
   await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
+    console.log(result);
     if(result){
       /* If they have team updates, store at most 5 updates in an array */
       if(result.updates){
