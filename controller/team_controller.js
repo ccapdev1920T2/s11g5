@@ -2065,7 +2065,7 @@ async function renderPage(req, res, render, pagedetails){
   var updateCount = 0, roundCount = 0;
   var updateRem = 0, roundRem = 0;
   /* Find the user's account */
-  await db.findOne(User, {username:req.session.curr_user.username}, async function(result){
+  await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
     if(result){
       /* If they have team updates, store at most 5 updates in an array */
       if(result.updates){
@@ -2117,17 +2117,17 @@ async function renderPage(req, res, render, pagedetails){
               break;
             }
           }
-          res.render(render, {
-            pagedetails: pagedetails,
-            rounds: finalRounds,
-            numRounds: roundCount,
-            roundRem: roundRem,
-            updates: finalUpdates,
-            numUpdates: updateCount,
-            updateRem: updateRem
-          });
-          res.end();
         }
+        res.render(render, {
+          pagedetails: pagedetails,
+          rounds: finalRounds,
+          numRounds: roundCount,
+          roundRem: roundRem,
+          updates: finalUpdates,
+          numUpdates: updateCount,
+          updateRem: updateRem
+        });
+        res.end();
       });
     }else{
       req.session.pagename = 'Error';
