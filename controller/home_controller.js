@@ -472,17 +472,13 @@ const home_controller = {
         }
         /* Update the user's account with the date of their latest debate then go to their dashboard */
         await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {dateoflast:latest}}, async function(result){
-          if(result){
-            req.session.curr_user = result;
-            var render = 'app/basics/dashboard';
-            var pagedetails = {
-              pagename: 'Dashboard',
-              curr_user:req.session.curr_user
-            };
-            renderPage(req, res, render, pagedetails);
-          }else{
-            goHome(req, res);
-          }
+          req.session.curr_user = result;
+          var render = 'app/basics/dashboard';
+          var pagedetails = {
+            pagename: 'Dashboard',
+            curr_user:req.session.curr_user
+          };
+          renderPage(req, res, render, pagedetails);
         });
       });
     }else if(req.session.guest_user){
