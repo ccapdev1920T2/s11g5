@@ -665,6 +665,7 @@ async function sendEmail(req, res, email_content, mail, updated){
       req.session.message = email_content.error_mess;
       goMessage(req, res);
     }else{
+      console.log(result);
       req.session.message = email_content.success_mess;
       goMessage(req, res);
     }
