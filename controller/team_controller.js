@@ -13,12 +13,15 @@ const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
 
 /* For emailing any user */
 const transpo = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
+  host: "smtp-mail.outlook.com",
+  secureConnection: false,
+  port: 587,
+  tls: {
+     ciphers:'SSLv3'
+  },
   auth: {
-    user: 'tabcore.ccapdev@gmail.com',
-    pass: 't2bc0re_CC4PD3V!'
+    user: 'tabcore@outlook.com',
+    pass: 't@bc0rEcc_pd3V!'
   }
 });
 
@@ -262,7 +265,7 @@ const team_controller = {
                               }else{
                                 /* Set the email content */
                                 const mailDetails = {
-                                  from: 'tabcore.ccapdev@gmail.com',
+                                  from: 'tabcore@outlook.com',
                                   to: maillist,
                                   subject: 'Invite to the team \'' + teamname + '\'',
                                   text: "Hey!\n\nYou were invited to join " + teamname + " team as a guest by " + req.session.curr_user.full_name + ".",
@@ -1799,7 +1802,7 @@ async function updateTeam(req, res, current, teamname, team){
   /* If any of the removed members are guest accounts, send them an email */
   if(maillist.length > 0){
     const mailDetails = {
-      from: 'tabcore.ccapdev@gmail.com',
+      from: 'tabcore@outlook.com',
       to: maillist,
       subject: 'Removal from the team \'' + update_teamname + '\'',
       text: "Hey!\n\nYou were removed from " + update_teamname + " team as a guest by " + req.session.curr_user.full_name + ".",
@@ -2006,7 +2009,7 @@ async function updateMembers(req, res, current, teamname){
                             update_teamname = current.teamname;
                           /* Set the email content */
                           const mailDetails = {
-                            from: 'tabcore.ccapdev@gmail.com',
+                            from: 'tabcore@outlook.com',
                             to: maillist,
                             subject: 'Invite to the team \'' + update_teamname + '\'',
                             text: "Hey!\n\nYou were invited to join " + update_teamname + " team as a guest by " + req.session.curr_user.full_name + ".",

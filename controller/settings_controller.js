@@ -647,6 +647,7 @@ async function updatesTeamsMatches(updated){
 async function sendEmail(req, res, email_content, mail, updated){
   /* Set the email content */
   const mailDetails = {
+    from: 'tabcore@outlook.com',
     to: mail,
     subject: 'Changes in Profile',
     text: email_content.text_content,
