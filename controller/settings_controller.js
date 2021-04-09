@@ -90,6 +90,8 @@ const settings_controller = {
                     res.end();
                   }else{ /* Update the account of the user and get the result */
                     await db.findOneAndUpdate(User, {_id:req.session.curr_user._id}, {$set: {email:mail}}, async function(updated){
+                      req.session.curr_user = updated;
+                      updatesTeamsMatches(updated);
                       /* Set the email details */
                       var email_content = {
                         text_content: "Hey, " + req.session.curr_user.full_name + "!\n\nYour email was changed to " + mail + ".",
@@ -118,6 +120,8 @@ const settings_controller = {
                     res.end();
                   }else{ /* Update the account of the user and get the result */
                     await db.findOneAndUpdate(User, {_id:req.session.curr_user._id}, {$set: {username:uname}}, async function(result){
+                      req.session.curr_user = result;
+                      updatesTeamsMatches(result);
                       /* Set the email content */
                       var email_content = {
                         text_content: "Hey, " + req.session.curr_user.full_name + "!\n\nYour username was changed to " + uname + ".",
@@ -194,6 +198,8 @@ const settings_controller = {
             if(paramLast == 1){
               /* Update the user's account */
               await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {institution:institution}}, async function(result){
+                req.session.curr_user = result;
+                updatesTeamsMatches(result);
                 /* Set the email content */
                 var email_content = {
                   html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your institution was recently changed to ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -207,6 +213,8 @@ const settings_controller = {
               var full_name = req.session.curr_user.first_name + " " + last_name;
               /* Update the user's account */
               await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {last_name:last_name}}, async function(result){
+                req.session.curr_user = result;
+                updatesTeamsMatches(result);
                 /* Set the email content */
                 var email_content = {
                   html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -220,6 +228,8 @@ const settings_controller = {
               var full_name = req.session.curr_user.first_name + " " + last_name;
               /* Update the user's account */
               await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {last_name:last_name, institution:institution, full_name:full_name}}, async function(result){
+                req.session.curr_user = result;
+                updatesTeamsMatches(result);
                 /* Set the email content */
                 var email_content = {
                   html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and institution were recently changed to ' + full_name + ' and ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -235,6 +245,8 @@ const settings_controller = {
               var full_name = first_name + " " + req.session.curr_user.last_name;
               /* Update the user's account */
               await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, full_name:full_name}}, async function(result){
+                req.session.curr_user = result;
+                updatesTeamsMatches(result);
                 /* Set the email content */
                 var email_content = {
                   html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -248,6 +260,8 @@ const settings_controller = {
               var full_name = first_name + " " + req.session.curr_user.last_name;
               /* Update the user's account */
               await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, full_name:full_name, institution:institution}}, async function(result){
+                req.session.curr_user = result;
+                updatesTeamsMatches(result);
                 /* Set the email content */
                 var email_content = {
                   html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + ' and your institution was changed to ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -262,6 +276,8 @@ const settings_controller = {
             var full_name = first_name + " " + last_name;
             /* Update the user's account */
             await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name}}, async function(result){
+              req.session.curr_user = result;
+              updatesTeamsMatches(result);
               /* Set the email content */
               var email_content = {
                 html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -275,6 +291,8 @@ const settings_controller = {
             var full_name = first_name + " " + last_name;
             /* Update the user's account */
             await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, institution:institution}}, async function(result){
+              req.session.curr_user = result;
+              updatesTeamsMatches(result);
               /* Set the email content */
               var email_content = {
                 html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and institution were recently changed to ' + full_name + ' and ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -290,6 +308,8 @@ const settings_controller = {
         var full_name = first_name + " " + last_name;
         /* Update the user's account */
         await db.findOneAndUpdate(User, {_id:req.session.curr_user._id}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, institution:institution}}, async function(result){
+          req.session.curr_user = result;
+          updatesTeamsMatches(result);
           /* Set the email content */
           var email_content = {
             html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and institution were recently changed to ' + full_name + ' and ' + institution + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -328,6 +348,8 @@ const settings_controller = {
                   bcrypt.hash(passOne, saltRounds, async function(err, hash){
                     /* Update the account of the user and get the result */
                     await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {password:hash}}, async function(result){
+                      req.session.curr_user = result;
+                      updatesTeamsMatches(result);
                       /* Set the email content */
                       var email_content = {
                         html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your password was recently changed. Didn\'t change your password? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
@@ -399,7 +421,7 @@ const settings_controller = {
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Leader deleted]"
             };
             if(result.second){
-              if(result.second.username != 'No User' && validator.isEmail(result.second.username))
+              if(result.second.username != 'No User' && !validator.isEmail(result.second.username))
                 await db.updateOne(User, {username:result.second.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -407,7 +429,7 @@ const settings_controller = {
               count = count + 1;
             }
             if(result.third){
-              if(result.third.username != 'No User' && validator.isEmail(result.third.username))
+              if(result.third.username != 'No User' && !validator.isEmail(result.third.username))
                 await db.updateOne(User, {username:result.third.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -432,7 +454,7 @@ const settings_controller = {
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Deputy Leader deleted]"
             };
             if(result.first){
-              if(result.second.username != 'No User' && validator.isEmail(result.first.username))
+              if(result.second.username != 'No User' && !validator.isEmail(result.first.username))
                 await db.updateOne(User, {username:result.first.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -440,7 +462,7 @@ const settings_controller = {
               count = count + 1;
             }
             if(result.third){
-              if(result.third.username != 'No User' && validator.isEmail(result.third.username))
+              if(result.third.username != 'No User' && !validator.isEmail(result.third.username))
                 await db.updateOne(User, {username:result.third.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -465,7 +487,7 @@ const settings_controller = {
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Whip deleted]"
             };
             if(result.first){
-              if(result.second.username != 'No User' && validator.isEmail(result.first.username))
+              if(result.second.username != 'No User' && !validator.isEmail(result.first.username))
                 await db.updateOne(User, {username:result.first.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -473,7 +495,7 @@ const settings_controller = {
               count = count + 1;
             }
             if(result.second){
-              if(result.second.username != 'No User' && validator.isEmail(result.second.username))
+              if(result.second.username != 'No User' && !validator.isEmail(result.second.username))
                 await db.updateOne(User, {username:result.second.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
@@ -583,6 +605,8 @@ async function updateUserMail(req, res, uname, mail){
             res.end();
           }else{ /* Update the account of the user and get the result */
             await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {username:uname, email: mail}}, async function(result){
+              req.session.curr_user = result;
+              updatesTeamsMatches(result);
               /* Set the email content */
               var email_content = {
                 text_content: "Hey, " + req.session.curr_user.full_name + "!\n\nYour email and username were recently changed to " + mail + " and " + uname + ".",
@@ -601,6 +625,19 @@ async function updateUserMail(req, res, uname, mail){
       goMessage(req, res);
     }
   });
+}
+
+/* Update the teams and matches */
+async function updatesTeamsMatches(updated){
+  await db.updateMany(Team, {"first._id":req.session.curr_user._id}, {$set:{"first":updated}});
+  await db.updateMany(Team, {"second._id":req.session.curr_user._id}, {$set:{"second":updated}});
+  await db.updateMany(Team, {"third._id":req.session.curr_user._id}, {$set:{"third":updated}});
+  await db.updateMany(Match, {"gov.first._id":req.session.curr_user._id}, {$set:{"gov.first":updated}});
+  await db.updateMany(Match, {"gov.second._id":req.session.curr_user._id}, {$set:{"gov.second":updated}});
+  await db.updateMany(Match, {"gov.third._id":req.session.curr_user._id}, {$set:{"gov.third":updated}});
+  await db.updateMany(Match, {"opp.first._id":req.session.curr_user._id}, {$set:{"opp.first":updated}});
+  await db.updateMany(Match, {"opp.second._id":req.session.curr_user._id}, {$set:{"opp.second":updated}});
+  await db.updateMany(Match, {"opp.third._id":req.session.curr_user._id}, {$set:{"opp.third":updated}});
 }
 
 /* Send email notification about changes */
@@ -624,16 +661,6 @@ async function sendEmail(req, res, email_content, mail, updated){
       req.session.message = email_content.error_mess;
       goMessage(req, res);
     }else{
-      await db.updateMany(Team, {"first._id":req.session.curr_user._id}, {$set:{"first":updated}});
-      await db.updateMany(Team, {"second._id":req.session.curr_user._id}, {$set:{"second":updated}});
-      await db.updateMany(Team, {"third._id":req.session.curr_user._id}, {$set:{"third":updated}});
-      await db.updateMany(Match, {"gov.first._id":req.session.curr_user._id}, {$set:{"gov.first":updated}});
-      await db.updateMany(Match, {"gov.second._id":req.session.curr_user._id}, {$set:{"gov.second":updated}});
-      await db.updateMany(Match, {"gov.third._id":req.session.curr_user._id}, {$set:{"gov.third":updated}});
-      await db.updateMany(Match, {"opp.first._id":req.session.curr_user._id}, {$set:{"opp.first":updated}});
-      await db.updateMany(Match, {"opp.second._id":req.session.curr_user._id}, {$set:{"opp.second":updated}});
-      await db.updateMany(Match, {"opp.third._id":req.session.curr_user._id}, {$set:{"opp.third":updated}});
-      req.session.curr_user = updated;
       req.session.message = email_content.success_mess;
       goMessage(req, res);
     }
