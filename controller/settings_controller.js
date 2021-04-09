@@ -644,7 +644,6 @@ async function updatesTeamsMatches(updated){
 async function sendEmail(req, res, email_content, mail, updated){
   /* Set the email content */
   const mailDetails = {
-    from: 'tabcore.ccapdev@gmail.com',
     to: mail,
     subject: 'Changes in Profile',
     text: email_content.text_content,
@@ -658,6 +657,7 @@ async function sendEmail(req, res, email_content, mail, updated){
   /* Send the email */
   transpo.sendMail(mailDetails, async function(err, result){
     if(err){
+      console.log(err);
       req.session.message = email_content.error_mess;
       goMessage(req, res);
     }else{
