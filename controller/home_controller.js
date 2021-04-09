@@ -389,11 +389,12 @@ const home_controller = {
                   });
                   res.end();
                 }else{
-                  db.insertOne(User, person);
-                  req.session.curr_user = person;
-                  req.session.current_page = 'welcome';
-                  res.redirect('/welcome');
-                  res.end();
+                  await db.insertOneCallback(User, person, async function(result){
+                    req.session.curr_user = result;
+                    req.session.current_page = 'welcome';
+                    res.redirect('/welcome');
+                    res.end();
+                  });
                 }
               });
             }else{
@@ -589,7 +590,6 @@ async function renderPage(req, res, render, pagedetails){
   var updateRem = 0, roundRem = 0;
   /* Find the user's account */
   await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
-    console.log(result);
     if(result){
       /* If they have team updates, store at most 5 updates in an array */
       if(result.updates){
