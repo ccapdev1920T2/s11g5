@@ -13,7 +13,9 @@ const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
 
 /* For emailing any user */
 const transpo = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: 'tabcore.ccapdev@gmail.com',
     pass: 't2bc0re_CC4PD3V!'
