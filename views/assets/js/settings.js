@@ -44,6 +44,7 @@ $(document).ready(function () {
   });
 
   $('#email').keyup(function () {
+    var username = $('#username').val();
     var email = $('#email').val();
     var current_email = $('#current_email').val();
     if(!validator.isEmpty(email)){
