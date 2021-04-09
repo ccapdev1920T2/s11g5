@@ -195,7 +195,7 @@ const team_controller = {
                                 update: new_team.teamname + ' was created by ' + full + ' (' + user + ').'
                               };
                               /* Update the users of the newly created team */
-                              updateUpdates(first, second, third, createUpdate);
+                              await updateUpdates(first, second, third, createUpdate);
                               req.session.header = 'Create Team';
                               req.session.message = name + ' Successfully Created!';
                               req.session.link = '/teamPage';
@@ -304,7 +304,7 @@ const team_controller = {
                                           update: new_team.teamname + ' was created by ' + full + ' (' + user + ').'
                                         };
                                         /* Update the users of the newly created team */
-                                        updateUpdates(first, second, third, createUpdate);
+                                        await updateUpdates(first, second, third, createUpdate);
                                         req.session.header = 'Create Team';
                                         req.session.message = new_team.teamname + ' Successfully Created!';
                                         req.session.link = '/teamPage';
@@ -494,7 +494,7 @@ const team_controller = {
         var teamID;
         /* Store the team name in variable teamname */
         if(req.body.edit_choose && req.body.edit_choose != 'choose'){
-          teamnID = sanitize(req.body.edit_choose);
+          teamID = sanitize(req.body.edit_choose);
           req.session.edit_team = teamID;
         }else if(req.query.team){
           teamID = sanitize(req.query.team);
@@ -577,6 +577,7 @@ const team_controller = {
   editChosenTeam: async function(req, res){
     if(req.session.curr_user){
       var errors = validationResult(req);
+      var teamID = sanitize(req.query.team);
       var teamname = sanitize(req.body.current_team);
       var current_team = sanitize(req.body.edit_current);
       var new_teamname = sanitize(req.body.edit_teamname);
@@ -587,8 +588,8 @@ const team_controller = {
       /* Check if there are any errors */
       if (!errors.isEmpty()){
         errors = errors.errors;
-        var validOne = 0, validTwo = 0, validThree = 0, validName = 0, validCurrent = 0;
-        var paramOne = 0, paramTwo = 0, paramThree = 0, paramName = 0, paramCurrent = 0;
+        var validOne = 0, validTwo = 0, validThree = 0, validName = 0, validCurrent = 0, validID = 0;
+        var paramOne = 0, paramTwo = 0, paramThree = 0, paramName = 0, paramCurrent = 0, paramID = 0;
         var emptyCount = 0;
         /* Check the errors detected */
         for(i = 0; i < errors.length; i++){
@@ -606,7 +607,9 @@ const team_controller = {
             }else if(errors[i].param == 'edit_current'){
               validCurrent = 1;
               paramCurrent = 1;
-              break;
+            }else if(errors[i].param == 'team'){
+              validID = 1;
+              paramID = 1;
             }
           }else{
             /* Check for other types of errors */
@@ -621,11 +624,19 @@ const team_controller = {
             }else if(errors[i].msg == 'edit_current'){
               validCurrent = 1;
               paramCurrent = 1;
-              break;
+            }else if(errors[i].param == 'team'){
+              validID = 1;
+              paramID = 1;
             }
           }
         }
-        if(validCurrent == 1 || paramCurrent == 1){
+        if(validID == 1 || paramID == 1){
+          req.session.header = 'Edit a Team';
+          req.session.message = 'Error in Edit a Team! Please Try Again Later.';
+          req.session.link = '/teamPage';
+          req.session.back = 'Teams Dashboard';
+          goMessage(req, res);
+        }else if(validCurrent == 1 || paramCurrent == 1){
           /* If the current teamname was not entered, redirect back to the edit a team page */
           if(paramName || validName && ((paramOne || validOne) || (paramTwo || validTwo) || (paramThree || validThree)))
             req.session.edit_fields.all = 1;
@@ -650,11 +661,92 @@ const team_controller = {
           res.redirect('/editTeams');
           res.end();
         }else{
-          /* If the current teamname entered is the same as the teamname of the team being edited, proceed */
-          if(validator.equals(teamname, current_team)){
-            /* Find the team to edit */
-            await db.findOne(Team, {teamname:teamname}, async function(current){
-              if(current){
+          /* Find the team to edit */
+          await db.findOne(Team, {_id:teamID}, async function(current){
+            if(current){
+              if(validator.equals(current.teamname, current_team)){
+                /* If the current teamname entered is the same as the teamname of the team being edited, proceed */
+                if(validator.equals(teamname, current_team)){
+                  /* If a new teamname was entered, proceed */
+                  if(!validator.isEmpty(new_teamname)){
+                    /* If the new teamname entered is the same as the old teamname, redirect back */
+                    if(!validator.equals(new_teamname, current_team)){
+                      /* See if the new teamname is already taken */
+                      await db.findOne(Team, {teamname:new_teamname}, async function(existingTeam){
+                        if(existingTeam){
+                          /* If the new teamname is taken, redirect back */
+                          req.session.edit_fields = {all:0, new_team:1, new_users:0 ,new_current:0};
+                          res.redirect('/editTeams');
+                          res.end();
+                        }else{
+                          /* If the members will be edited, proceed */
+                          if(paramOne == 0 || paramTwo == 0 || paramThree == 0){
+                            reset(req);
+                            updateMembers(req, res, current, new_teamname);
+                          }else{
+                            await db.findOneAndUpdate(Team, {_id:teamID}, {$set: {teamname:new_teamname}}, async function(new_team){
+                              if(new_team){
+                                /* If the new team name is not taken, proceed with updating */
+                                var editUpdate = {
+                                  teamID: new_team._id,
+                                  teamname: new_team.teamname,
+                                  update: current.teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Change Team Name]"
+                                };
+                                /* Send an update to the users */
+                                await updateUpdates(new_team.first, new_team.second, new_team.third, editUpdate);
+                                reset(req);
+                                /* Update the team name of updates connected */
+                                await updateTeamname(new_team._id, new_teamname, new_team.first.username);
+                                await updateTeamname(new_team._id, new_teamname, new_team.second.username);
+                                await updateTeamname(new_team._id, new_teamname, new_team.third.username);
+                                req.session.header = 'Edit a Team';
+                                req.session.message = 'Successfully changed team name of ' + current.teamname + ' to ' + new_teamname + '!';
+                                req.session.link = '/teamPage';
+                                req.session.back = 'Teams Dashboard';
+                                goMessage(req, res);
+                              }else{
+                                req.session.header = 'Edit a Team';
+                                req.session.message = 'Error in Editing Team '+current.teamname+'! Please Try Again Later.';
+                                req.session.link = '/teamPage';
+                                req.session.back = 'Teams Dashboard';
+                                goMessage(req, res);
+                              }
+                            });
+                          }
+                        }
+                      });
+                    }else{
+                      req.session.edit_fields = {all:0, new_team:1, new_users:0 ,new_current:0};
+                      res.redirect('/editTeams');
+                      res.end();
+                    }
+                  }else{
+                    reset(req);
+                    updateMembers(req, res, current, null);
+                  }
+                }else{
+                  req.session.edit_fields = {all:0, new_team:0, new_users:0 ,new_current:1};
+                  res.redirect('/editTeams');
+                  res.end();
+                }
+              }else{
+                req.session.edit_fields = {all:0, new_team:0, new_users:0 ,new_current:1};
+                res.redirect('/editTeams');
+                res.end();
+              }
+            }else{
+              req.session.edit_fields = {all:0, new_team:0, new_users:0 ,new_current:1};
+              res.redirect('/editTeams');
+              res.end();
+            }
+          });
+        }
+      }else{
+        /* Find the team to edit */
+        await db.findOne(Team, {_id:teamID}, async function(current){
+          if(current){
+            if(validator.equals(current.teamname, current_team)){
+              if(validator.equals(teamname, current_team)){
                 /* If a new teamname was entered, proceed */
                 if(!validator.isEmpty(new_teamname)){
                   /* If the new teamname entered is the same as the old teamname, redirect back */
@@ -668,11 +760,11 @@ const team_controller = {
                         res.end();
                       }else{
                         /* If the members will be edited, proceed */
-                        if(paramOne == 0 || paramTwo == 0 || paramThree == 0){
+                        if(!validator.isEmpty(userfirst) || !validator.isEmpty(usersecond) || !validator.isEmpty(userthird)){
                           reset(req);
                           updateMembers(req, res, current, new_teamname);
                         }else{
-                          await db.findOneAndUpdate(Team, {teamname:current.teamname}, {$set: {teamname:new_teamname}}, async function(new_team){
+                          await db.findOneAndUpdate(Team, {_id:teamID}, {$set: {teamname:new_teamname}}, async function(new_team){
                             if(new_team){
                               /* If the new team name is not taken, proceed with updating */
                               var editUpdate = {
@@ -681,12 +773,12 @@ const team_controller = {
                                 update: current.teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Change Team Name]"
                               };
                               /* Send an update to the users */
-                              updateUpdates(new_team.first, new_team.second, new_team.third, editUpdate);
+                              await updateUpdates(new_team.first, new_team.second, new_team.third, editUpdate);
                               reset(req);
                               /* Update the team name of updates connected */
-                              updateTeamname(new_team._id, new_teamname, new_team.first.username);
-                              updateTeamname(new_team._id, new_teamname, new_team.second.username);
-                              updateTeamname(new_team._id, new_teamname, new_team.third.username);
+                              await updateTeamname(new_team._id, new_team.teamname, new_team.first.username);
+                              await updateTeamname(new_team._id, new_team.teamname, new_team.second.username);
+                              await updateTeamname(new_team._id, new_team.teamname, new_team.third.username);
                               req.session.header = 'Edit a Team';
                               req.session.message = 'Successfully changed team name of ' + current.teamname + ' to ' + new_teamname + '!';
                               req.session.link = '/teamPage';
@@ -717,86 +809,17 @@ const team_controller = {
                 res.redirect('/editTeams');
                 res.end();
               }
-            });
-          }else{
-            req.session.edit_fields = {all:0, new_team:0, new_users:0 ,new_current:1};
-            res.redirect('/editTeams');
-            res.end();
-          }
-        }
-      }else{
-        if(validator.equals(teamname, current_team)){
-          /* Find the team to edit */
-          await db.findOne(Team, {teamname:teamname}, async function(current){
-            if(current){
-              /* If a new teamname was entered, proceed */
-              if(!validator.isEmpty(new_teamname)){
-                /* If the new teamname entered is the same as the old teamname, redirect back */
-                if(!validator.equals(new_teamname, current_team)){
-                  /* See if the new teamname is already taken */
-                  await db.findOne(Team, {teamname:new_teamname}, async function(existingTeam){
-                    if(existingTeam){
-                      /* If the new teamname is taken, redirect back */
-                      req.session.edit_fields = {all:0, new_team:1, new_users:0 ,new_current:0};
-                      res.redirect('/editTeams');
-                      res.end();
-                    }else{
-                      /* If the members will be edited, proceed */
-                      if(!validator.isEmpty(userfirst) || !validator.isEmpty(usersecond) || !validator.isEmpty(userthird)){
-                        reset(req);
-                        updateMembers(req, res, current, new_teamname);
-                      }else{
-                        await db.findOneAndUpdate(Team, {teamname:current.teamname}, {$set: {teamname:new_teamname}}, async function(new_team){
-                          if(new_team){
-                            /* If the new team name is not taken, proceed with updating */
-                            var editUpdate = {
-                              teamID: new_team._id,
-                              teamname: new_team.teamname,
-                              update: current.teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Change Team Name]"
-                            };
-                            /* Send an update to the users */
-                            updateUpdates(new_team.first, new_team.second, new_team.third, editUpdate);
-                            reset(req);
-                            /* Update the team name of updates connected */
-                            updateTeamname(new_team._id, new_team.teamname, new_team.first.username);
-                            updateTeamname(new_team._id, new_team.teamname, new_team.second.username);
-                            updateTeamname(new_team._id, new_team.teamname, new_team.third.username);
-                            req.session.header = 'Edit a Team';
-                            req.session.message = 'Successfully changed team name of ' + current.teamname + ' to ' + new_teamname + '!';
-                            req.session.link = '/teamPage';
-                            req.session.back = 'Teams Dashboard';
-                            goMessage(req, res);
-                          }else{
-                            req.session.header = 'Edit a Team';
-                            req.session.message = 'Error in Editing Team '+current.teamname+'! Please Try Again Later.';
-                            req.session.link = '/teamPage';
-                            req.session.back = 'Teams Dashboard';
-                            goMessage(req, res);
-                          }
-                        });
-                      }
-                    }
-                  });
-                }else{
-                  req.session.edit_fields = {all:0, new_team:1, new_users:0 ,new_current:0};
-                  res.redirect('/editTeams');
-                  res.end();
-                }
-              }else{
-                reset(req);
-                updateMembers(req, res, current, null);
-              }
             }else{
               req.session.edit_fields = {all:0, new_team:0, new_users:0 ,new_current:1};
               res.redirect('/editTeams');
               res.end();
             }
-          });
-        }else{
-          req.session.edit_fields = {all:0, new_team:0, new_users:0 ,new_current:1};
-          res.redirect('/editTeams');
-          res.end();
-        }
+          }else{
+            req.session.edit_fields = {all:0, new_team:0, new_users:0 ,new_current:1};
+            res.redirect('/editTeams');
+            res.end();
+          }
+        });
       }
     }else{
       goHome(req, res);
@@ -935,7 +958,7 @@ const team_controller = {
                     teamname: name,
                     update: req.session.curr_user.full_name + " ("+ current_name +") has left " + name + ". [Leader Left]"
                   };
-                  updateUpdates(result.first, result.second, result.third, leaveUpdate);
+                  await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"first":{username:'No User', full_name:'No User'}}});
                 }else if(result.second._id == current_id){
                   var leaveUpdate = {
@@ -943,7 +966,7 @@ const team_controller = {
                     teamname: name,
                     update: req.session.curr_user.full_name + " ("+ current_name +") has left " + name + ". [Deputy Leader Left]"
                   };
-                  updateUpdates(result.first, result.second, result.third, leaveUpdate);
+                  await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"second":{username:'No User', full_name:'No User'}}});
                 }else if(result.third._id == current_id){
                   var leaveUpdate = {
@@ -951,7 +974,7 @@ const team_controller = {
                     teamname: name,
                     update: req.session.curr_user.full_name + " ("+ current_name +") has left " + name + ". [Whip Left]"
                   };
-                  updateUpdates(result.first, result.second, result.third, leaveUpdate);
+                  await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"third":{username:'No User', full_name:'No User'}}});
                 }
                 await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
@@ -1051,7 +1074,7 @@ const team_controller = {
                 update: name+" has been deleted by " + req.session.curr_user.full_name + " ("+ req.session.curr_user.username +"). [Deleted team]"
               };
               /* Update the users in the team */
-              updateUpdates(result.first, result.second, result.third, deleteUpdate);
+              await updateUpdates(result.first, result.second, result.third, deleteUpdate);
               /* Delete the team */
               await db.deleteOne(Team, {teamname:name});
               await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
@@ -1684,7 +1707,6 @@ async function updateTeamname(old_team, new_team, user){
         for(i = 0; i < foundUser.updates.length; i++){
           var temp;
           if(foundUser.updates[i].teamID.toString() == old_team){
-            console.log(foundUser.updates[i].teamID);
             temp = {
               teamID: foundUser.updates[i].teamID,
               teamname: new_team,
@@ -1719,6 +1741,9 @@ async function updateTeam(req, res, current, teamname, team){
       teamname: update_teamname,
       update: update_teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Edited Members and Team Name]"
     };
+    await updateTeamname(current._id, teamname, first.username);
+    await updateTeamname(current._id, teamname, second.username);
+    await updateTeamname(current._id, teamname, third.username);
   }else{ /* If only the members were changed, create an update regarding so */
     await db.updateOne(Team, {teamname:current.teamname}, {$set: {first:first, second:second, third:third}});
     update_teamname = current.teamname;
@@ -1730,12 +1755,6 @@ async function updateTeam(req, res, current, teamname, team){
   }
   /* Update the users with the created update */
   await updateUpdates(first, second, third, editUpdate);
-  /* If the team name was changed, update the updates connected */
-  if(teamname){
-    updateTeamname(current._id, teamname, first.username);
-    updateTeamname(current._id, teamname, second.username);
-    updateTeamname(current._id, teamname, third.username);
-  }
   /* If the previous leader is no longer in the team, create an update and send */
   if(current.first.username != first.username && current.first.username != second.username && current.first.username != third.username){
     await db.updateOne(User, {username:current.first.username}, {$push:{"updates":editUpdate}});

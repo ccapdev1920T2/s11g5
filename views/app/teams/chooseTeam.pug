@@ -21,13 +21,13 @@ block content
                           option(value='choose') Choose an option
                           if(pagedetails.teams.length > 0)
                             each team in pagedetails.teams
-                              option(value=team._id) #{team._id}
+                              option(value=team._id) #{team.teamname}
                       else
                         select#edit_choose.form-control(name='edit_choose')
                           option(value='choose') Choose an option
                           if(pagedetails.teams.length > 0)
                             each team in pagedetails.teams
-                              option(value=team.teamname) #{team.teamname}
+                              option(value=team._id) #{team.teamname}
                 if (pagedetails.choosing == 1)
                   .text-center.small#invalid_editChoose(style="color: #d66") Choose one team to edit
                 .text-center.small#invalid_editChoose(style="color: #d66")

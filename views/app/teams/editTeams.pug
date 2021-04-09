@@ -10,7 +10,7 @@ block content
             .card-header.py-3
               p.text-primary.m-0.font-weight-bold Edit a Team
             .card-body
-              form.user(action="/editChosenTeam", method="post")
+              form.user(action="/editChosenTeam?team="+pagedetails.team._id, method="post")
                 input#current_user(type='hidden' value=pagedetails.curr_user.username)
                 input#current_team(type='hidden' value=pagedetails.team.teamname name='current_team')
                 .form-row

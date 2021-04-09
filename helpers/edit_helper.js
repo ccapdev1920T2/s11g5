@@ -1,10 +1,12 @@
-const { check, oneOf } = require('express-validator');
+const { check, oneOf, query } = require('express-validator');
 const nameFormat = /^[a-zA-Z][a-zA-Z\s]*$/;
 const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
 
 const edit_helper = {
   editValidation: function () {
     var validation = [
+      query('team', 'empty').notEmpty(),
+      query('team', 'format').isAlphanumeric(),
       check('edit_teamname', 'empty').notEmpty(),
       check('edit_teamname', 'edit_teamname').matches(nameFormat),
       check('edit_first', 'empty').notEmpty(),

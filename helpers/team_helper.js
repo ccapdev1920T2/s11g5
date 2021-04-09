@@ -30,12 +30,10 @@ const team_helper = {
     var validation = [
       oneOf([
         check('edit_choose').notEmpty(),
-        check('current_team').notEmpty(),
         query('team').notEmpty(),
       ], 'empty'),
       oneOf([
-        check('edit_choose').matches(nameFormat),
-        check('current_team').matches(nameFormat),
+        check('edit_choose').isAlphanumeric(),
         query('team').isAlphanumeric()
       ], 'format'),
     ];
