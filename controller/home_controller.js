@@ -462,28 +462,33 @@ const home_controller = {
     reset(req);
     if(req.session.curr_user){
       /* Find the registered user's previous matches wherein they were a debater */
-      await db.findMany(Match, {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status: 'Done'}, {$or: [{"gov.first.username":req.session.curr_user.username}, {"gov.second.username":req.session.curr_user.username}, {"gov.third.username":req.session.curr_user.username}, {"opp.first.username":req.session.curr_user.username}, {"opp.second.username":req.session.curr_user.username}, {"opp.third.username":req.session.curr_user.username}]}]}, async function(result){
+      await db.findMany(Match, {$and: [{"gov.teamname": {$ne: null}}, {"opp.teamname": {$ne: null}}, {status: 'Done'}, {$or: [{"gov.first._id":req.session.curr_user._id}, {"gov.second._id":req.session.curr_user._id}, {"gov.third._id":req.session.curr_user._id}, {"opp.first._id":req.session.curr_user._id}, {"opp.second._id":req.session.curr_user._id}, {"opp.third._id":req.session.curr_user._id}]}]}, async function(result){
         var latest = 'None';
         if(result){
           if(result.length > 0){
             var sorted = result.sort((a,b) => b.date_match - a.date_match);
             latest = sorted[sorted.length - 1].date_match;
           }
-        }
-        /* Update the user's account with the date of their latest debate then go to their dashboard */
-        await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {dateoflast:latest}}, async function(foundUser){
-          if(foundUser){
-            req.session.curr_user = foundUser;
+          /* Update the user's account with the date of their latest debate then go to their dashboard */
+          await db.findOneAndUpdate(User, {_id:req.session.curr_user._id}, {$set: {dateoflast:latest}}, async function(foundUser){
+            if(foundUser){
+              req.session.curr_user = foundUser;
+            }
             var render = 'app/basics/dashboard';
             var pagedetails = {
               pagename: 'Dashboard',
               curr_user:req.session.curr_user
             };
             renderPage(req, res, render, pagedetails);
-          }else{
-            goHome(req, res);
-          }
-        });
+          });
+        }else{
+          var render = 'app/basics/dashboard';
+          var pagedetails = {
+            pagename: 'Dashboard',
+            curr_user:req.session.curr_user
+          };
+          renderPage(req, res, render, pagedetails);
+        }
       });
     }else if(req.session.guest_user){
       res.redirect('/guestDashboard');
