@@ -10,12 +10,15 @@ var sanitize = require('mongo-sanitize');
 
 /* For emailing any user */
 const transpo = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
+  host: "smtp-mail.outlook.com",
+  secureConnection: false,
+  port: 587,
+  tls: {
+     ciphers:'SSLv3'
+  },
   auth: {
-    user: 'tabcore.ccapdev@gmail.com',
-    pass: 't2bc0re_CC4PD3V!'
+    user: 'tabcore@outlook.com',
+    pass: 't@bc0rEcc_pd3V!'
   }
 });
 
