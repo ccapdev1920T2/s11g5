@@ -377,6 +377,7 @@ const home_controller = {
               /* Send an email to the user welcoming them to Tabcore */
               transpo.sendMail(mailDetails, function(err, result){
                 if(err){
+                  console.log(err || response);
                   res.render('app/basics/register', {
                     pagename: 'Register',
                     all: 0,
