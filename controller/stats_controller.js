@@ -130,6 +130,7 @@ const stats_controller = {
                   role = 'add';
                 }
                 if(role){
+                  reset(req);
                   req.session.roundID = roundID;
                   if(req.session.curr_user){
                     var render = "app/statistics/roundroomStatistics";

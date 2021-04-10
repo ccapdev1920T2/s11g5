@@ -982,13 +982,80 @@ const team_controller = {
                   await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"third":{username:'No User', full_name:'No User'}}});
                 }
-                await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
-                  req.session.curr_user = result;
-                  req.session.header = 'Leave Team';
-                  req.session.message = 'Successfully Left ' + name + '!';
-                  req.session.link = '/teamPage';
-                  req.session.back = 'Teams Dashboard';
-                  goMessage(req, res);
+                var wholeQuery = {$and: [{$or: [{"gov._id":teamID}, {"opp._id":teamID}]}, {'status':'Ongoing'}, {'creator._id':current_id}]};
+                await db.findMany(Match, wholeQuery, async function(deleteMatch){
+                  if(deleteMatch){
+                    var maillist = [];
+                    for(i = 0; i < deleteMatch.length; i++){
+                      if(deleteMatch[i].gov.first.username != current_name){
+                        maillist.push(deleteMatch[i].gov.first.email);
+                      }
+                      if(deleteMatch[i].gov.second.username != current_name){
+                        maillist.push(deleteMatch[i].gov.second.email);
+                      }
+                      if(deleteMatch[i].gov.third.username != current_name){
+                        maillist.push(deleteMatch[i].gov.third.email);
+                      }
+                      if(deleteMatch[i].opp.first.username != current_name){
+                        maillist.push(deleteMatch[i].opp.first.email);
+                      }
+                      if(deleteMatch[i].opp.second.username != current_name){
+                        maillist.push(deleteMatch[i].opp.second.email);
+                      }
+                      if(deleteMatch[i].opp.third.username != current_name){
+                        maillist.push(deleteMatch[i].opp.third.email);
+                      }
+                      if(deleteMatch[i].adjudicator.username != current_name){
+                        maillist.push(deleteMatch[i].adjudicator.email);
+                      }
+                      if(maillist.length > 0){
+                        const mailDetails = {
+                          from: 'tabcore@outlook.com',
+                          to: maillist,
+                          subject: 'Cancellation of Debate Round: ' + deleteMatch[i].roundID,
+                          text: "The Debate Round " + deleteMatch[i].roundID + " was cancelled!",
+                          html: '<h3>The Debate Round ' + deleteMatch[i].roundID + ' was cancelled since the creator of the round, ' + req.session.curr_user.full_name + ' has left team ' + name + '.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                          attachments: [{
+                            filename: 'TABCORE_FOOTER.png',
+                            path: __dirname + '/../views/assets/img/email/TABCORE_FOOTER.png',
+                            cid: 'tabcore_attach.png'
+                          }]
+                        };
+                        transpo.sendMail(mailDetails, async function(err, result){
+                          if(err){
+                            req.session.header = 'Leave Team';
+                            req.session.message = 'Error in Leave Team! Some Debate Rounds created cannot be deleted. Please Try Again Later.';
+                            req.session.link = '/teamPage';
+                            req.session.back = 'Teams Dashboard';
+                            goMessage(req, res);
+                          }
+                        });
+                      }
+                    }
+                    /* Delete the team */
+                    if(deleteMatch.length > 0)
+                      await db.deleteMany(Match, wholeQuery);
+                    await db.deleteOne(Team, {teamname:name});
+                    await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
+                      req.session.curr_user = result;
+                      req.session.header = 'Leave Team';
+                      req.session.message = 'Successfully Left ' + name + '!';
+                      req.session.link = '/teamPage';
+                      req.session.back = 'Teams Dashboard';
+                      goMessage(req, res);
+                    });
+                  }else{
+                    /* Delete the team */
+                    await db.deleteOne(Team, {teamname:name});
+                    await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
+                      req.session.curr_user = result;
+                      req.session.header = 'Leave Team';
+                      req.session.message = 'Successfully Left ' + name + '!';
+                      req.session.link = '/teamPage';
+                      req.session.back = 'Teams Dashboard';
+                      goMessage(req, res);
+                    });
+                  }
                 });
               }
             }else{
@@ -1080,15 +1147,81 @@ const team_controller = {
               };
               /* Update the users in the team */
               await updateUpdates(result.first, result.second, result.third, deleteUpdate);
-              /* Delete the team */
-              await db.deleteOne(Team, {teamname:name});
-              await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
-                req.session.curr_user = result;
-                req.session.header = 'Delete Team';
-                req.session.message = 'Team Successfully Deleted!';
-                req.session.link = '/teamPage';
-                req.session.back = 'Teams Dashboard';
-                goMessage(req, res);
+              var wholeQuery = {$and: [{$or: [{"gov._id":teamID}, {"opp._id":teamID}]}, {'status':'Ongoing'}, {'creator._id':{$in:[result.first._id, result.second._id, result.third._id]}}]};
+              await db.findMany(Match, wholeQuery, async function(deleteMatch){
+                if(deleteMatch){
+                  var username = req.session.curr_user.username;
+                  for(i = 0; i < deleteMatch.length; i++){
+                    var maillist = [];
+                    if(deleteMatch[i].gov.first.username != username){
+                      maillist.push(deleteMatch[i].gov.first.email);
+                    }
+                    if(deleteMatch[i].gov.second.username != username){
+                      maillist.push(deleteMatch[i].gov.second.email);
+                    }
+                    if(deleteMatch[i].gov.third.username != username){
+                      maillist.push(deleteMatch[i].gov.third.email);
+                    }
+                    if(deleteMatch[i].opp.first.username != username){
+                      maillist.push(deleteMatch[i].opp.first.email);
+                    }
+                    if(deleteMatch[i].opp.second.username != username){
+                      maillist.push(deleteMatch[i].opp.second.email);
+                    }
+                    if(deleteMatch[i].opp.third.username != username){
+                      maillist.push(deleteMatch[i].opp.third.email);
+                    }
+                    if(deleteMatch[i].adjudicator.username != username){
+                      maillist.push(deleteMatch[i].adjudicator.email);
+                    }
+                    if(maillist.length > 0){
+                      const mailDetails = {
+                        from: 'tabcore@outlook.com',
+                        to: maillist,
+                        subject: 'Cancellation of Debate Round: ' + deleteMatch[i].roundID,
+                        text: "The Debate Round was cancelled!",
+                        html: '<h3>The Debate Round ' + deleteMatch[i].roundID + ' was cancelled since the team ' + name + ' has been deleted.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                        attachments: [{
+                          filename: 'TABCORE_FOOTER.png',
+                          path: __dirname + '/../views/assets/img/email/TABCORE_FOOTER.png',
+                          cid: 'tabcore_attach.png'
+                        }]
+                      };
+                      transpo.sendMail(mailDetails, async function(err, result){
+                        if(err){
+                          req.session.header = 'Delete a Team';
+                          req.session.message = 'Error in Delete a Team! Some Debate Rounds created by the members cannot be deleted. Please Try Again Later.';
+                          req.session.link = '/teamPage';
+                          req.session.back = 'Teams Dashboard';
+                          goMessage(req, res);
+                        }
+                      });
+                    }
+                  }
+                  /* Delete the team */
+                  if(deleteMatch.length > 0)
+                    await db.deleteMany(Match, wholeQuery);
+                  await db.deleteOne(Team, {teamname:name});
+                  await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
+                    req.session.curr_user = result;
+                    req.session.header = 'Delete Team';
+                    req.session.message = 'Team Successfully Deleted!';
+                    req.session.link = '/teamPage';
+                    req.session.back = 'Teams Dashboard';
+                    goMessage(req, res);
+                  });
+                }else{
+                  /* Delete the team */
+                  await db.deleteOne(Team, {teamname:name});
+                  await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
+                    req.session.curr_user = result;
+                    req.session.header = 'Delete Team';
+                    req.session.message = 'Team Successfully Deleted!';
+                    req.session.link = '/teamPage';
+                    req.session.back = 'Teams Dashboard';
+                    goMessage(req, res);
+                  });
+                }
               });
             }else{
               req.session.header = 'Team Information';
