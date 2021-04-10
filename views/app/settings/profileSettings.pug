@@ -52,7 +52,7 @@ block content
               form.user(action="/settings/personal", method="post")
                 input#current_first(type='hidden' value=pagedetails.curr_user.first_name)
                 input#current_last(type='hidden' value=pagedetails.curr_user.last_name)
-                input#current_insti(type='hidden' value=pagedetails.curr_user.institution)
+                input#current_level(type='hidden' value=pagedetails.curr_user.level)
                 .form-row
                   .col
                     .form-group
@@ -76,15 +76,21 @@ block content
                         .text-center.small#invalid_last(style="color: #d66")
                 .form-group
                   label(for='institution')
-                    strong Debate Institution
+                    strong Debate Level
                   if(pagedetails.insti == 1)
-                    input.form-control#institution(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.curr_user.institution}` name='institution')
-                    .text-center.small Can only contain letters and spaces
-                    .text-center.small#invalid_insti(style="color: #d66") Invalid Institution
+                    select#level.form-control(style='border: 1px solid #d66' name='level' placeholder='Debate Level')
+                      option(value='' disabled selected) #{pagedetails.curr_user.level}
+                      option(value='Novice') Novice
+                      option(value='Junior') Junior
+                      option(value='Varsity') Varsity
+                    .text-center.small#invalid_level(style="color: #d66") Invalid Debate Level
                   else
-                    input.form-control#institution(type='text' placeholder=`${pagedetails.curr_user.institution}` name='institution')
-                    .text-center.small Can only contain letters and spaces
-                    .text-center.small#invalid_insti(style="color: #d66")
+                    select#level.form-control(name='level' placeholder='Debate Level')
+                      option(value='' disabled selected) #{pagedetails.curr_user.level}
+                      option(value='Novice') Novice
+                      option(value='Junior') Junior
+                      option(value='Varsity') Varsity
+                    .text-center.small#invalid_level(style="color: #d66")
                 .form-group
                   button.btn.btn-primary.btn-sm#personal(type='submit') Save Settings
           .card.shadow(style='margin-top: 15px;')

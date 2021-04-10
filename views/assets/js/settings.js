@@ -85,7 +85,7 @@ $(document).ready(function () {
     var current_first = $('#current_first').val();
     var first = $('#first_name').val();
     var last = $('#last_name').val();
-    var institution = $('#institution').val();
+    var level = $('#level').val();
     if(!validator.isEmpty(first)){
       if(validator.equals(first, current_first)){
         $('#first_name').css('border', '1px solid #d66');
@@ -103,7 +103,7 @@ $(document).ready(function () {
     }else{
       $('#first_name').css('border', '1px solid #cccccc');
       $('#invalid_first').text('');
-      if(!validator.isEmpty(last) || !validator.isEmpty(institution))
+      if(!validator.isEmpty(last) || !validator.isEmpty(level))
         $('#personal').prop('disabled', false);
       else
         $('#personal').prop('disabled', true);
@@ -114,7 +114,7 @@ $(document).ready(function () {
     var current_last = $('#current_last').val();
     var first = $('#first_name').val();
     var last = $('#last_name').val();
-    var institution = $('#institution').val();
+    var level = $('#level').val();
     if(!validator.isEmpty(last)){
       if(validator.equals(last, current_last)){
         $('#last_name').css('border', '1px solid #d66');
@@ -132,35 +132,37 @@ $(document).ready(function () {
     }else{
       $('#last_name').css('border', '1px solid #cccccc');
       $('#invalid_last').text('');
-      if(!validator.isEmpty(first) || !validator.isEmpty(institution))
+      if(!validator.isEmpty(first) || !validator.isEmpty(level))
         $('#personal').prop('disabled', false);
       else
         $('#personal').prop('disabled', true);
     }
   });
 
-  $('#institution').keyup(function () {
-    var current_insti = $('#current_insti').val();
+  $('#level').change(function () {
+    var current_level = $('#current_level').val();
     var first = $('#first_name').val();
     var last = $('#last_name').val();
-    var institution = $('#institution').val();
-    if(!validator.isEmpty(institution)){
-      if(validator.equals(institution, current_insti)){
-        $('#institution').css('border', '1px solid #d66');
-        $('#invalid_insti').text('Enter a New Institution');
+    var level = $('#level').val();
+    console.log(current_level);
+    console.log(level);
+    if(!validator.isEmpty(level)){
+      if(validator.equals(level, current_level)){
+        $('#level').css('border', '1px solid #d66');
+        $('#invalid_level').text('Enter a New Debate Level');
         $('#personal').prop('disabled', true);
-      }else if(!validator.matches(institution, nameFormat)){
-        $('#institution').css('border', '1px solid #d66');
-        $('#invalid_insti').text('Invalid Institution');
+      }else if(!validator.isAlpha(level)){
+        $('#level').css('border', '1px solid #d66');
+        $('#invalid_level').text('Invalid Debate Level');
         $('#personal').prop('disabled', true);
       }else{
-        $('#institution').css('border', '1px solid #cccccc');
-        $('#invalid_insti').text('');
+        $('#level').css('border', '1px solid #cccccc');
+        $('#invalid_level').text('');
         $('#personal').prop('disabled', false);
       }
     }else{
-      $('#institution').css('border', '1px solid #cccccc');
-      $('#invalid_insti').text('');
+      $('#level').css('border', '1px solid #cccccc');
+      $('#invalid_level').text('');
       if(!validator.isEmpty(first) || !validator.isEmpty(last))
         $('#personal').prop('disabled', false);
       else

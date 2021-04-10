@@ -25,7 +25,7 @@ var User = new mongoose.Schema({
       type: String,
       required: true
     },
-    institution: {
+    level: {
       type: String,
       required: true
     },

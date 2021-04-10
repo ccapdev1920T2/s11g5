@@ -19,8 +19,8 @@ const settings_helper = {
       check('first_name').matches(nameFormat),
       check('last_name', 'empty').notEmpty(),
       check('last_name').matches(nameFormat),
-      check('institution', 'empty').notEmpty(),
-      check('institution').matches(nameFormat)
+      check('level', 'empty').notEmpty(),
+      check('level').isAlpha()
     ];
     return validation;
   },

@@ -57,8 +57,11 @@ html
                       .text-center.small Can only contain letters, numbers, - , _ , or .
                       br
                     .form-group
-                      input.form-control.form-control-user#institution(style='border: 1px solid #d66' type='text' placeholder='Debate Institution' name='institution')
-                      .text-center.small Can only contain letters and spaces
+                      select#level.form-control(name='level' style='border: 1px solid #d66' placeholder='Debate Level')
+                        option(value='' disabled selected) Debate Level
+                        option(value='Novice') Novice
+                        option(value='Junior') Junior
+                        option(value='Varsity') Varsity
                     .form-group
                       input.form-control.form-control-user#email(style='border: 1px solid #d66' type='email' aria-describedby='emailHelp' placeholder='Email Address' name='email')
                     .form-group.row
@@ -95,14 +98,20 @@ html
                         .text-center.small#invalid_user(style="color: #d66")
                         br
                     .form-group
-                      if (insti == 1)
-                        input.form-control.form-control-user#institution(style='border: 1px solid #d66' type='text' placeholder='Debate Institution' name='institution')
-                        .text-center.small Can only contain letters and spaces
-                        .text-center.small#invalid_insti(style="color: #d66") Invalid Institution
+                      if (level == 1)
+                        select#level.form-control(name='level' style='border: 1px solid #d66' placeholder='Debate Level')
+                          option(value='' disabled selected) Debate Level
+                          option(value='Novice') Novice
+                          option(value='Junior') Junior
+                          option(value='Varsity') Varsity
+                        .text-center.small#invalid_level(style="color: #d66") Invalid Debate Level
                       else
-                        input.form-control.form-control-user#institution(type='text' placeholder='Debate Institution' name='institution')
-                        .text-center.small Can only contain letters and spaces
-                        .text-center.small#invalid_insti(style="color: #d66")
+                        select#level.form-control(name='level' placeholder='Debate Level')
+                          option(value='' disabled selected) Debate Level
+                          option(value='Novice') Novice
+                          option(value='Junior') Junior
+                          option(value='Varsity') Varsity
+                        .text-center.small#invalid_level(style="color: #d66")
                     .form-group
                       if (email == 1)
                         input.form-control.form-control-user#email(style='border: 1px solid #d66' type='email' aria-describedby='emailHelp' placeholder='Email Address' name='email')

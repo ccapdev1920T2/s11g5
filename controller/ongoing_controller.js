@@ -1,11 +1,25 @@
-const crypto = require('crypto');
 const db = require('../models/db.js');
 const User = require('../models/user_model.js');
 const Team = require('../models/team_model.js');
 const Match = require('../models/match_model.js');
+const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
 var validator = require('validator');
 var sanitize = require('mongo-sanitize');
+
+/* For emailing any user */
+const transpo = nodemailer.createTransport({
+  host: "smtp-mail.outlook.com",
+  secureConnection: false,
+  port: 587,
+  tls: {
+     ciphers:'SSLv3'
+  },
+  auth: {
+    user: 'tabcore@outlook.com',
+    pass: 't@bc0rEcc_pd3V!'
+  }
+});
 
 const ongoing_controller = {
   /* Confirm the round information and change the status to waiting (waiting for the round to start) */
@@ -70,9 +84,62 @@ const ongoing_controller = {
                   /* Find the round and update the status to waiting and the current speaker details */
                   await db.findOneAndUpdate(Match, {roundID:roundID}, {$set:{status:'Ongoing', speaker:speaker}}, async function(foundRound){
                     if(foundRound){
-                      req.session.roundID = roundID;
-                      res.redirect('/ongoingRound');
-                      res.end();
+                      var maillist = [];
+                      if(foundRound.gov.first.username != foundRound.creator.username){
+                        maillist.push(foundRound.gov.first.email);
+                      }
+                      if(foundRound.gov.second.username != foundRound.creator.username){
+                        maillist.push(foundRound.gov.second.email);
+                      }
+                      if(foundRound.gov.third.username != foundRound.creator.username){
+                        maillist.push(foundRound.gov.third.email);
+                      }
+                      if(foundRound.opp.first.username != foundRound.creator.username){
+                        maillist.push(foundRound.opp.first.email);
+                      }
+                      if(foundRound.opp.second.username != foundRound.creator.username){
+                        maillist.push(foundRound.opp.second.email);
+                      }
+                      if(foundRound.opp.third.username != foundRound.creator.username){
+                        maillist.push(foundRound.opp.third.email);
+                      }
+                      if(foundRound.adjudicator.username != foundRound.creator.username){
+                        maillist.push(foundRound.adjudicator.email);
+                      }
+                      if(maillist.length > 0){
+                        const mailDetails = {
+                          from: 'tabcore@outlook.com',
+                          to: maillist,
+                          subject: 'Invite to Join a Round',
+                          text: "Your team has been invited to a Debate Round!",
+                          html: '<h3>' + foundRound.creator.full_name + ' has created a new Debate Round. Here are the details:</br><ul><li>Round ID: ' + roundID + ' </li><li>Adjudicator: ' + foundRound.adjudicator.full_name + '</li><li>Motion: ' + foundRound.motion + '</li><li>Government: ' + foundRound.gov.teamname + '</li><li>Opposition: ' + foundRound.opp.teamname + '</ul><br>Head on over to <a href="https://tabcore.herokuapp.com/">Tabcore</a> to start the round!<br /></h3><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                          attachments: [{
+                            filename: 'TABCORE_FOOTER.png',
+                            path: __dirname + '/../views/assets/img/email/TABCORE_FOOTER.png',
+                            cid: 'tabcore_attach.png'
+                          }]
+                        };
+                        /* Send a farewell message through email */
+                        transpo.sendMail(mailDetails, async function(err, result){
+                          if(err){
+                            req.session.pagename = 'Join a Round';
+                            req.session.header = 'Join a Round';
+                            req.session.message = 'Error in Join a Round! Please Try Again Later.';
+                            req.session.link = '/findRound';
+                            req.session.back = 'Join a Round';
+                            res.redirect('/message');
+                            res.end();
+                          }else{
+                            req.session.roundID = roundID;
+                            res.redirect('/ongoingRound');
+                            res.end();
+                          }
+                        });
+                      }else{
+                        req.session.roundID = roundID;
+                        res.redirect('/ongoingRound');
+                        res.end();
+                      }
                     }else{
                       req.session.pagename = 'Join a Round';
                       req.session.header = 'Join a Round';

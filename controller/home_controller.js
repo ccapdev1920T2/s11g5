@@ -109,7 +109,7 @@ const home_controller = {
       res.end();
     }else{
       if(!req.session.guest_fields){
-        req.session.guest_fields = {email:0, name:0, insti:0};
+        req.session.guest_fields = {email:0, name:0, level:0};
       }
       res.render('app/guest/guestLogin', {
         pagename: 'Guest Login',
@@ -129,7 +129,7 @@ const home_controller = {
     }else{
       var errors = validationResult(req);
       if (!errors.isEmpty()){
-        req.session.guest_fields = {email:1, name:0, insti:0};
+        req.session.guest_fields = {email:1, name:0, level:0};
         res.redirect('/guestLogin');
         res.end();
       }else{
@@ -137,7 +137,7 @@ const home_controller = {
         /* Try to find the email entered in the registered user database. If found, signal an error */
         await db.findOne(User, {email:email}, async function(foundUser){
           if(foundUser){
-            req.session.guest_fields = {email:1, name:0, insti:0};
+            req.session.guest_fields = {email:1, name:0, level:0};
             res.redirect('/guestLogin');
             res.end();
           }else{
@@ -147,7 +147,7 @@ const home_controller = {
               first_name: email,
               last_name: email,
               full_name: email,
-              institution: 'None'
+              level: 'None'
             };
             req.session.guest_user = guest_user;
             res.redirect('/guestName');
@@ -166,13 +166,13 @@ const home_controller = {
     }else if(req.session.guest_user){
       /* Have the user enter a name */
       if(!req.session.guest_fields){
-        req.session.guest_fields = {email:0, name:0, insti:0};
+        req.session.guest_fields = {email:0, name:0, level:0};
       }
       res.render('app/guest/guestName', {
         pagename: 'Guest Name',
         guest_user:req.session.guest_user,
         name:req.session.guest_fields.name,
-        insti:req.session.guest_fields.insti
+        level:req.session.guest_fields.level
       });
       res.end();
     }else{
@@ -189,28 +189,28 @@ const home_controller = {
     }else if(req.session.guest_user){
       var errors = validationResult(req);
       if (!errors.isEmpty()){
-        var validName = 0, validInsti = 0;
+        var validName = 0, validLevel = 0;
         errors = errors.errors;
         for(i = 0; i < errors.length; i++){
           if(errors[i].msg == 'empty'){
             validName = 1;
-            validInsti = 1;
+            validLevel = 1;
             break;
           }else{
             if(errors[i].param == 'firstname' || errors[i].param == 'lastname'){
               validName = 1;
-            }else if(errors[i].param == 'institution'){
-              validInsti = 1;
+            }else if(errors[i].param == 'level'){
+              validLevel = 1;
             }
           }
         }
-        req.session.guest_fields = {email:0, name:validName, insti:validInsti};
+        req.session.guest_fields = {email:0, name:validName, level:validLevel};
         res.redirect('/guestName');
         res.end();
       }else{
         var first = sanitize(req.body.firstname);
         var last = sanitize(req.body.lastname);
-        var institution = sanitize(req.body.institution);
+        var level = sanitize(req.body.level);
         var username = req.session.guest_user.email;
         var full_name = first + " " + last;
         var guest_user = {
@@ -219,7 +219,7 @@ const home_controller = {
           first_name: first,
           last_name: last,
           full_name: full_name,
-          institution: institution
+          level: level
         };
         req.session.guest_user = guest_user;
         /* Update the teams and rounds that they are part of */
@@ -272,7 +272,7 @@ const home_controller = {
           first: 0,
           last: 0,
           user: 0,
-          insti: 0,
+          level: 0,
           email: 0,
           pass: 0
         };
@@ -283,7 +283,7 @@ const home_controller = {
         first: req.session.reg_fields.first,
         last: req.session.reg_fields.last,
         user: req.session.reg_fields.user,
-        insti: req.session.reg_fields.insti,
+        level: req.session.reg_fields.level,
         email: req.session.reg_fields.email,
         pass: req.session.reg_fields.pass
       });
@@ -300,7 +300,7 @@ const home_controller = {
     }else{
       var errors = validationResult(req);
       if (!errors.isEmpty()){
-        var all = 0, validFirst = 0, validLast = 0, validInsti = 0, validUser = 0, validEmail = 0, validPass = 0;
+        var all = 0, validFirst = 0, validLast = 0, validLevel = 0, validUser = 0, validEmail = 0, validPass = 0;
         errors = errors.errors;
         for(i = 0; i < errors.length; i++){
           if(errors[i].msg == 'empty'){
@@ -311,8 +311,8 @@ const home_controller = {
               validFirst = 1;
             }else if(errors[i].param == 'lastname'){
               validLast = 1;
-            }else if(errors[i].param == 'institution'){
-              validInsti = 1;
+            }else if(errors[i].param == 'level'){
+              validLevel = 1;
             }else if(errors[i].param == 'username'){
               validUser = 1;
             }else if(errors[i].param == 'email'){
@@ -329,7 +329,7 @@ const home_controller = {
           first: validFirst,
           last: validLast,
           user: validUser,
-          insti: validInsti,
+          level: validLevel,
           email: validEmail,
           pass: validPass
         };
@@ -340,7 +340,7 @@ const home_controller = {
         var first = sanitize(req.body.first_name);
         var last = sanitize(req.body.last_name);
         var email = sanitize(req.body.email);
-        var institution = sanitize(req.body.institution);
+        var level = sanitize(req.body.level);
         var firstPass = sanitize(req.body.password);
         var secondPass = sanitize(req.body.confirm_pass);
         bcrypt.hash(firstPass, saltRounds, async function(err, hash){
@@ -352,7 +352,7 @@ const home_controller = {
             last_name : last,
             full_name: full,
             email: email,
-            institution :institution,
+            level :level,
             dateoflast: 'None',
             numdebates: 0,
             wins: 0,
@@ -388,7 +388,7 @@ const home_controller = {
                     first: 0,
                     last: 0,
                     user: 0,
-                    insti: 0,
+                    level: 0,
                     email: 1,
                     pass: 0
                   });
@@ -415,7 +415,7 @@ const home_controller = {
                 first: 0,
                 last: 0,
                 user: validUser,
-                insti: 0,
+                level: 0,
                 email: validEmail,
                 pass: 0
               };
@@ -525,24 +525,6 @@ const home_controller = {
 
   /* Log the user out of Tabcore */
   getLogout: async function(req, res) {
-    if(req.session.guest_user){
-      /* If the logged in user is a guest, update the teams and matches and delete the temporary account */
-      var guestUser = {
-        email:req.session.guest_user.email,
-        username:req.session.guest_user.email,
-        full_name:req.session.guest_user.email,
-        institution: 'No Institution Entered.'
-      };
-      await db.updateMany(Team, {"first.email":req.session.guest_user.email}, {$set:{"first":guestUser}});
-      await db.updateMany(Team, {"second.email":req.session.guest_user.email}, {$set:{"second":guestUser}});
-      await db.updateMany(Team, {"third.email":req.session.guest_user.email}, {$set:{"third":guestUser}});
-      await db.updateMany(Match, {"gov.first.email":req.session.guest_user.email}, {$set:{"gov.first":guestUser}});
-      await db.updateMany(Match, {"gov.second.email":req.session.guest_user.email}, {$set:{"gov.second":guestUser}});
-      await db.updateMany(Match, {"gov.third.email":req.session.guest_user.email}, {$set:{"gov.third":guestUser}});
-      await db.updateMany(Match, {"opp.first.email":req.session.guest_user.email}, {$set:{"opp.first":guestUser}});
-      await db.updateMany(Match, {"opp.second.email":req.session.guest_user.email}, {$set:{"opp.second":guestUser}});
-      await db.updateMany(Match, {"opp.third.email":req.session.guest_user.email}, {$set:{"opp.third":guestUser}});
-    }
     req.session.destroy((err)=>{
       if(err) throw err;
     });

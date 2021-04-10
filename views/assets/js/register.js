@@ -5,12 +5,12 @@ $(document).ready(function () {
   function checkAll(){
     var first = $('#first_name').val();
     var last = $('#last_name').val()
-    var institution = $('#institution').val();
+    var level = $('#level').val();
     var username = $('#username').val();
     var email = $('#email').val();
     var password = $('#password').val();
     var confirm = $('#confirm_pass').val();
-    return (!validator.isEmpty(first) && !validator.isEmpty(last) && !validator.isEmpty(institution) && !validator.isEmpty(username) && !validator.isEmpty(email) && !validator.isEmpty(password) && !validator.isEmpty(confirm))
+    return (!validator.isEmpty(first) && !validator.isEmpty(last) && !validator.isEmpty(level) && !validator.isEmpty(username) && !validator.isEmpty(email) && !validator.isEmpty(password) && !validator.isEmpty(confirm))
   }
 
   $('#submit').prop('disabled', true);
@@ -62,16 +62,16 @@ $(document).ready(function () {
     }
   });
 
-  $('#institution').keyup(function () {
-    var institution = $('#institution').val();
-    if(!validator.isEmpty(institution)){
-      if(!validator.matches(institution, nameFormat)){
-        $('#institution').css('border', '1px solid #d66');
-        $('#invalid_insti').text('Invalid Institution');
+  $('#level').change(function () {
+    var level = $('#level').val();
+    if(!validator.isEmpty(level)){
+      if(!validator.isAlpha(level)){
+        $('#level').css('border', '1px solid #d66');
+        $('#invalid_level').text('Invalid Debate Level');
         $('#submit').prop('disabled', true);
       }else{
-        $('#institution').css('border', '1px solid #cccccc');
-        $('#invalid_insti').text('');
+        $('#level').css('border', '1px solid #cccccc');
+        $('#invalid_level').text('');
         $('#invalid_all').text('');
         if(checkAll() == true){
           $('#submit').prop('disabled', false);
@@ -80,8 +80,8 @@ $(document).ready(function () {
         }
       }
     }else{
-      $('#institution').css('border', '1px solid #cccccc');
-      $('#invalid_insti').text('');
+      $('#level').css('border', '1px solid #cccccc');
+      $('#invalid_level').text('');
       $('#submit').prop('disabled', true);
     }
   });

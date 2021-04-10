@@ -42,7 +42,7 @@ html
                             input#govFirst(type='hidden' value=pagedetails.match.gov.first.full_name)
                           if(pagedetails.match.gov.first.full_name != 'No User')
                             .small Leader of Government
-                            span.text-xs Institution: #{pagedetails.match.gov.first.institution}
+                            span.text-xs Debate Level: #{pagedetails.match.gov.first.level}
                     li.list-group-item.bg-light.text-dark#gov_second(style='font-size: 18px;')
                       .row.align-items-center.no-gutters
                         .col.mr-2
@@ -51,7 +51,7 @@ html
                             input#govSecond(type='hidden' value=pagedetails.match.gov.second.full_name)
                           if(pagedetails.match.gov.second.full_name != 'No User')
                             .small Deputy Leader of Government
-                            span.text-xs Institution: #{pagedetails.match.gov.second.institution}
+                            span.text-xs Debate Level: #{pagedetails.match.gov.second.level}
                     li.list-group-item.bg-light.text-dark#gov_third(style='font-size: 18px;')
                       .row.align-items-center.no-gutters
                         .col.mr-2
@@ -60,7 +60,7 @@ html
                             input#govThird(type='hidden' value=pagedetails.match.gov.third.full_name)
                           if(pagedetails.match.gov.third.full_name != 'No User')
                             .small Government Whip
-                            span.text-xs Institution: #{pagedetails.match.gov.third.institution}
+                            span.text-xs Debate Level: #{pagedetails.match.gov.third.level}
               .col-lg-6.mb-4
                 .card.shadow.mb-4
                   .card-header.py-3
@@ -170,7 +170,7 @@ html
                             input#oppFirst(type='hidden' value=pagedetails.match.opp.first.full_name)
                           if(pagedetails.match.opp.first.full_name != 'No User')
                             .small Leader of Opposition
-                            span.text-xs Institution: #{pagedetails.match.opp.first.institution}
+                            span.text-xs Debate Level: #{pagedetails.match.opp.first.level}
                     li.list-group-item.bg-light.text-dark#opp_second(style='font-size: 18px;')
                       .row.align-items-center.no-gutters
                         .col.mr-2
@@ -179,7 +179,7 @@ html
                             input#oppSecond(type='hidden' value=pagedetails.match.opp.second.full_name)
                           if(pagedetails.match.opp.second.full_name != 'No User')
                             .small Deputy Leader of Opposition
-                            span.text-xs Institution: #{pagedetails.match.opp.second.institution}
+                            span.text-xs Debate Level: #{pagedetails.match.opp.second.level}
                     li.list-group-item.bg-light.text-dark#opp_third(style='font-size: 18px;')
                       .row.align-items-center.no-gutters
                         .col.mr-2
@@ -188,7 +188,7 @@ html
                             input#oppThird(type='hidden' value=pagedetails.match.opp.third.full_name)
                           if(pagedetails.match.opp.third.full_name != 'No User')
                             .small Opposition Whip
-                            span.text-xs Institution: #{pagedetails.match.opp.third.institution}
+                            span.text-xs Debate Level: #{pagedetails.match.opp.third.level}
         footer.bg-white.sticky-footer
           .container.my-auto
             .text-center.my-auto.copyright

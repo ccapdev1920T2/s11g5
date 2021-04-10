@@ -17,8 +17,8 @@ const guest_login_helper = {
       check('firstname').matches(nameFormat),
       check('lastname', 'empty').notEmpty(),
       check('lastname').matches(nameFormat),
-      check('institution', 'empty').notEmpty(),
-      check('institution').matches(nameFormat)
+      check('level', 'empty').notEmpty(),
+      check('level').isAlpha()
     ];
     return validation;
   }
