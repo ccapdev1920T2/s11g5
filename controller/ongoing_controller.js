@@ -110,7 +110,7 @@ const ongoing_controller = {
                         const mailDetails = {
                           from: 'tabcore@outlook.com',
                           to: maillist,
-                          subject: 'Invite to Join a Round',
+                          subject: 'Invite to Join Round: ' + roundID,
                           text: "Your team has been invited to a Debate Round!",
                           html: '<h3>' + foundRound.creator.full_name + ' has created a new Debate Round. Here are the details:</br><ul><li>Round ID: ' + roundID + ' </li><li>Adjudicator: ' + foundRound.adjudicator.full_name + '</li><li>Motion: ' + foundRound.motion + '</li><li>Government: ' + foundRound.gov.teamname + '</li><li>Opposition: ' + foundRound.opp.teamname + '</ul><br>Head on over to <a href="https://tabcore.herokuapp.com/">Tabcore</a> to start the round!<br /></h3><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
                           attachments: [{
