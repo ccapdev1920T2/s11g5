@@ -842,8 +842,8 @@ const team_controller = {
         req.session.back = 'Team Dashboard';
         goMessage(req, res);
       }else{
-        if(validator.matches(name, nameFormat)){
-          var teamID = sanitize(req.query.team);
+        var teamID = sanitize(req.query.team);
+        if(validator.isAlphanumeric(teamID)){
           /* Find the team */
           await db.findOne(Team, {_id:teamID}, async function(result){
             if(result){ /* If team is found, proceed */
@@ -1838,6 +1838,7 @@ async function updateTeam(req, res, current, teamname, team){
 /* Update the members within the chosen team */
 async function updateMembers(req, res, current, teamname){
   if(req.session.curr_user){
+    req.session.edit_team = current._id;
     var userfirst = sanitize(req.body.edit_first);
     var usersecond = sanitize(req.body.edit_second);
     var userthird = sanitize(req.body.edit_third);
@@ -1950,6 +1951,8 @@ async function updateMembers(req, res, current, teamname){
                         first = current.third;
                     }else if(!first){
                       lead = 1;
+                    }else if(first && validator.isEmail(userfirst)){
+                      lead = 1;
                     }else{
                       lead = 0;
                     }
@@ -1969,6 +1972,8 @@ async function updateMembers(req, res, current, teamname){
                         second = current.third;
                     }else if(!second){
                       dep = 1;
+                    }else if(second && validator.isEmail(usersecond)){
+                      dep = 1;
                     }else{
                       dep = 0;
                     }
@@ -1987,6 +1992,8 @@ async function updateMembers(req, res, current, teamname){
                       else if(current.third.username == userthird)
                         third = current.third;
                     }else if(!third){
+                      whip = 1;
+                    }else if(third && validator.isEmail(userthird)){
                       whip = 1;
                     }else{
                       whip = 0;
@@ -2048,6 +2055,7 @@ async function updateMembers(req, res, current, teamname){
           }
         });
       }else{
+        req.session.edit_team = current._id;
         req.session.edit_fields = {all:0, new_team:0, new_users:1 ,new_current:0};
         res.redirect('/editTeams');
         res.end();
