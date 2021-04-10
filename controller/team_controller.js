@@ -1915,144 +1915,136 @@ async function updateMembers(req, res, current, teamname){
     }else{
       /* if no two users are the same and the current user is one of the members, proceed */
       if((userfirst === current_user || usersecond === current_user || userthird === current_user) && (userfirst !== usersecond && userfirst !== userthird && usersecond !== userthird)){
-        await db.findOne(Team, query, async function(exist_res){
-          if(exist_res){ /* if the team already exists/all three members already have a group together, redirect back to the create a team page */
-            req.session.edit_fields = {all:0, new_team:0, new_users:2 ,new_current:0};
-            res.redirect('/editTeams');
-            res.end();
-          }else{
-            /* Check the validity of all information entered */
-            await db.findOne(User, findOne, async function(first_res){
-              var first = first_res;
-              await db.findOne(User, findTwo, async function(second_res){
-                var second = second_res;
-                await db.findOne(User, findThree, async function(third_res){
-                  var third = third_res;
-                  /* If all users are registered and found and there is no team with the same name, proceed */
-                  if((first && !validator.isEmail(userfirst)) && (second && !validator.isEmail(usersecond)) && (third && !validator.isEmail(userthird))){
-                    var team = {first:first,second:second,third:third};
-                    updateTeam(req, res, current, teamname, team);
-                  }else{
-                    var lead = 0, dep = 0, whip = 0;
-                    var maillist = [];
-                    /* Check if the first entered user is an email or a username */
-                    if(!first && validator.isEmail(userfirst) && (userfirst != current.first.username && userfirst != current.second.username && userfirst != current.third.username)){
-                      /* If unregistered, a new user to the team, and an email, add the email to the mail list array */
-                      lead = 0;
-                      maillist.push(userfirst);
-                      first = {email:userfirst,username:userfirst,full_name:userfirst};
-                    }else if((userfirst == current.first.username || userfirst == current.second.username || userfirst == current.third.username) && validator.isEmail(userfirst)){
-                      lead = 0;
-                      if(current.first.username == userfirst)
-                        first = current.first;
-                      else if(current.second.username == userfirst)
-                        first = current.second;
-                      else if(current.third.username == userfirst)
-                        first = current.third;
-                    }else if(!first){
-                      lead = 1;
-                    }else if(first && validator.isEmail(userfirst)){
-                      lead = 1;
-                    }else{
-                      lead = 0;
-                    }
-                    /* Check if the second entered user is an email or a username */
-                    if(!second && validator.isEmail(usersecond) && (usersecond != current.first.username && usersecond != current.second.username && usersecond != current.third.username)){
-                      /* If unregistered, a new user to the team, and an email, add the email to the mail list array */
-                      dep =  0;
-                      maillist.push(usersecond);
-                      second = {email:usersecond,username:usersecond,full_name:usersecond};
-                    }else if((usersecond == current.first.username || usersecond == current.second.username || usersecond == current.third.username) && validator.isEmail(usersecond)){
-                      dep = 0;
-                      if(current.first.username == usersecond)
-                        second = current.first;
-                      else if(current.second.username == usersecond)
-                        second = current.second;
-                      else if(current.third.username == usersecond)
-                        second = current.third;
-                    }else if(!second){
-                      dep = 1;
-                    }else if(second && validator.isEmail(usersecond)){
-                      dep = 1;
-                    }else{
-                      dep = 0;
-                    }
-                    /* Check if the third entered user is an email or a username */
-                    if(!third && validator.isEmail(userthird) && (userthird != current.first.username && userthird != current.second.username && userthird != current.third.username)){
-                      /* If unregistered, a new user to the team, and an email, add the email to the mail list array */
-                      whip = 0;
-                      maillist.push(userthird);
-                      third = {email:userthird,username:userthird,full_name:userthird};
-                    }else if((userthird == current.first.username || userthird == current.second.username || userthird == current.third.username) && validator.isEmail(userthird)){
-                      whip = 0;
-                      if(current.first.username == userthird)
-                        third = current.first;
-                      else if(current.second.username == userthird)
-                        third = current.second;
-                      else if(current.third.username == userthird)
-                        third = current.third;
-                    }else if(!third){
-                      whip = 1;
-                    }else if(third && validator.isEmail(userthird)){
-                      whip = 1;
-                    }else{
-                      whip = 0;
-                    }
-                    /* If any entered information are invalid, redirect back to the edit a team page */
-                    if(lead == 1 || dep == 1 || whip == 1){
-                      req.session.edit_fields = {all:0, new_team:0, new_users:1 ,new_current:0};
+        /* Check the validity of all information entered */
+        await db.findOne(User, findOne, async function(first_res){
+          var first = first_res;
+          await db.findOne(User, findTwo, async function(second_res){
+            var second = second_res;
+            await db.findOne(User, findThree, async function(third_res){
+              var third = third_res;
+              /* If all users are registered and found and there is no team with the same name, proceed */
+              if((first && !validator.isEmail(userfirst)) && (second && !validator.isEmail(usersecond)) && (third && !validator.isEmail(userthird))){
+                var team = {first:first,second:second,third:third};
+                updateTeam(req, res, current, teamname, team);
+              }else{
+                var lead = 0, dep = 0, whip = 0;
+                var maillist = [];
+                /* Check if the first entered user is an email or a username */
+                if(!first && validator.isEmail(userfirst) && (userfirst != current.first.username && userfirst != current.second.username && userfirst != current.third.username)){
+                  /* If unregistered, a new user to the team, and an email, add the email to the mail list array */
+                  lead = 0;
+                  maillist.push(userfirst);
+                  first = {email:userfirst,username:userfirst,full_name:userfirst};
+                }else if((userfirst == current.first.username || userfirst == current.second.username || userfirst == current.third.username) && validator.isEmail(userfirst)){
+                  lead = 0;
+                  if(current.first.username == userfirst)
+                    first = current.first;
+                  else if(current.second.username == userfirst)
+                    first = current.second;
+                  else if(current.third.username == userfirst)
+                    first = current.third;
+                }else if(!first){
+                  lead = 1;
+                }else if(first && validator.isEmail(userfirst)){
+                  lead = 1;
+                }else{
+                  lead = 0;
+                }
+                /* Check if the second entered user is an email or a username */
+                if(!second && validator.isEmail(usersecond) && (usersecond != current.first.username && usersecond != current.second.username && usersecond != current.third.username)){
+                  /* If unregistered, a new user to the team, and an email, add the email to the mail list array */
+                  dep =  0;
+                  maillist.push(usersecond);
+                  second = {email:usersecond,username:usersecond,full_name:usersecond};
+                }else if((usersecond == current.first.username || usersecond == current.second.username || usersecond == current.third.username) && validator.isEmail(usersecond)){
+                  dep = 0;
+                  if(current.first.username == usersecond)
+                    second = current.first;
+                  else if(current.second.username == usersecond)
+                    second = current.second;
+                  else if(current.third.username == usersecond)
+                    second = current.third;
+                }else if(!second){
+                  dep = 1;
+                }else if(second && validator.isEmail(usersecond)){
+                  dep = 1;
+                }else{
+                  dep = 0;
+                }
+                /* Check if the third entered user is an email or a username */
+                if(!third && validator.isEmail(userthird) && (userthird != current.first.username && userthird != current.second.username && userthird != current.third.username)){
+                  /* If unregistered, a new user to the team, and an email, add the email to the mail list array */
+                  whip = 0;
+                  maillist.push(userthird);
+                  third = {email:userthird,username:userthird,full_name:userthird};
+                }else if((userthird == current.first.username || userthird == current.second.username || userthird == current.third.username) && validator.isEmail(userthird)){
+                  whip = 0;
+                  if(current.first.username == userthird)
+                    third = current.first;
+                  else if(current.second.username == userthird)
+                    third = current.second;
+                  else if(current.third.username == userthird)
+                    third = current.third;
+                }else if(!third){
+                  whip = 1;
+                }else if(third && validator.isEmail(userthird)){
+                  whip = 1;
+                }else{
+                  whip = 0;
+                }
+                /* If any entered information are invalid, redirect back to the edit a team page */
+                if(lead == 1 || dep == 1 || whip == 1){
+                  req.session.edit_fields = {all:0, new_team:0, new_users:1 ,new_current:0};
+                  res.redirect('/editTeams');
+                  res.end();
+                }else if(lead == 0 && dep == 0 && whip == 0 && maillist.length > 0){ /* If no errors and there are unregistered new users within the entered information, proceed */
+                  await db.findOne(Team, {$and:[{teamname:{$ne:current.teamname}},{"first.username":{$in:[first.username, second.username, third.username]}},{"second.username":{$in:[first.username, second.username, third.username]}},{"third.username":{$in:[first.username, second.username, third.username]}}]}, async function(existing){
+                    if(existing){ /* if the team already exists/all three members already have a group together, redirect back to the edit a team page */
+                      req.session.edit_fields = {all:0, new_team:0, new_users:2 ,new_current:0};
                       res.redirect('/editTeams');
                       res.end();
-                    }else if(lead == 0 && dep == 0 && whip == 0 && maillist.length > 0){ /* If no errors and there are unregistered new users within the entered information, proceed */
-                      await db.findOne(Team, {$and:[{teamname:{$ne:current.teamname}},{"first.username":{$in:[first.username, second.username, third.username]}},{"second.username":{$in:[first.username, second.username, third.username]}},{"third.username":{$in:[first.username, second.username, third.username]}}]}, async function(existing){
-                        if(existing){ /* if the team already exists/all three members already have a group together, redirect back to the edit a team page */
-                          req.session.edit_fields = {all:0, new_team:0, new_users:2 ,new_current:0};
+                    }else{
+                      if(teamname)
+                        update_teamname = teamname;
+                      else
+                        update_teamname = current.teamname;
+                      /* Set the email content */
+                      const mailDetails = {
+                        from: 'tabcore@outlook.com',
+                        to: maillist,
+                        subject: 'Invite to the team \'' + update_teamname + '\'',
+                        text: "Hey!\n\nYou were invited to join " + update_teamname + " team as a guest by " + req.session.curr_user.full_name + ".",
+                        html: '<h2>Hey!</h2><br><h3>You were invited to join \'' + update_teamname + '\' team as a guest by ' + req.session.curr_user.full_name + '. Head on over to Tabcore and login as a guest with this email address.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                        attachments: [{
+                          filename: 'TABCORE_FOOTER.png',
+                          path: __dirname + '/../views/assets/img/email/TABCORE_FOOTER.png',
+                          cid: 'tabcore_attach.png'
+                        }]
+                      };
+                      /* Send the email/s */
+                      transpo.sendMail(mailDetails, async function(err, result){
+                        if(err){
+                          req.session.edit_fields = {all:0, new_team:0, new_users:1 ,new_current:0};
                           res.redirect('/editTeams');
                           res.end();
                         }else{
-                          if(teamname)
-                            update_teamname = teamname;
-                          else
-                            update_teamname = current.teamname;
-                          /* Set the email content */
-                          const mailDetails = {
-                            from: 'tabcore@outlook.com',
-                            to: maillist,
-                            subject: 'Invite to the team \'' + update_teamname + '\'',
-                            text: "Hey!\n\nYou were invited to join " + update_teamname + " team as a guest by " + req.session.curr_user.full_name + ".",
-                            html: '<h2>Hey!</h2><br><h3>You were invited to join \'' + update_teamname + '\' team as a guest by ' + req.session.curr_user.full_name + '. Head on over to Tabcore and login as a guest with this email address.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                            attachments: [{
-                              filename: 'TABCORE_FOOTER.png',
-                              path: __dirname + '/../views/assets/img/email/TABCORE_FOOTER.png',
-                              cid: 'tabcore_attach.png'
-                            }]
-                          };
-                          /* Send the email/s */
-                          transpo.sendMail(mailDetails, async function(err, result){
-                            if(err){
-                              req.session.edit_fields = {all:0, new_team:0, new_users:1 ,new_current:0};
-                              res.redirect('/editTeams');
-                              res.end();
-                            }else{
-                              var team = {first:first,second:second,third:third};
-                              updateTeam(req, res, current, teamname, team);
-                            }
-                          });
+                          var team = {first:first,second:second,third:third};
+                          updateTeam(req, res, current, teamname, team);
                         }
                       });
-                    }else if(lead == 0 && dep == 0 && whip == 0){
-                      var team = {first:first,second:second,third:third};
-                      updateTeam(req, res, current, teamname, team);
-                    }else{
-                      req.session.edit_fields = {all:0, new_team:0, new_users:1 ,new_current:0};
-                      res.redirect('/editTeams');
-                      res.end();
                     }
-                  }
-                });
-              });
+                  });
+                }else if(lead == 0 && dep == 0 && whip == 0){
+                  var team = {first:first,second:second,third:third};
+                  updateTeam(req, res, current, teamname, team);
+                }else{
+                  req.session.edit_fields = {all:0, new_team:0, new_users:1 ,new_current:0};
+                  res.redirect('/editTeams');
+                  res.end();
+                }
+              }
             });
-          }
+          });
         });
       }else{
         req.session.edit_team = current._id;
