@@ -1014,7 +1014,7 @@ const team_controller = {
                           to: maillist,
                           subject: 'Cancellation of Debate Round: ' + deleteMatch[i].roundID,
                           text: "The Debate Round " + deleteMatch[i].roundID + " was cancelled!",
-                          html: '<h3>The Debate Round ' + deleteMatch[i].roundID + ' was cancelled since the creator of the round, ' + req.session.curr_user.full_name + ' has left team ' + name + '.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                          html: '<h3>The Debate Round ' + deleteMatch[i].roundID + ' was cancelled since the creator of the round, ' + req.session.curr_user.full_name + ', has left team ' + name + '.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
                           attachments: [{
                             filename: 'TABCORE_FOOTER.png',
                             path: __dirname + '/../views/assets/img/email/TABCORE_FOOTER.png',
