@@ -922,7 +922,7 @@ const team_controller = {
         req.session.back = 'Team Dashboard';
         goMessage(req, res);
       }else{
-        var teamID = sanitize(req.query.teamname);
+        var teamID = sanitize(req.query.team);
         /* Find the team */
         await db.findOne(Team, {_id:teamID}, async function(result){
           if(result){ /* If team is found, proceed */
