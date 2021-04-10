@@ -267,7 +267,7 @@ $(document).ready(function () {
     var confirm = $('#edit_current').val();
     var current = $('#current_user').val();
     var current_teamname = $('#current_team').val();
-    if((!validator.isEmpty(first) || !validator.isEmpty(second) || !validator.isEmpty(third)) && newMember == 1){
+    if(((!validator.isEmpty(first) && validFirst == 0) || (!validator.isEmpty(second) && validSecond == 0) || (!validator.isEmpty(third) && validThird == 0)) && newMember == 1){
       if(current == first || current == second || current == third){
         if(first != second && first != third && second != third){
           $.get('/checkTeam', {first:first, second:second, third:third}, function(result){
@@ -279,31 +279,26 @@ $(document).ready(function () {
               return false;
             }else{
               if(!validator.isEmpty(confirm)){
-                if(validFirst == 0 && validSecond == 0 && validThird == 0){
-                  if(!validator.isEmpty(teamname) && newName == 1){
-                    if(!checkTeamName()){
-                      if(!validator.equals(teamname, confirm)){
-                        resetEverything();
-                        $('#edit').prop('disabled', false);
-                        return true;
-                      }else{
-                        $('#edit_teamname').css('border', '1px solid #d66');
-                        $('#invalid_editTeam').text('Enter a New Team Name');
-                        $('#edit').prop('disabled', true);
-                        return false;
-                      }
+                if(!validator.isEmpty(teamname) && newName == 1){
+                  if(!checkTeamName()){
+                    if(!validator.equals(teamname, confirm)){
+                      resetEverything();
+                      $('#edit').prop('disabled', false);
+                      return true;
                     }else{
+                      $('#edit_teamname').css('border', '1px solid #d66');
+                      $('#invalid_editTeam').text('Enter a New Team Name');
                       $('#edit').prop('disabled', true);
                       return false;
                     }
                   }else{
-                    resetEverything();
-                    $('#edit').prop('disabled', false);
-                    return true;
+                    $('#edit').prop('disabled', true);
+                    return false;
                   }
                 }else{
-                  $('#edit').prop('disabled', true);
-                  return false;
+                  resetEverything();
+                  $('#edit').prop('disabled', false);
+                  return true;
                 }
               }else{
                 resetEverything();
