@@ -959,7 +959,7 @@ const team_controller = {
                 /* Determine which user is the current user then create an update, send to the other users, and update the team count of the current user */
                 if(result.first._id == current_id){
                   var leaveUpdate = {
-                    teamID: result[i]._id,
+                    teamID: result._id,
                     teamname: name,
                     update: req.session.curr_user.full_name + " ("+ current_name +") has left " + name + ". [Leader Left]"
                   };
@@ -967,7 +967,7 @@ const team_controller = {
                   await db.updateOne(Team, {_id:teamID}, {$set:{"first":{username:'No User', full_name:'No User'}}});
                 }else if(result.second._id == current_id){
                   var leaveUpdate = {
-                    teamID: result[i]._id,
+                    teamID: result._id,
                     teamname: name,
                     update: req.session.curr_user.full_name + " ("+ current_name +") has left " + name + ". [Deputy Leader Left]"
                   };
@@ -975,7 +975,7 @@ const team_controller = {
                   await db.updateOne(Team, {_id:teamID}, {$set:{"second":{username:'No User', full_name:'No User'}}});
                 }else if(result.third._id == current_id){
                   var leaveUpdate = {
-                    teamID: result[i]._id,
+                    teamID: result._id,
                     teamname: name,
                     update: req.session.curr_user.full_name + " ("+ current_name +") has left " + name + ". [Whip Left]"
                   };
