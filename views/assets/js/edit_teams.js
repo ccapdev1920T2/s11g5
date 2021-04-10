@@ -155,7 +155,8 @@ $(document).ready(function () {
         }
       }
     }else{
-      resetEverything();
+      $('#edit_teamname').css('border', '1px solid #cccccc');
+      $('#invalid_editTeam').text('');
       $('#edit').prop('disabled', true);
     }
   });
@@ -216,6 +217,8 @@ $(document).ready(function () {
         }
       }
     }else{
+      $('#edit_first').css('border', '1px solid #cccccc');
+      $('#invalid_editFirst').text('');
       $('#edit').prop('disabled', true);
     }
   });
@@ -276,6 +279,8 @@ $(document).ready(function () {
         }
       }
     }else{
+      $('#edit_second').css('border', '1px solid #cccccc');
+      $('#invalid_editSecond').text('');
       $('#edit').prop('disabled', true);
     }
   });
@@ -336,6 +341,8 @@ $(document).ready(function () {
         }
       }
     }else{
+      $('#edit_third').css('border', '1px solid #cccccc');
+      $('#invalid_editThird').text('');
       $('#edit').prop('disabled', true);
     }
   });
@@ -360,7 +367,8 @@ $(document).ready(function () {
         $('#edit').prop('disabled', true);
       }
     }else{
-      resetEverything();
+      $('#edit_current').css('border', '1px solid #cccccc');
+      $('#invalid_editCurrent').text('');
       $('#edit').prop('disabled', true);
     }
   });

@@ -6,6 +6,7 @@ const Team = require('../models/team_model.js');
 const Match = require('../models/match_model.js');
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
+var validator = require('validator');
 var sanitize = require('mongo-sanitize');
 
 /* For emailing any user */
@@ -421,21 +422,25 @@ const settings_controller = {
             var deleteUpdate = {
               teamID: result[i]._id,
               teamname: result[i].teamname,
-              update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Leader deleted]"
+              update: full_name + " ("+ username +") has deleted their account. [Leader deleted]"
             };
-            if(result.second){
-              if(result.second.username != 'No User' && !validator.isEmail(result.second.username))
-                await db.updateOne(User, {username:result.second.username}, {$push:{"updates":deleteUpdate}});
-              else
+            if(result[i].second){
+              if(result[i].second.username != 'No User' && !validator.isEmail(result[i].second.username)){
+                await db.updateOne(User, {username:result[i].second.username}, {$push:{"updates":deleteUpdate}});
+              }
+              else{
                 count = count + 1;
+              }
             }else{
               count = count + 1;
             }
-            if(result.third){
-              if(result.third.username != 'No User' && !validator.isEmail(result.third.username))
-                await db.updateOne(User, {username:result.third.username}, {$push:{"updates":deleteUpdate}});
-              else
+            if(result[i].third){
+              if(result[i].third.username != 'No User' && !validator.isEmail(result[i].third.username)){
+                await db.updateOne(User, {username:result[i].third.username}, {$push:{"updates":deleteUpdate}});
+              }
+              else{
                 count = count + 1;
+              }
             }else{
               count = count + 1;
             }
@@ -456,17 +461,17 @@ const settings_controller = {
               teamname: result[i].teamname,
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Deputy Leader deleted]"
             };
-            if(result.first){
-              if(result.second.username != 'No User' && !validator.isEmail(result.first.username))
-                await db.updateOne(User, {username:result.first.username}, {$push:{"updates":deleteUpdate}});
+            if(result[i].first){
+              if(result[i].second.username != 'No User' && !validator.isEmail(result[i].first.username))
+                await db.updateOne(User, {username:result[i].first.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
             }else{
               count = count + 1;
             }
-            if(result.third){
-              if(result.third.username != 'No User' && !validator.isEmail(result.third.username))
-                await db.updateOne(User, {username:result.third.username}, {$push:{"updates":deleteUpdate}});
+            if(result[i].third){
+              if(result[i].third.username != 'No User' && !validator.isEmail(result[i].third.username))
+                await db.updateOne(User, {username:result[i].third.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
             }else{
@@ -489,17 +494,17 @@ const settings_controller = {
               teamname: result[i].teamname,
               update: req.session.curr_user.full_name + " ("+ req.session.curr_user.username +") has deleted their account. [Whip deleted]"
             };
-            if(result.first){
-              if(result.second.username != 'No User' && !validator.isEmail(result.first.username))
-                await db.updateOne(User, {username:result.first.username}, {$push:{"updates":deleteUpdate}});
+            if(result[i].first){
+              if(result[i].second.username != 'No User' && !validator.isEmail(result[i].first.username))
+                await db.updateOne(User, {username:result[i].first.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
             }else{
               count = count + 1;
             }
-            if(result.second){
-              if(result.second.username != 'No User' && !validator.isEmail(result.second.username))
-                await db.updateOne(User, {username:result.second.username}, {$push:{"updates":deleteUpdate}});
+            if(result[i].second){
+              if(result[i].second.username != 'No User' && !validator.isEmail(result[i].second.username))
+                await db.updateOne(User, {username:result[i].second.username}, {$push:{"updates":deleteUpdate}});
               else
                 count = count + 1;
             }else{
@@ -661,11 +666,9 @@ async function sendEmail(req, res, email_content, mail, updated){
   /* Send the email */
   transpo.sendMail(mailDetails, async function(err, result){
     if(err){
-      console.log(err);
       req.session.message = email_content.error_mess;
       goMessage(req, res);
     }else{
-      console.log(result);
       req.session.message = email_content.success_mess;
       goMessage(req, res);
     }
