@@ -15,21 +15,21 @@ var MatchSchema = new mongoose.Schema({
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
-      institution: {type: String},
+      level: {type: String},
     },
     second: {
       _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
-      institution: {type: String},
+      level: {type: String},
     },
     third: {
       _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
-      institution: {type: String},
+      level: {type: String},
     }
   },
   opp: {
@@ -40,21 +40,21 @@ var MatchSchema = new mongoose.Schema({
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
-      institution: {type: String},
+      level: {type: String},
     },
     second: {
       _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
-      institution: {type: String},
+      level: {type: String},
     },
     third: {
       _id: {type: mongoose.ObjectId},
       username: {type: String},
       email: {type: String},
       full_name: {type: String},
-      institution: {type: String},
+      level: {type: String},
     }
   },
   adjudicator: {
@@ -62,14 +62,14 @@ var MatchSchema = new mongoose.Schema({
     username: {type: String},
     email: {type: String},
     full_name: {type: String},
-    institution: {type: String},
+    level: {type: String},
   },
   creator: {
     _id: {type: mongoose.ObjectId},
     username: {type: String},
     email: {type: String},
     full_name: {type: String},
-    institution: {type: String},
+    level: {type: String},
   },
   creatorRole: String,
   speaker: {

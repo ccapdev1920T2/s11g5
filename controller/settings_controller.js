@@ -165,7 +165,7 @@ const settings_controller = {
       var level = sanitize(req.body.level);
       var errors = validationResult(req);
       if (!errors.isEmpty()){
-        var validFirst = 0, validLast = 0, validInsti = 0, emptyCount = 0, paramFirst = 0, paramLast = 0, paramInsti = 0;
+        var validFirst = 0, validLast = 0, validInsti = 0, emptyCount = 0, paramFirst = 0, paramLast = 0, paramLevel = 0;
         errors = errors.errors;
         for(i = 0; i < errors.length; i++){
           if(errors[i].msg == 'empty'){
@@ -175,7 +175,7 @@ const settings_controller = {
             }else if(errors[i].param == 'last_name'){
               paramLast = 1;
             }else if(errors[i].param == 'level'){
-              paramInsti = 1;
+              paramLevel = 1;
             }
           }else{
             if(errors[i].param == 'first_name'){
@@ -187,12 +187,12 @@ const settings_controller = {
             }
           }
         }
-        if(emptyCount == 3 || (paramFirst == 1 && paramLast == 1 && paramInsti == 1)){
+        if(emptyCount == 3 || (paramFirst == 1 && paramLast == 1 && paramLevel == 1)){
           reset(req);
           req.session.settings_fields = {new_user:0, new_mail:0, new_first:1, new_last:1, new_level:1, pass:0};
           res.redirect('/settings');
           res.end();
-        }else if((validFirst == 1 && paramFirst == 0) || (validLast == 1 && paramLast == 0) || (validInsti == 1 && paramInsti == 0)){
+        }else if((validFirst == 1 && paramFirst == 0) || (validLast == 1 && paramLast == 0) || (validInsti == 1 && paramLevel == 0)){
           reset(req);
           req.session.settings_fields = {new_user:0, new_mail:0, new_first:validFirst, new_last:validLast, new_level:validInsti, pass:0};
           res.redirect('/settings');
@@ -202,109 +202,144 @@ const settings_controller = {
             if(paramLast == 1){
               /* Update the user's account */
               await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {level:level}}, async function(result){
-                req.session.curr_user = result;
-                updatesTeamsMatches(req, result);
-                /* Set the email content */
-                var email_content = {
-                  html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your debate level was recently changed to ' + level + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                  error_mess: "Error in updating Debate Level! Please Try again later.",
-                  success_mess: "Successfully updated Debate Level to " + level + "!"
-                };
-                /* Send the email */
-                sendEmail(req, res, email_content, req.session.curr_user.email, result);
+                if(result){
+                  req.session.curr_user = result;
+                  updatesTeamsMatches(req, result);
+                  /* Set the email content */
+                  var email_content = {
+                    html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your debate level was recently changed to ' + level + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                    error_mess: "Error in updating Debate Level! Please Try again later.",
+                    success_mess: "Successfully updated Debate Level to " + level + "!"
+                  };
+                  /* Send the email */
+                  sendEmail(req, res, email_content, req.session.curr_user.email, result);
+                }else{
+                  req.session.message = "Error in updating Debate Level! Please Try again later.";
+                  goMessage(req, res);
+                }
               });
-            }else if(paramInsti == 1){
+            }else if(paramLevel == 1){
               var full_name = req.session.curr_user.first_name + " " + last_name;
               /* Update the user's account */
               await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {last_name:last_name}}, async function(result){
+                if(result){
+                  req.session.curr_user = result;
+                  updatesTeamsMatches(req, result);
+                  /* Set the email content */
+                  var email_content = {
+                    html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                    error_mess: "Error in updating Name! Please Try again later.",
+                    success_mess: "Successfully updated Last Name to " + last_name + "!"
+                  };
+                  /* Send the email */
+                  sendEmail(req, res, email_content, req.session.curr_user.email, result);
+                }else{
+                  req.session.message = "Error in updating Debate Level! Please Try again later.";
+                  goMessage(req, res);
+                }
+              });
+            }else{
+              var full_name = req.session.curr_user.first_name + " " + last_name;
+              /* Update the user's account */
+              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {last_name:last_name, level:level, full_name:full_name}}, async function(result){
+                if(result){
+                  req.session.curr_user = result;
+                  updatesTeamsMatches(req, result);
+                  /* Set the email content */
+                  var email_content = {
+                    html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and debate level were recently changed to ' + full_name + ' and ' + level + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                    error_mess: "Error in updating Name and Debate Level! Please Try again later.",
+                    success_mess: "Successfully updated Last Name and Debate Level to " + last_name + " and " + level + "!"
+                  };
+                  /* Send the email */
+                  sendEmail(req, res, email_content, req.session.curr_user.email, result);
+                }else{
+                  req.session.message = "Error in updating Debate Level! Please Try again later.";
+                  goMessage(req, res);
+                }
+              });
+            }
+          }else if(paramLast == 1){
+            if(paramLevel == 1){
+              var full_name = first_name + " " + req.session.curr_user.last_name;
+              /* Update the user's account */
+              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, full_name:full_name}}, async function(result){
+                if(result){
+                  req.session.curr_user = result;
+                  updatesTeamsMatches(req, result);
+                  /* Set the email content */
+                  var email_content = {
+                    html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                    error_mess: "Error in updating Name! Please Try again later.",
+                    success_mess: "Successfully updated First Name to " + first_name + "!"
+                  };
+                  /* Send the email */
+                  sendEmail(req, res, email_content, req.session.curr_user.email, result);
+                }else{
+                  req.session.message = "Error in updating Debate Level! Please Try again later.";
+                  goMessage(req, res);
+                }
+              });
+            }else{
+              var full_name = first_name + " " + req.session.curr_user.last_name;
+              /* Update the user's account */
+              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, full_name:full_name, level:level}}, async function(result){
+                if(result){
+                  req.session.curr_user = result;
+                  updatesTeamsMatches(req, result);
+                  /* Set the email content */
+                  var email_content = {
+                    html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + ' and your level was changed to ' + level + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+                    error_mess: "Error in updating Name! Please Try again later.",
+                    success_mess: "Successfully updated First Name and Debate Level to " + first_name + " and " + level + "!"
+                  };
+                  /* Send the email */
+                  sendEmail(req, res, email_content, req.session.curr_user.email, result);
+                }else{
+                  req.session.message = "Error in updating Debate Level! Please Try again later.";
+                  goMessage(req, res);
+                }
+              });
+            }
+          }else if(paramLevel == 1){
+            var full_name = first_name + " " + last_name;
+            /* Update the user's account */
+            await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name}}, async function(result){
+              if(result){
                 req.session.curr_user = result;
                 updatesTeamsMatches(req, result);
                 /* Set the email content */
                 var email_content = {
                   html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
                   error_mess: "Error in updating Name! Please Try again later.",
-                  success_mess: "Successfully updated Last Name to " + last_name + "!"
+                  success_mess: "Successfully updated First Name and Last Name to " + first_name + " and " + last_name + "!"
                 };
                 /* Send the email */
                 sendEmail(req, res, email_content, req.session.curr_user.email, result);
-              });
-            }else{
-              var full_name = req.session.curr_user.first_name + " " + last_name;
-              /* Update the user's account */
-              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {last_name:last_name, level:level, full_name:full_name}}, async function(result){
+              }else{
+                req.session.message = "Error in updating Debate Level! Please Try again later.";
+                goMessage(req, res);
+              }
+            });
+          }else{
+            var full_name = first_name + " " + last_name;
+            /* Update the user's account */
+            await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, level:level}}, async function(result){
+              if(result){
                 req.session.curr_user = result;
                 updatesTeamsMatches(req, result);
                 /* Set the email content */
                 var email_content = {
                   html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and debate level were recently changed to ' + full_name + ' and ' + level + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
                   error_mess: "Error in updating Name and Debate Level! Please Try again later.",
-                  success_mess: "Successfully updated Last Name and Debate Level to " + last_name + " and " + level + "!"
+                  success_mess: "Successfully updated First Name, Last Name, and Debate Level to " + first_name + ", " + last_name + ", and " + level + "!"
                 };
                 /* Send the email */
                 sendEmail(req, res, email_content, req.session.curr_user.email, result);
-              });
-            }
-          }else if(paramLast == 1){
-            if(paramInsti == 1){
-              var full_name = first_name + " " + req.session.curr_user.last_name;
-              /* Update the user's account */
-              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, full_name:full_name}}, async function(result){
-                req.session.curr_user = result;
-                updatesTeamsMatches(req, result);
-                /* Set the email content */
-                var email_content = {
-                  html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                  error_mess: "Error in updating Name! Please Try again later.",
-                  success_mess: "Successfully updated First Name to " + first_name + "!"
-                };
-                /* Send the email */
-                sendEmail(req, res, email_content, req.session.curr_user.email, result);
-              });
-            }else{
-              var full_name = first_name + " " + req.session.curr_user.last_name;
-              /* Update the user's account */
-              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, full_name:full_name, level:level}}, async function(result){
-                req.session.curr_user = result;
-                updatesTeamsMatches(req, result);
-                /* Set the email content */
-                var email_content = {
-                  html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + ' and your level was changed to ' + level + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                  error_mess: "Error in updating Name! Please Try again later.",
-                  success_mess: "Successfully updated First Name and Debate Level to " + first_name + " and " + level + "!"
-                };
-                /* Send the email */
-                sendEmail(req, res, email_content, req.session.curr_user.email, result);
-              });
-            }
-          }else if(paramInsti == 1){
-            var full_name = first_name + " " + last_name;
-            /* Update the user's account */
-            await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name}}, async function(result){
-              req.session.curr_user = result;
-              updatesTeamsMatches(req, result);
-              /* Set the email content */
-              var email_content = {
-                html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name was recently changed to ' + full_name + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                error_mess: "Error in updating Name! Please Try again later.",
-                success_mess: "Successfully updated First Name and Last Name to " + first_name + " and " + last_name + "!"
-              };
-              /* Send the email */
-              sendEmail(req, res, email_content, req.session.curr_user.email, result);
-            });
-          }else{
-            var full_name = first_name + " " + last_name;
-            /* Update the user's account */
-            await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, level:level}}, async function(result){
-              req.session.curr_user = result;
-              updatesTeamsMatches(req, result);
-              /* Set the email content */
-              var email_content = {
-                html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and debate level were recently changed to ' + full_name + ' and ' + level + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-                error_mess: "Error in updating Name and Debate Level! Please Try again later.",
-                success_mess: "Successfully updated First Name, Last Name, and Debate Level to " + first_name + ", " + last_name + ", and " + level + "!"
-              };
-              /* Send the email */
-              sendEmail(req, res, email_content, req.session.curr_user.email, result);
+              }else{
+                req.session.message = "Error in updating Debate Level! Please Try again later.";
+                goMessage(req, res);
+              }
             });
           }
         }
@@ -312,16 +347,21 @@ const settings_controller = {
         var full_name = first_name + " " + last_name;
         /* Update the user's account */
         await db.findOneAndUpdate(User, {_id:req.session.curr_user._id}, {$set: {first_name:first_name, last_name:last_name, full_name:full_name, level:level}}, async function(result){
-          req.session.curr_user = result;
-          updatesTeamsMatches(req, result);
-          /* Set the email content */
-          var email_content = {
-            html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and debate level were recently changed to ' + full_name + ' and ' + level + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
-            error_mess: "Error in updating Name and Debate Level! Please Try again later.",
-            success_mess: "Successfully updated First Name, Last Name, and Debate Level to " + first_name + ", " + last_name + ", and " + level + "!"
-          };
-          /* Send the email */
-          sendEmail(req, res, email_content, req.session.curr_user.email, result);
+          if(result){
+            req.session.curr_user = result;
+            updatesTeamsMatches(req, result);
+            /* Set the email content */
+            var email_content = {
+              html_content:  '<h2>Hey, ' + req.session.curr_user.full_name + '!</h2><br><h3>Your name and debate level were recently changed to ' + full_name + ' and ' + level + '. Didn\'t make these changes? No worries! Reply to this email and we can try to resolve this problem.</h3><br /><img src="cid:tabcore_attach.png" alt="Tabcore" style="display:block; margin-left:auto; margin-right:auto; width: 100%">',
+              error_mess: "Error in updating Name and Debate Level! Please Try again later.",
+              success_mess: "Successfully updated First Name, Last Name, and Debate Level to " + first_name + ", " + last_name + ", and " + level + "!"
+            };
+            /* Send the email */
+            sendEmail(req, res, email_content, req.session.curr_user.email, result);
+          }else{
+            req.session.message = "Error in updating Debate Level! Please Try again later.";
+            goMessage(req, res);
+          }
         });
       }
     }else{

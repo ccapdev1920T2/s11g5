@@ -25,10 +25,10 @@ block content
                           input#current_status(type='hidden' value=pagedetails.match.status)
                           input#edit_adj(type='hidden' value=pagedetails.match.adjudicator.username)
                           if(pagedetails.ad == 1)
-                            input.form-control#ad(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.adjudicator.full_name}` name='ad')
+                            input.form-control#ad(style='border: 1px solid #d66' type='text' placeholder=`${pagedetails.match.adjudicator.username}` name='ad')
                             .text-center.small#invalid_ad(style="color: #d66") Invalid User Name
                           else
-                            input.form-control#ad(type='text' placeholder=`${pagedetails.match.adjudicator.full_name}` name='ad')
+                            input.form-control#ad(type='text' placeholder=`${pagedetails.match.adjudicator.username}` name='ad')
                             .text-center.small#invalid_ad(style="color: #d66")
                     .form-group.text-center
                       button.btn.btn-block.btn-primary#adj_next(type='submit') Next

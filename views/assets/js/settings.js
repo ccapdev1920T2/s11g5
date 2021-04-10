@@ -103,7 +103,7 @@ $(document).ready(function () {
     }else{
       $('#first_name').css('border', '1px solid #cccccc');
       $('#invalid_first').text('');
-      if(!validator.isEmpty(last) || !validator.isEmpty(level))
+      if(level != null || !validator.isEmpty(last))
         $('#personal').prop('disabled', false);
       else
         $('#personal').prop('disabled', true);
@@ -132,7 +132,7 @@ $(document).ready(function () {
     }else{
       $('#last_name').css('border', '1px solid #cccccc');
       $('#invalid_last').text('');
-      if(!validator.isEmpty(first) || !validator.isEmpty(level))
+      if(level != null || !validator.isEmpty(first))
         $('#personal').prop('disabled', false);
       else
         $('#personal').prop('disabled', true);
@@ -144,8 +144,6 @@ $(document).ready(function () {
     var first = $('#first_name').val();
     var last = $('#last_name').val();
     var level = $('#level').val();
-    console.log(current_level);
-    console.log(level);
     if(!validator.isEmpty(level)){
       if(validator.equals(level, current_level)){
         $('#level').css('border', '1px solid #d66');
