@@ -6,6 +6,7 @@ const Team = require('../models/team_model.js');
 const Match = require('../models/match_model.js');
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
+var validator = require('validator');
 var sanitize = require('mongo-sanitize');
 
 /* For emailing any user */
@@ -248,29 +249,34 @@ const home_controller = {
       res.redirect('/dashboard');
       res.end();
     }else if(req.session.guest_user){
-      first_query = {"first.email":req.session.guest_user.email};
-      second_query = {"second.email":req.session.guest_user.email};
-      third_query = {"third.email":req.session.guest_user.email};
-      whole_query = {$and: [{$or: [first_query, second_query, third_query]}, {'status':{$ne:'Active'}}]};
-      await db.findOne(Team, whole_query, function(result){
-        var match = 0, team;
-        if(result){
-          match = 1;
-          team = result;
-          req.session.guest_user.status = result.status;
-        }else{
-          req.session.guest_user.status = 'Active';
-        }
-        var render = 'app/basics/dashboard';
-        var pagedetails = {
-          pagename: 'Guest Dashboard',
-          curr_user:req.session.guest_user,
-          match: match,
-          team: team
-        };
-        res.render('app/guest/guestDashboard', {pagedetails:pagedetails});
+      if(!validator.isEmail(req.session.guest_user.full_name)){
+        first_query = {"first.email":req.session.guest_user.email};
+        second_query = {"second.email":req.session.guest_user.email};
+        third_query = {"third.email":req.session.guest_user.email};
+        whole_query = {$and: [{$or: [first_query, second_query, third_query]}, {'status':{$ne:'Active'}}]};
+        await db.findOne(Team, whole_query, function(result){
+          var match = 0, team;
+          if(result){
+            match = 1;
+            team = result;
+            req.session.guest_user.status = result.status;
+          }else{
+            req.session.guest_user.status = 'Active';
+          }
+          var render = 'app/basics/dashboard';
+          var pagedetails = {
+            pagename: 'Guest Dashboard',
+            curr_user:req.session.guest_user,
+            match: match,
+            team: team
+          };
+          res.render('app/guest/guestDashboard', {pagedetails:pagedetails});
+          res.end();
+        });
+      }else{
+        res.redirect('/guestName');
         res.end();
-      });
+      }
     }else{
       goHome(req, res);
     }
