@@ -17,7 +17,7 @@ const transpo = nodemailer.createTransport({
   },
   auth: {
     user: 'tabcore@outlook.com',
-    pass: 't@bc0rEcc_pd3V!'
+    pass: 't@bc0rE_cApd3V!'
   }
 });
 
