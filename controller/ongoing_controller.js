@@ -354,7 +354,7 @@ const ongoing_controller = {
                           }else{
                             req.session.pagename = 'Join a Round';
                             req.session.header = 'Join a Round';
-                            req.session.message = 'Cannot start round! ' + oppTeam.teamname + ' is currently participating in a different round.';
+                            req.session.message = 'Cannot start round! ' + oppTeam.teamname + ' members are currently participating in a different round.';
                             req.session.link = '/dashboard';
                             req.session.back = 'Dashboard';
                             res.redirect('/message');
@@ -363,7 +363,7 @@ const ongoing_controller = {
                         }else{
                           req.session.pagename = 'Join a Round';
                           req.session.header = 'Join a Round';
-                          req.session.message = 'Cannot start round! ' + govTeam.teamname + ' is currently participating in a different round.';
+                          req.session.message = 'Cannot start round! ' + govTeam.teamname + ' members are currently participating in a different round.';
                           req.session.link = '/dashboard';
                           req.session.back = 'Dashboard';
                           res.redirect('/message');
