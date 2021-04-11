@@ -1,6 +1,21 @@
 extends ../layout/base_guest.pug
 
 block content
+    .row
+      .container-fluid
+        .card.shadow
+          .card-body
+            .row.text-center
+              if(pagedetails.match > 0)
+                .col
+                  h6.text-dark.mb-0.text-center ROUND ID:
+                  a(href='/ongoingRound?roundID='+pagedetails.team.status style="font-size:x-large;") #{pagedetails.team.status}
+                .col
+                  h5.text-success.mb-0.text-center #{pagedetails.team.teamname}
+                  h6.text-dark.mb-0.text-center Your team is currently participating in this Debate Round
+              else
+                .col
+                  h5.text-dark.mb-0.text-center No Ongoing Rounds. Click on Join a Round!
     .container
       .row.justify-content-center(style='padding-top: 75px;')
         .col-md-6.col-xl-3

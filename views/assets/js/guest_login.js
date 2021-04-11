@@ -2,6 +2,8 @@ $(document).ready(function () {
   const nameFormat = /^[a-zA-Z][a-zA-Z\s]*$/;
   const userFormat = /[a-zA-Z0-9\-\_\.]+$/;
 
+  $('#login_guest').prop('disabled', true);
+  $('#submit').prop('disabled', true);
   $('#guest_email').keyup(function () {
     var email = $('#guest_email').val();
     if(!validator.isEmpty(email)){
@@ -25,12 +27,14 @@ $(document).ready(function () {
     }else{
       $('#guest_email').css('border', '1px solid #cccccc');
       $('#invalid_guest').text('');
-      $('#login_guest').prop('disabled', false);
+      $('#login_guest').prop('disabled', true);
     }
   });
 
   $('#firstname').keyup(function () {
     var first = $('#firstname').val();
+    var last = $('#lastname').val();
+    var level = $('#level').val();
     if(!validator.isEmpty(first)){
       if(!validator.matches(first, nameFormat)){
         $('#firstname').css('border', '1px solid #d66');
@@ -39,17 +43,22 @@ $(document).ready(function () {
       }else{
         $('#firstname').css('border', '1px solid #cccccc');
         $('#invalid_first').text('');
-        $('#submit').prop('disabled', false);
+        if(level != null && !validator.isEmpty(last))
+          $('#submit').prop('disabled', false);
+        else
+          $('#submit').prop('disabled', true);
       }
     }else{
       $('#firstname').css('border', '1px solid #cccccc');
       $('#invalid_first').text('');
-      $('#submit').prop('disabled', false);
+      $('#submit').prop('disabled', true);
     }
   });
 
   $('#lastname').keyup(function () {
+    var first = $('#firstname').val();
     var last = $('#lastname').val();
+    var level = $('#level').val();
     if(!validator.isEmpty(last)){
       if(!validator.matches(last, nameFormat)){
         $('#lastname').css('border', '1px solid #d66');
@@ -58,31 +67,39 @@ $(document).ready(function () {
       }else{
         $('#lastname').css('border', '1px solid #cccccc');
         $('#invalid_last').text('');
-        $('#submit').prop('disabled', false);
+        if(level != null && !validator.isEmpty(first))
+          $('#submit').prop('disabled', false);
+        else
+          $('#submit').prop('disabled', true);
       }
     }else{
       $('#lastname').css('border', '1px solid #cccccc');
       $('#invalid_last').text('');
-      $('#submit').prop('disabled', false);
+      $('#submit').prop('disabled', true);
     }
   });
 
-  $('#level').keyup(function () {
+  $('#level').change(function () {
+    var first = $('#firstname').val();
+    var last = $('#lastname').val();
     var level = $('#level').val();
     if(!validator.isEmpty(level)){
-      if(!validator.matches(level, nameFormat)){
+      if(!validator.isAlpha(level)){
         $('#level').css('border', '1px solid #d66');
-        $('#invalid_level').text('Invalid Institution');
+        $('#invalid_level').text('Invalid Level');
         $('#submit').prop('disabled', true);
       }else{
         $('#level').css('border', '1px solid #cccccc');
         $('#invalid_level').text('');
-        $('#submit').prop('disabled', false);
+        if(!validator.isEmpty(first) && !validator.isEmpty(last))
+          $('#submit').prop('disabled', false);
+        else
+          $('#submit').prop('disabled', true);
       }
     }else{
       $('#level').css('border', '1px solid #cccccc');
       $('#invalid_level').text('');
-      $('#submit').prop('disabled', false);
+      $('#submit').prop('disabled', true);
     }
   });
 });

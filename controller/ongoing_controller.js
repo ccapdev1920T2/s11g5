@@ -294,58 +294,75 @@ const ongoing_controller = {
             roundID = req.session.roundID;
         }
         if(roundID){
-          /* Find the round */
-          await db.findOne(Match, {roundID:roundID}, async function(result){
-            if(result){
-              /* If the round is found and the status is waiting or ongoing, proceed */
-              if(result.status == 'Ongoing'){
-                /* If round information is already complete, proceed */
-                if(result.motion && result.gov && result.opp && result.adjudicator.full_name != "No User"){
-                  if(result.adjudicator.status == 'Active' || result.adjudicator.status == roundID){
-                    await db.findMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, async function(matchTeams){
-                      if(matchTeams){
-                        var govTeam, oppTeam;
-                        for(i = 0; i < matchTeams.length; i++){
-                          if(matchTeams[i].teamname == result.gov.teamname)
-                            govTeam = matchTeams[i];
-                          else if(matchTeams[i].teamname == result.opp.teamname)
-                            oppTeam = matchTeams[i];
-                        }
-                        if((govTeam.status == 'Active' || govTeam.status == roundID) && (govTeam.first.status == 'Active' || govTeam.first.status == roundID) && (govTeam.second.status == 'Active' || govTeam.second.status == roundID) && (govTeam.third.status == 'Active' || govTeam.third.status == roundID)){
-                          if((oppTeam.status == 'Active' || oppTeam.status == roundID) && (oppTeam.first.status == 'Active' || oppTeam.first.status == roundID) && (oppTeam.second.status == 'Active' || oppTeam.second.status == roundID) && (oppTeam.third.status == 'Active' || oppTeam.third.status == roundID)){
-                            await db.updateOne(User, {username:result.adjudicator.username}, {$set:{'status':roundID}});
-                            await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':roundID}});
-                            await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'first.status':roundID, 'second.status':roundID, 'third.status':roundID}});
-                            await db.updateMany(User, {username:{$in:[govTeam.first.username, govTeam.second.username, govTeam.third.username, oppTeam.first.username, oppTeam.second.username, oppTeam.third.username]}}, {$set:{'status':roundID}});
-                            await db.updateMany(Match, {roundID:roundID}, {$set:{'adjudicator.status':roundID}});
-                            var username;
-                            if(req.session.curr_user)
-                              username = req.session.curr_user.username;
-                            else
-                              username = req.session.guest_user.username;
-                            /* If user is in the round, proceed */
-                            if(!checkUsers(username, result.gov) || !checkUsers(username, result.opp) || username == result.adjudicator.username){
-                              var render = 'app/ongoing_round/ongoingRound';
-                              if(req.session.curr_user){
-                                var pagedetails = {
-                                  pagename: 'On Going Round',
-                                  match: result,
-                                  curr_user:req.session.curr_user
-                                };
-                                renderPage(req, res, render, pagedetails);
+          var current_round;
+          if(req.session.curr_user)
+            current_round = req.session.curr_user.status;
+          else if(req.session.guest_user)
+            current_round = req.session.guest_user.status;
+          if(current_round == 'Active' || current_round == roundID){
+            /* Find the round */
+            await db.findOne(Match, {roundID:roundID}, async function(result){
+              if(result){
+                /* If the round is found and the status is waiting or ongoing, proceed */
+                if(result.status == 'Ongoing'){
+                  /* If round information is already complete, proceed */
+                  if(result.motion && result.gov && result.opp && result.adjudicator.full_name != "No User"){
+                    if(result.adjudicator.status == 'Active' || result.adjudicator.status == roundID){
+                      await db.findMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, async function(matchTeams){
+                        if(matchTeams){
+                          var govTeam, oppTeam;
+                          for(i = 0; i < matchTeams.length; i++){
+                            if(matchTeams[i].teamname == result.gov.teamname)
+                              govTeam = matchTeams[i];
+                            else if(matchTeams[i].teamname == result.opp.teamname)
+                              oppTeam = matchTeams[i];
+                          }
+                          if((govTeam.status == 'Active' || govTeam.status == roundID) && (govTeam.first.status == 'Active' || govTeam.first.status == roundID) && (govTeam.second.status == 'Active' || govTeam.second.status == roundID) && (govTeam.third.status == 'Active' || govTeam.third.status == roundID)){
+                            if((oppTeam.status == 'Active' || oppTeam.status == roundID) && (oppTeam.first.status == 'Active' || oppTeam.first.status == roundID) && (oppTeam.second.status == 'Active' || oppTeam.second.status == roundID) && (oppTeam.third.status == 'Active' || oppTeam.third.status == roundID)){
+                              await db.updateOne(User, {username:result.adjudicator.username}, {$set:{'status':roundID}});
+                              await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':roundID}});
+                              await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'first.status':roundID, 'second.status':roundID, 'third.status':roundID}});
+                              await db.updateMany(User, {username:{$in:[govTeam.first.username, govTeam.second.username, govTeam.third.username, oppTeam.first.username, oppTeam.second.username, oppTeam.third.username]}}, {$set:{'status':roundID}});
+                              await db.updateMany(Match, {roundID:roundID}, {$set:{'adjudicator.status':roundID}});
+                              var username;
+                              if(req.session.curr_user)
+                                username = req.session.curr_user.username;
+                              else
+                                username = req.session.guest_user.username;
+                              /* If user is in the round, proceed */
+                              if(!checkUsers(username, result.gov) || !checkUsers(username, result.opp) || username == result.adjudicator.username){
+                                var render = 'app/ongoing_round/ongoingRound';
+                                if(req.session.curr_user){
+                                  req.session.curr_user.status = roundID;
+                                  var pagedetails = {
+                                    pagename: 'On Going Round',
+                                    match: result,
+                                    curr_user:req.session.curr_user
+                                  };
+                                  renderPage(req, res, render, pagedetails);
+                                }else{
+                                  req.session.guest_user.status = roundID;
+                                  var pagedetails = {
+                                    pagename: 'On Going Round',
+                                    match: result,
+                                    curr_user:req.session.guest_user
+                                  };
+                                  res.render(render, {pagedetails:pagedetails});
+                                  res.end();
+                                }
                               }else{
-                                var pagedetails = {
-                                  pagename: 'On Going Round',
-                                  match: result,
-                                  curr_user:req.session.guest_user
-                                };
-                                res.render(render, {pagedetails:pagedetails});
+                                req.session.pagename = 'Join a Round';
+                                req.session.header = 'Join a Round';
+                                req.session.message = 'Error in Join a Round! You are not invited to join Round ID: ' + result.roundID + '.';
+                                req.session.link = '/dashboard';
+                                req.session.back = 'Dashboard';
+                                res.redirect('/message');
                                 res.end();
                               }
                             }else{
                               req.session.pagename = 'Join a Round';
                               req.session.header = 'Join a Round';
-                              req.session.message = 'Error in Join a Round! You are not invited to join Round ID: ' + result.roundID + '.';
+                              req.session.message = 'Cannot start round! ' + oppTeam.teamname + ' members are currently participating in a different round.';
                               req.session.link = '/dashboard';
                               req.session.back = 'Dashboard';
                               res.redirect('/message');
@@ -354,7 +371,7 @@ const ongoing_controller = {
                           }else{
                             req.session.pagename = 'Join a Round';
                             req.session.header = 'Join a Round';
-                            req.session.message = 'Cannot start round! ' + oppTeam.teamname + ' members are currently participating in a different round.';
+                            req.session.message = 'Cannot start round! ' + govTeam.teamname + ' members are currently participating in a different round.';
                             req.session.link = '/dashboard';
                             req.session.back = 'Dashboard';
                             res.redirect('/message');
@@ -363,81 +380,81 @@ const ongoing_controller = {
                         }else{
                           req.session.pagename = 'Join a Round';
                           req.session.header = 'Join a Round';
-                          req.session.message = 'Cannot start round! ' + govTeam.teamname + ' members are currently participating in a different round.';
+                          req.session.message = 'Error in Join a Round! Round information needs to be edited.';
                           req.session.link = '/dashboard';
                           req.session.back = 'Dashboard';
                           res.redirect('/message');
                           res.end();
                         }
-                      }else{
-                        req.session.pagename = 'Join a Round';
-                        req.session.header = 'Join a Round';
-                        req.session.message = 'Error in Join a Round! Round information needs to be edited.';
-                        req.session.link = '/dashboard';
-                        req.session.back = 'Dashboard';
-                        res.redirect('/message');
-                        res.end();
-                      }
-                    });
+                      });
+                    }else{
+                      req.session.pagename = 'Join a Round';
+                      req.session.header = 'Join a Round';
+                      req.session.message = 'Cannot start round! The Adjudicator, ' + result.adjudicator.full_name + ', is currently participating in a different round.';
+                      req.session.link = '/dashboard';
+                      req.session.back = 'Dashboard';
+                      res.redirect('/message');
+                      res.end();
+                    }
                   }else{
                     req.session.pagename = 'Join a Round';
                     req.session.header = 'Join a Round';
-                    req.session.message = 'Cannot start round! The Adjudicator, ' + result.adjudicator.full_name + ', is currently participating in a different round.';
+                    req.session.message = 'Error in Join a Round! Round information is not yet finalized.';
                     req.session.link = '/dashboard';
                     req.session.back = 'Dashboard';
                     res.redirect('/message');
                     res.end();
                   }
                 }else{
-                  req.session.pagename = 'Join a Round';
-                  req.session.header = 'Join a Round';
-                  req.session.message = 'Error in Join a Round! Round information is not yet finalized.';
-                  req.session.link = '/dashboard';
-                  req.session.back = 'Dashboard';
-                  res.redirect('/message');
-                  res.end();
+                  /* If the status is grading, redirect to the grade round page */
+                  if(result.status == 'Grading'){
+                    var username;
+                    if(req.session.curr_user)
+                      username = req.session.curr_user.username;
+                    else
+                      username = req.session.guest_user.username;
+                    if(result.adjudicator.username == username){
+                      req.session.gradeID = roundID;
+                      res.redirect('/gradeRound');
+                      res.end();
+                    }else{
+                      req.session.pagename = 'Grade a Round';
+                      req.session.header = 'Grade a Round';
+                      req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
+                      req.session.link = '/dashboard';
+                      req.session.back = 'Dashboard';
+                      res.redirect('/message');
+                      res.end();
+                    }
+                  }else{
+                    req.session.pagename = 'Join a Round';
+                    req.session.header = 'Join a Round';
+                    req.session.message = 'Error in Join a Round! Please try again later.';
+                    req.session.link = '/dashboard';
+                    req.session.back = 'Dashboard';
+                    res.redirect('/message');
+                    res.end();
+                  }
                 }
               }else{
-                /* If the status is grading, redirect to the grade round page */
-                if(result.status == 'Grading'){
-                  var username;
-                  if(req.session.curr_user)
-                    username = req.session.curr_user.username;
-                  else
-                    username = req.session.guest_user.username;
-                  if(result.adjudicator.username == username){
-                    req.session.gradeID = roundID;
-                    res.redirect('/gradeRound');
-                    res.end();
-                  }else{
-                    req.session.pagename = 'Grade a Round';
-                    req.session.header = 'Grade a Round';
-                    req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
-                    req.session.link = '/dashboard';
-                    req.session.back = 'Dashboard';
-                    res.redirect('/message');
-                    res.end();
-                  }
-                }else{
-                  req.session.pagename = 'Join a Round';
-                  req.session.header = 'Join a Round';
-                  req.session.message = 'Error in Join a Round! Please try again later.';
-                  req.session.link = '/dashboard';
-                  req.session.back = 'Dashboard';
-                  res.redirect('/message');
-                  res.end();
-                }
+                req.session.pagename = 'Join a Round';
+                req.session.header = 'Join a Round';
+                req.session.message = 'Error in Join a Round! RoundID: ' + roundID + ' may have been cancelled or was not found.';
+                req.session.link = '/findRound';
+                req.session.back = 'Join a Round';
+                res.redirect('/message');
+                res.end();
               }
-            }else{
-              req.session.pagename = 'Join a Round';
-              req.session.header = 'Join a Round';
-              req.session.message = 'Error in Join a Round! RoundID: ' + roundID + ' may have been cancelled or was not found.';
-              req.session.link = '/findRound';
-              req.session.back = 'Join a Round';
-              res.redirect('/message');
-              res.end();
-            }
-          });
+            });
+          }else{
+            req.session.pagename = 'Join a Round';
+            req.session.header = 'Join a Round';
+            req.session.message = 'Cannot start round! You currently have a different Ongoing Debate Round.';
+            req.session.link = '/dashboard';
+            req.session.back = 'Dashboard';
+            res.redirect('/message');
+            res.end();
+          }
         }else{
           req.session.pagename = 'Join a Round';
           req.session.header = 'Join a Round';

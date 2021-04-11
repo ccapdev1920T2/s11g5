@@ -248,12 +248,29 @@ const home_controller = {
       res.redirect('/dashboard');
       res.end();
     }else if(req.session.guest_user){
-      var pagedetails = {
-        pagename:'Guest Dashboard',
-        curr_user:req.session.guest_user
-      };
-      res.render('app/guest/guestDashboard', {pagedetails:pagedetails});
-      res.end();
+      first_query = {"first.email":req.session.guest_user.email};
+      second_query = {"second.email":req.session.guest_user.email};
+      third_query = {"third.email":req.session.guest_user.email};
+      whole_query = {$and: [{$or: [first_query, second_query, third_query]}, {'status':{$ne:'Active'}}]};
+      await db.findOne(Team, whole_query, function(result){
+        var match = 0, team;
+        if(result){
+          match = 1;
+          team = result;
+          req.session.guest_user.status = result.status;
+        }else{
+          req.session.guest_user.status = 'Active';
+        }
+        var render = 'app/basics/dashboard';
+        var pagedetails = {
+          pagename: 'Guest Dashboard',
+          curr_user:req.session.guest_user,
+          match: match,
+          team: team
+        };
+        res.render('app/guest/guestDashboard', {pagedetails:pagedetails});
+        res.end();
+      });
     }else{
       goHome(req, res);
     }
@@ -397,6 +414,16 @@ const home_controller = {
                 }else{
                   await db.insertOneCallback(User, person, async function(result){
                     req.session.curr_user = result;
+                    /* Update the teams and rounds that they are part of */
+                    await db.updateMany(Team, {"first.email":result.email}, {$set:{"first":result}});
+                    await db.updateMany(Team, {"second.email":result.email}, {$set:{"second":result}});
+                    await db.updateMany(Team, {"third.email":result.email}, {$set:{"third":result}});
+                    await db.updateMany(Match, {"gov.first.email":result.email}, {$set:{"gov.first":result}});
+                    await db.updateMany(Match, {"gov.second.email":result.email}, {$set:{"gov.second":result}});
+                    await db.updateMany(Match, {"gov.third.email":result.email}, {$set:{"gov.third":result}});
+                    await db.updateMany(Match, {"opp.first.email":result.email}, {$set:{"opp.first":result}});
+                    await db.updateMany(Match, {"opp.second.email":result.email}, {$set:{"opp.second":result}});
+                    await db.updateMany(Match, {"opp.third.email":result.email}, {$set:{"opp.third":result}});
                     req.session.current_page = 'welcome';
                     res.redirect('/welcome');
                     res.end();
