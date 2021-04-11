@@ -311,10 +311,12 @@ const ongoing_controller = {
                           else if(matchTeams[i].teamname == result.opp.teamname)
                             oppTeam = matchTeams[i];
                         }
-                        if(govTeam.status == 'Active' || govTeam.status == roundID){
-                          if(oppTeam.status == 'Active' || oppTeam.status == roundID){
+                        if((govTeam.status == 'Active' || govTeam.status == roundID) && (govTeam.first.status == 'Active' || govTeam.first.status == roundID) && (govTeam.second.status == 'Active' || govTeam.second.status == roundID) && (govTeam.third.status == 'Active' || govTeam.third.status == roundID)){
+                          if((oppTeam.status == 'Active' || oppTeam.status == roundID) && (oppTeam.first.status == 'Active' || oppTeam.first.status == roundID) && (oppTeam.second.status == 'Active' || oppTeam.second.status == roundID) && (oppTeam.third.status == 'Active' || oppTeam.third.status == roundID)){
                             await db.updateOne(User, {username:result.adjudicator.username}, {$set:{'status':roundID}});
                             await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':roundID}});
+                            await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'first.status':roundID, 'second.status':roundID, 'third.status':roundID}});
+                            await db.updateMany(User, {username:{$in:[govTeam.first.username, govTeam.second.username, govTeam.third.username, oppTeam.first.username, oppTeam.second.username, oppTeam.third.username]}}, {$set:{'status':roundID}});
                             await db.updateMany(Match, {roundID:roundID}, {$set:{'adjudicator.status':roundID}});
                             var username;
                             if(req.session.curr_user)
@@ -527,6 +529,7 @@ const ongoing_controller = {
                   curr_user = req.session.curr_user._id;
                 await db.updateOne(User, {username:result.adjudicator.username}, {$set:{'status':'Active'}});
                 await db.updateOne(Match, {roundID:roundID}, {$set:{'adjudicator.status':'Active'}});
+                await db.updateMany(User, {username:{$in:[govTeam.first.username, govTeam.second.username, govTeam.third.username, oppTeam.first.username, oppTeam.second.username, oppTeam.third.username]}}, {$set:{'status':'Active'}});
                 await db.updateOne(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':'Active'}});
                 /* If the user is the adjudicator, proceed to the grade a round page */
                 if(result.adjudicator._id == curr_user){

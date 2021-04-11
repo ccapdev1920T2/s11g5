@@ -10,6 +10,7 @@ var TeamSchema = new mongoose.Schema({
     email: {type: String},
     full_name: {type: String},
     level: {type: String},
+    status: {type: String}
   },
   second: {
     _id: {type: mongoose.ObjectId},
@@ -17,6 +18,7 @@ var TeamSchema = new mongoose.Schema({
     email: {type: String},
     full_name: {type: String},
     level: {type: String},
+    status: {type: String}
   },
   third: {
     _id: {type: mongoose.ObjectId},
@@ -24,6 +26,7 @@ var TeamSchema = new mongoose.Schema({
     email: {type: String},
     full_name: {type: String},
     level: {type: String},
+    status: {type: String}
   },
   numdebates: Number,
   wins: mongoose.Mixed,
