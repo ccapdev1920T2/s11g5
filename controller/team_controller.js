@@ -470,7 +470,7 @@ const team_controller = {
       second_query = {"second._id":req.session.curr_user._id};
       third_query = {"third._id":req.session.curr_user._id};
       team_query = {"teamname": {$ne: null}};
-      whole_query = {$and: [team_query, {$or: [first_query, second_query, third_query]}]};
+      whole_query = {$and: [team_query, {$or: [first_query, second_query, third_query]}, {'status':'Active'}]};
       /* Find the teams of the user */
       await db.findMany(Team, whole_query, function(result){
         var render = 'app/teams/chooseTeam';
@@ -516,49 +516,57 @@ const team_controller = {
           /* Find the team */
           await db.findOne(Team, {_id:teamID}, async function(result){
             if(result){
-              var current_user = req.session.curr_user._id;
-              if(result.first._id == current_user || result.second._id == current_user || result.third._id == current_user){
-                var final_info = result;
-                var temp_first, temp_second, temp_third;
-                if(!result.first){
-                  temp_first = {full_name:"No User", username:"No User"};
-                  await db.updateOne(Team, {teamname:result.teamname}, {$set:{first:{full_name:"No User", username:"No User"}}});
-                }else{
-                  temp_first = result.first;
-                }
-                if(!result.second){
-                  temp_second = {full_name:"No User", username:"No User"};
-                  await db.updateOne(Team, {teamname:result.teamname}, {$set:{second:{full_name:"No User", username:"No User"}}});
-                }else{
-                  temp_second = result.second;
-                }
-                if(!result.third){
-                  temp_third = {full_name:"No User", username:"No User"};
-                  await db.updateOne(Team, {teamname:result.teamname}, {$set:{third:{full_name:"No User", username:"No User"}}});
-                }else{
-                  temp_third = result.third;
-                }
-                final_info.first = temp_first;
-                final_info.second = temp_second;
-                final_info.third = temp_third;
+              if(result.status == 'Active'){
+                var current_user = req.session.curr_user._id;
+                if(result.first._id == current_user || result.second._id == current_user || result.third._id == current_user){
+                  var final_info = result;
+                  var temp_first, temp_second, temp_third;
+                  if(!result.first){
+                    temp_first = {full_name:"No User", username:"No User"};
+                    await db.updateOne(Team, {teamname:result.teamname}, {$set:{first:{full_name:"No User", username:"No User"}}});
+                  }else{
+                    temp_first = result.first;
+                  }
+                  if(!result.second){
+                    temp_second = {full_name:"No User", username:"No User"};
+                    await db.updateOne(Team, {teamname:result.teamname}, {$set:{second:{full_name:"No User", username:"No User"}}});
+                  }else{
+                    temp_second = result.second;
+                  }
+                  if(!result.third){
+                    temp_third = {full_name:"No User", username:"No User"};
+                    await db.updateOne(Team, {teamname:result.teamname}, {$set:{third:{full_name:"No User", username:"No User"}}});
+                  }else{
+                    temp_third = result.third;
+                  }
+                  final_info.first = temp_first;
+                  final_info.second = temp_second;
+                  final_info.third = temp_third;
 
-                if(!req.session.edit_fields){
-                  req.session.edit_fields = {all:0, new_team:0, new_users:0 ,new_current:0};
+                  if(!req.session.edit_fields){
+                    req.session.edit_fields = {all:0, new_team:0, new_users:0 ,new_current:0};
+                  }
+                  var render = 'app/teams/editTeams';
+                  var pagedetails = {
+                    pagename: "Edit Teams",
+                    curr_user: req.session.curr_user,
+                    team: final_info,
+                    all: req.session.edit_fields.all,
+                    new_team: req.session.edit_fields.new_team,
+                    new_users: req.session.edit_fields.new_users,
+                    new_current: req.session.edit_fields.new_current
+                  };
+                  renderPage(req, res, render, pagedetails);
+                }else{
+                  req.session.header = 'Edit a Team';
+                  req.session.message = 'Cannot edit ' + result.teamname + '! You are not in ' + result.teamname + '.';
+                  req.session.link = '/teamPage';
+                  req.session.back = 'Teams Dashboard';
+                  goMessage(req, res);
                 }
-                var render = 'app/teams/editTeams';
-                var pagedetails = {
-                  pagename: "Edit Teams",
-                  curr_user: req.session.curr_user,
-                  team: final_info,
-                  all: req.session.edit_fields.all,
-                  new_team: req.session.edit_fields.new_team,
-                  new_users: req.session.edit_fields.new_users,
-                  new_current: req.session.edit_fields.new_current
-                };
-                renderPage(req, res, render, pagedetails);
               }else{
                 req.session.header = 'Edit a Team';
-                req.session.message = 'Cannot edit ' + result.teamname + '! You are not in ' + result.teamname + '.';
+                req.session.message = 'Cannot edit ' + result.teamname + '! Team has an ongoing Debate Round.';
                 req.session.link = '/teamPage';
                 req.session.back = 'Teams Dashboard';
                 goMessage(req, res);
@@ -965,6 +973,11 @@ const team_controller = {
                   };
                   await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"first":{username:'No User', full_name:'No User'}}});
+                  /* Update the ongoing matches involving the team */
+                  var matchGovQuery = {$and: [{"gov._id":teamID}, {'status':'Ongoing'}]};
+                  await db.updateMany(Match, matchGovQuery, {$set:{"gov.first":{username:'No User', full_name:'No User'}}});
+                  var matchOppQuery = {$and: [{"opp._id":teamID}, {'status':'Ongoing'}]};
+                  await db.updateMany(Match, matchOppQuery, {$set:{"opp.first":{username:'No User', full_name:'No User'}}});
                 }else if(result.second._id == current_id){
                   var leaveUpdate = {
                     teamID: result._id,
@@ -973,6 +986,11 @@ const team_controller = {
                   };
                   await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"second":{username:'No User', full_name:'No User'}}});
+                  /* Update the ongoing matches involving the team */
+                  var matchGovQuery = {$and: [{"gov._id":teamID}, {'status':'Ongoing'}]};
+                  await db.updateMany(Match, matchGovQuery, {$set:{"gov.second":{username:'No User', full_name:'No User'}}});
+                  var matchOppQuery = {$and: [{"opp._id":teamID}, {'status':'Ongoing'}]};
+                  await db.updateMany(Match, matchOppQuery, {$set:{"opp.second":{username:'No User', full_name:'No User'}}});
                 }else if(result.third._id == current_id){
                   var leaveUpdate = {
                     teamID: result._id,
@@ -981,6 +999,11 @@ const team_controller = {
                   };
                   await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"third":{username:'No User', full_name:'No User'}}});
+                  /* Update the ongoing matches involving the team */
+                  var matchGovQuery = {$and: [{"gov._id":teamID}, {'status':'Ongoing'}]};
+                  await db.updateMany(Match, matchGovQuery, {$set:{"gov.third":{username:'No User', full_name:'No User'}}});
+                  var matchOppQuery = {$and: [{"opp._id":teamID}, {'status':'Ongoing'}]};
+                  await db.updateMany(Match, matchOppQuery, {$set:{"opp.third":{username:'No User', full_name:'No User'}}});
                 }
                 var wholeQuery = {$and: [{$or: [{"gov._id":teamID}, {"opp._id":teamID}]}, {'status':'Ongoing'}, {'creator._id':current_id}]};
                 await db.findMany(Match, wholeQuery, async function(deleteMatch){
@@ -1035,7 +1058,6 @@ const team_controller = {
                     /* Delete the team */
                     if(deleteMatch.length > 0)
                       await db.deleteMany(Match, wholeQuery);
-                    await db.deleteOne(Team, {teamname:name});
                     await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
                       req.session.curr_user = result;
                       req.session.header = 'Leave Team';
@@ -1045,8 +1067,6 @@ const team_controller = {
                       goMessage(req, res);
                     });
                   }else{
-                    /* Delete the team */
-                    await db.deleteOne(Team, {teamname:name});
                     await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
                       req.session.curr_user = result;
                       req.session.header = 'Leave Team';
@@ -1882,6 +1902,11 @@ async function updateTeam(req, res, current, teamname, team){
     await updateTeamname(current._id, teamname, first.username);
     await updateTeamname(current._id, teamname, second.username);
     await updateTeamname(current._id, teamname, third.username);
+    /* Update the ongoing matches involving the team */
+    var matchGovQuery = {$and: [{"gov._id":current._id}, {'status':'Ongoing'}]};
+    await db.updateMany(Match, matchGovQuery, {$set:{"gov.first":{username:'No User', full_name:'No User'}}});
+    var matchOppQuery = {$and: [{"opp._id":current._id}, {'status':'Ongoing'}]};
+    await db.updateMany(Match, matchOppQuery, {$set:{"opp.first":{username:'No User', full_name:'No User'}}});
   }else{ /* If only the members were changed, create an update regarding so */
     await db.updateOne(Team, {teamname:current.teamname}, {$set: {first:first, second:second, third:third}});
     update_teamname = current.teamname;
@@ -1890,11 +1915,16 @@ async function updateTeam(req, res, current, teamname, team){
       teamname: update_teamname,
       update: update_teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Edited Members]"
     };
+    /* Update the ongoing matches involving the team */
+    var matchGovQuery = {$and: [{"gov._id":current._id}, {'status':'Ongoing'}]};
+    await db.updateMany(Match, matchGovQuery, {$set:{"gov.first":{username:'No User', full_name:'No User'}}});
+    var matchOppQuery = {$and: [{"opp._id":current._id}, {'status':'Ongoing'}]};
+    await db.updateMany(Match, matchOppQuery, {$set:{"opp.first":{username:'No User', full_name:'No User'}}});
   }
   /* Update the users with the created update */
   await updateUpdates(first, second, third, editUpdate);
   /* If the previous leader is no longer in the team, create an update and send */
-  if(current.first.username != first.username && current.first.username != second.username && current.first.username != third.username){
+  if(current.first.username != first.username && current.first.username != second.username && current.first.username != third.username && current.first.username != 'No User'){
     await db.updateOne(User, {username:current.first.username}, {$push:{"updates":editUpdate}});
     var removeUpdate = {
       teamID: current._id,
@@ -1907,7 +1937,7 @@ async function updateTeam(req, res, current, teamname, team){
       maillist.push(current.first.username);
   }
   /* If the previous deputy leader is no longer in the team, create an update and send */
-  if(current.second.username != first.username && current.second.username != second.username && current.second.username != third.username){
+  if(current.second.username != first.username && current.second.username != second.username && current.second.username != third.username && current.second.username != 'No User'){
     await db.updateOne(User, {username:current.second.username}, {$push:{"updates":editUpdate}});
     var removeUpdate = {
       teamID: current._id,
@@ -1920,7 +1950,7 @@ async function updateTeam(req, res, current, teamname, team){
       maillist.push(current.second.username);
   }
   /* If the previous whip is no longer in the team, create an update and send */
-  if(current.third.username != first.username && current.third.username != second.username && current.third.username != third.username){
+  if(current.third.username != first.username && current.third.username != second.username && current.third.username != third.username && current.third.username != 'No User'){
     await db.updateOne(User, {username:current.third.username}, {$push:{"updates":editUpdate}});
     var removeUpdate = {
       teamID: current._id,

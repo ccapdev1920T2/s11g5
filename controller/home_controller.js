@@ -361,7 +361,8 @@ const home_controller = {
             rawWins: 0,
             rawLose: 0,
             rawDraw: 0,
-            updates: []
+            updates: [],
+            status: 'Active'
           }
           /* Find the username and email entered. If found, reload with the errors */
           await db.findOne(User, {$or: [{email:email}, {username:username}]}, async function(result){
@@ -479,12 +480,30 @@ const home_controller = {
             if(foundUser){
               req.session.curr_user = foundUser;
             }
-            var render = 'app/basics/dashboard';
-            var pagedetails = {
-              pagename: 'Dashboard',
-              curr_user:req.session.curr_user
-            };
-            renderPage(req, res, render, pagedetails);
+            first_query = {"first._id":req.session.curr_user._id};
+            second_query = {"second._id":req.session.curr_user._id};
+            third_query = {"third._id":req.session.curr_user._id};
+            whole_query = {$and: [{$or: [first_query, second_query, third_query]}, {'status':{$ne:'Active'}}]};
+            await db.findOne(Team, whole_query, function(result){
+              var match = 0, team;
+              if(result){
+                match = 1;
+                team = result;
+              }else if(foundUser.status != 'Active'){
+                match = 2;
+                team = {
+                  status: foundUser.status
+                }
+              }
+              var render = 'app/basics/dashboard';
+              var pagedetails = {
+                pagename: 'Dashboard',
+                curr_user:req.session.curr_user,
+                match: match,
+                team: team
+              };
+              renderPage(req, res, render, pagedetails);
+            });
           });
         }else{
           var render = 'app/basics/dashboard';

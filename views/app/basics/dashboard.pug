@@ -50,6 +50,25 @@ block content
             .col-auto
               i.fa.fa-handshake-o.fa-2x.text-gray-300
   .row
+    .container-fluid
+      .card.shadow
+        .card-body
+          .row.text-center
+            if(pagedetails.match > 0)
+              .col
+                h6.text-dark.mb-0.text-center ROUND ID:
+                a(href='/ongoingRound?roundID='+pagedetails.team.status style="font-size:x-large;") #{pagedetails.team.status}
+              .col
+                if(pagedetails.match == 1)
+                  h5.text-success.mb-0.text-center #{pagedetails.team.teamname}
+                  h6.text-dark.mb-0.text-center Your team is currently participating in this Debate Round
+                else
+                  h5.text-success.mb-0.text-center Adjudicator
+                  h6.text-dark.mb-0.text-center You have an Ongoing Debate Round as an Adjudicator
+            else
+              .col
+                h5.text-dark.mb-0.text-center No Ongoing Rounds. Click on Create a Round or Join a Round!
+  .row(style="padding-top:20px;")
     .col-lg-7.col-xl-8(style='padding-top: 43px;')
       .row.d-xl-flex.justify-content-xl-center
         .col-md-6.col-xl-5.mb-4

@@ -68,7 +68,8 @@ var User = new mongoose.Schema({
     wlratio: {
       type: mongoose.Mixed,
       required: false
-    }
+    },
+    status: {type: String}
 });
 
 module.exports = mongoose.model('users', User);

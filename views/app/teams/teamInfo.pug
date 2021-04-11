@@ -66,16 +66,19 @@ block content
               li.list-group-item
                 .text-center
                   br
-                  a.card-link.btn.btn-primary.btn-sm(href='/editTeams?team='+pagedetails.team._id)
-                    i.fa.fa-pencil
-                    |   Edit Team
-                  if(pagedetails.leave == 1)
-                    a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmLeave?team='+pagedetails.team._id)
-                      i.fa.fa-user-times
-                      |   Leave Team
-                  a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmDeleteTeam?team='+pagedetails.team._id)
-                    i.fa.fa-trash-o
-                    |   Delete Team
+                  if(pagedetails.team.status == 'Active')
+                    a.card-link.btn.btn-primary.btn-sm(href='/editTeams?team='+pagedetails.team._id)
+                      i.fa.fa-pencil
+                      |   Edit Team
+                    if(pagedetails.leave == 1)
+                      a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmLeave?team='+pagedetails.team._id)
+                        i.fa.fa-user-times
+                        |   Leave Team
+                    a.card-link.btn.btn-primary.btn-sm.btn-danger(href='/confirmDeleteTeam?team='+pagedetails.team._id)
+                      i.fa.fa-trash-o
+                      |   Delete Team
+                  else
+                    h4.text-danger.mb-0.text-center Cannot Edit Team, Team has an Ongoing Debate Round
     if(pagedetails.part == 1)
       .col-lg-6
         .card.shadow.mb-4

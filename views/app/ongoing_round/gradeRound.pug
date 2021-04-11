@@ -64,7 +64,7 @@ block content
                               input.form-control#firstgov(type="number" min="1" max="100" name='firstgov')
                               .text-center.small#invalid_firstgov(style="color: #d66")
                       else
-                        input#firstgov(type=hidden name='firstgov' value=0)
+                        input#firstgov(type=hidden name='firstgov' value=0 style="display:none;")
                       if(pagedetails.match.gov.second.full_name != 'No User')
                         .col
                           .form-group
@@ -76,7 +76,7 @@ block content
                               input.form-control#secondgov(type="number" min="1" max="100" name='secondgov')
                               .text-center.small#invalid_secondgov(style="color: #d66")
                       else
-                        input#secondgov(type=hidden name='secondgov' value=0)
+                        input#secondgov(type=hidden name='secondgov' value=0 style="display:none;")
                       if(pagedetails.match.gov.third.full_name != 'No User')
                         .col
                           .form-group
@@ -88,7 +88,7 @@ block content
                               input.form-control#thirdgov(type="number" min="1" max="100" name='thirdgov')
                               .text-center.small#invalid_thirdgov(style="color: #d66")
                       else
-                        input#thirdgov(type=hidden name='thirdgov' value=0)
+                        input#thirdgov(type=hidden name='thirdgov' value=0 style="display:none;")
                     br
                   li.list-group-item
                     br
@@ -139,7 +139,7 @@ block content
                               input.form-control#firstopp(type="number" min="1" max="100" name='firstopp')
                               .text-center.small#invalid_firstopp(style="color: #d66")
                       else
-                        input#firstopp(type=hidden name='firstopp' value=0)
+                        input#firstopp(type=hidden name='firstopp' value=0  style="display:none;")
                       if(pagedetails.match.opp.second.full_name != 'No User')
                         .col
                           .form-group
@@ -151,7 +151,7 @@ block content
                               input.form-control#secondopp(type="number" min="1" max="100" name='secondopp')
                               .text-center.small#invalid_secondopp(style="color: #d66")
                       else
-                        input#secondopp(type=hidden name='secondopp' value=0)
+                        input#secondopp(type=hidden name='secondopp' value=0  style="display:none;")
                       if(pagedetails.match.opp.third.full_name != 'No User')
                         .col
                           .form-group
@@ -163,7 +163,7 @@ block content
                               input.form-control#thirdopp(type="number" min="1" max="100" name='thirdopp')
                               .text-center.small#invalid_thirdopp(style="color: #d66")
                       else
-                        input#thirdopp(type=hidden name='thirdopp' value=0)
+                        input#thirdopp(type=hidden name='thirdopp' value=0  style="display:none;")
                     br
                   li.list-group-item
                     br

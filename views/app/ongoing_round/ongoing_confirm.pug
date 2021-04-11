@@ -1,0 +1,45 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1,shrink-to-fit=no')
+    title #{pagedetails.pagename} | TabCore
+    link(rel='stylesheet' href='/assets/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Adamina')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Oswald')
+    link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.12.0/css/all.css')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet' href='https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css')
+    link(rel='stylesheet' href='assets/fonts/fontawesome5-overrides.min.css')
+    link(rel='icon' type='image/png' href='/assets/img/logo/tabcore_icon.png')
+  body.bg-gradient-primary(style='font-family: Oswald, sans-serif;')
+    nav.navbar.navbar-light.navbar-expand-md(style='font-family: Oswald, sans-serif;color: #4e73df;background-color: #4e73df;')
+      .container-fluid
+        a.navbar-brand.d-flex.justify-content-center.align-items-center.sidebar-brand.m-0(href='/')
+          .sidebar-brand-icon.rotate-n-15
+            i.fas.fa-balance-scale(style='font-size: 46px;color: rgba(255,255,255,0.9);')
+          .sidebar-brand-text.mx-3
+            span(style='font-size: 44px;color: rgba(255,255,255,0.9);') TABCORE
+        button.navbar-toggler(data-toggle='collapse' data-target='#navcol-1')
+          span.sr-only Toggle navigation
+          span.navbar-toggler-icon
+    .container
+      .row.justify-content-center
+        .col-md-9.col-lg-12.col-xl-10
+          .card.shadow-lg.o-hidden.border-0.my-5
+            .card-body.p-0
+              .text-center
+                h1.text-dark.mb-0 #{pagedetails.header}
+                br
+                br
+                h2.text-dark.mb-0 Start Debate Round: #{pagedetails.roundID} ?
+                br
+                br
+                a.card-link.btn.btn-success(href='/ongoingRound?roundID='+pagedetails.roundID) Start #{pagedetails.roundID}
+                a.card-link.btn.btn-danger(href='/dashboard') Back to Dashboard
+                br
+                br
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js')
