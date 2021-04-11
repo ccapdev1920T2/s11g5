@@ -76,8 +76,82 @@ const stats_controller = {
     }
   },
 
-  /* Get the round statistics of a debate round and display them */
+  /* Get the round statistics of a debate round */
   roundStats: async function(req, res){
+    if (req.session.curr_user || req.session.guest_user){
+      var roundID;
+      /* Ensure that there is a round ID to find */
+      if(req.body.roundID){
+        roundID = sanitize(req.body.roundID);
+      }else if(req.query.roundID){
+        roundID = sanitize(req.query.roundID);
+      }else if(req.session.roundID){
+        roundID = req.session.roundID;
+      }
+      var errors = validationResult(req);
+      if (!errors.isEmpty() && !req.session.roundID){
+        errors = errors.errors;
+        var empty = 0;
+        for(i = 0; i < errors.length; i++){
+          if(errors[i].msg == 'empty'){
+            empty = 1;
+          }
+        }
+        if(empty == 1){
+          req.session.message = "Error in loading Round Statistics! No Round ID entered.";
+        }else{
+          req.session.message = "Error in loading Round Statistics! Invalid Round ID entered.";
+        }
+        req.session.pagename = "Round Statistics";
+        req.session.header = "Round Statistics";
+        req.session.link = '/roundStats'
+        req.session.back = "Round Statistics";
+        res.redirect('/message');
+        res.end();
+      }else if(roundID){
+        if(validator.isAlphanumeric(roundID)){
+          /* Find the round ID */
+          await db.findOne(Match, {roundID:roundID}, async function(result){
+            if(result){
+              var redirect_link = '/roundroomStatistics?roundID='+roundID;
+              req.session.roundID = roundID;
+              res.redirect(redirect_link);
+              res.end();
+            }else{
+              req.session.pagename = "Round Statistics";
+              req.session.header = "Round Statistics";
+              req.session.message = "No Matches Found!";
+              req.session.link = '/roundStats'
+              req.session.back = "Round Statistics";
+              res.redirect('/message');
+              res.end();
+            }
+          });
+        }else{
+          req.session.pagename = "Round Statistics";
+          req.session.header = "Round Statistics";
+          req.session.message = "Invalid Round ID!";
+          req.session.link = '/roundStats'
+          req.session.back = "Round Statistics";
+          res.redirect('/message');
+          res.end();
+        }
+      }else{
+        req.session.pagename = "Round Statistics";
+        req.session.header = "Round Statistics";
+        req.session.message = "Error in loading Round Statistics! No Round ID entered.";
+        req.session.link = '/roundStats'
+        req.session.back = "Round Statistics";
+        res.redirect('/message');
+        res.end();
+      }
+    }else{
+      goHome(req, res);
+    }
+  },
+
+  /* Display the Statistics of a Debate Round */
+  roundStatistics: async function(req, res){
     if (req.session.curr_user || req.session.guest_user){
       var roundID;
       /* Ensure that there is a round ID to find */
@@ -206,7 +280,7 @@ const stats_controller = {
     }else{
       goHome(req, res);
     }
-  }
+  },
 }
 
 /* Make sure all indicated variables are set to 0, null, or their default value */

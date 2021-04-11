@@ -143,8 +143,10 @@ app.get('/roundStats', stats_controller.getStats);
 app.post('/roundStats', stats_controller.getStats);
 
 /* See a Round's Statistics */
-app.get('/roundroomStatistics', stats_helper.statsValidation(), stats_controller.roundStats);
-app.post('/roundroomStatistics', stats_helper.statsValidation(), stats_controller.roundStats);
+app.get('/roundStatistics', stats_helper.statsValidation(), stats_controller.roundStats);
+app.post('/roundStatistics', stats_helper.statsValidation(), stats_controller.roundStats);
+app.get('/roundroomStatistics', stats_helper.statsValidation(), stats_controller.roundStatistics);
+app.post('/roundroomStatistics', stats_helper.statsValidation(), stats_controller.roundStatistics);
 
 /* See all of a user's previous matches */
 app.get('/roundHistory', stats_controller.roundHistory);
