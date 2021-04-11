@@ -323,7 +323,7 @@ const ongoing_controller = {
                               await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':roundID}});
                               await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'first.status':roundID, 'second.status':roundID, 'third.status':roundID}});
                               await db.updateMany(User, {username:{$in:[govTeam.first.username, govTeam.second.username, govTeam.third.username, oppTeam.first.username, oppTeam.second.username, oppTeam.third.username]}}, {$set:{'status':roundID}});
-                              await db.updateMany(Match, {roundID:roundID}, {$set:{'adjudicator.status':roundID}});
+                              await db.updateOne(Match, {roundID:roundID}, {$set:{'adjudicator.status':roundID, 'gov.first.status':roundID, 'gov.second.status':roundID, 'gov.third.status':roundID, 'opp.first.status':roundID, 'opp.second.status':roundID, 'opp.third.status':roundID}});
                               var username;
                               if(req.session.curr_user)
                                 username = req.session.curr_user.username;
@@ -541,27 +541,46 @@ const ongoing_controller = {
           await db.findOne(Match, {roundID:roundID}, async function(result){
             if(result){ /* If found and the status is Grading, proceed */
               if(result.status == 'Grading'){
-                var curr_user;
-                if(req.session.curr_user)
-                  curr_user = req.session.curr_user._id;
-                await db.updateOne(User, {username:result.adjudicator.username}, {$set:{'status':'Active'}});
-                await db.updateOne(Match, {roundID:roundID}, {$set:{'adjudicator.status':'Active'}});
-                await db.updateMany(User, {username:{$in:[govTeam.first.username, govTeam.second.username, govTeam.third.username, oppTeam.first.username, oppTeam.second.username, oppTeam.third.username]}}, {$set:{'status':'Active'}});
-                await db.updateOne(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':'Active'}});
-                /* If the user is the adjudicator, proceed to the grade a round page */
-                if(result.adjudicator._id == curr_user){
-                  req.session.gradeID = roundID;
-                  res.redirect('/gradeRound');
-                  res.end();
-                }else{
-                  req.session.pagename = 'Grade a Round';
-                  req.session.header = 'Grade a Round';
-                  req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
-                  req.session.link = '/dashboard';
-                  req.session.back = 'Dashboard';
-                  res.redirect('/message');
-                  res.end();
-                }
+                await db.findMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, async function(matchTeams){
+                  if(matchTeams){
+                    var govTeam, oppTeam;
+                    for(i = 0; i < matchTeams.length; i++){
+                      if(matchTeams[i].teamname == result.gov.teamname)
+                        govTeam = matchTeams[i];
+                      else if(matchTeams[i].teamname == result.opp.teamname)
+                        oppTeam = matchTeams[i];
+                    }
+                    var curr_user;
+                    if(req.session.curr_user)
+                      curr_user = req.session.curr_user._id;
+                    await db.updateOne(User, {username:result.adjudicator.username}, {$set:{'status':'Active'}});
+                    await db.updateOne(Match, {roundID:roundID}, {$set:{'adjudicator.status':'Active', 'gov.first.status':'Active', 'gov.second.status':'Active', 'gov.third.status':'Active', 'opp.first.status':'Active', 'opp.second.status':'Active', 'opp.third.status':'Active'}});
+                    await db.updateMany(User, {username:{$in:[govTeam.first.username, govTeam.second.username, govTeam.third.username, oppTeam.first.username, oppTeam.second.username, oppTeam.third.username]}}, {$set:{'status':'Active'}});
+                    await db.updateOne(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':'Active'}});
+                    /* If the user is the adjudicator, proceed to the grade a round page */
+                    if(result.adjudicator._id == curr_user){
+                      req.session.gradeID = roundID;
+                      res.redirect('/gradeRound');
+                      res.end();
+                    }else{
+                      req.session.pagename = 'Grade a Round';
+                      req.session.header = 'Grade a Round';
+                      req.session.message = 'Adjudicator is grading Round ID: ' + roundID + '.';
+                      req.session.link = '/dashboard';
+                      req.session.back = 'Dashboard';
+                      res.redirect('/message');
+                      res.end();
+                    }
+                  }else{
+                    req.session.pagename = 'Join a Round';
+                    req.session.header = 'Join a Round';
+                    req.session.message = 'Error in Join a Round! Round information needs to be edited.';
+                    req.session.link = '/dashboard';
+                    req.session.back = 'Dashboard';
+                    res.redirect('/message');
+                    res.end();
+                  }
+                });
               }else{
                 req.session.pagename = 'Grade a Round';
                 req.session.header = 'Grade a Round';

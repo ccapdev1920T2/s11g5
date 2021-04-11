@@ -167,6 +167,7 @@ const settings_controller = {
       if (!errors.isEmpty()){
         var validFirst = 0, validLast = 0, validInsti = 0, emptyCount = 0, paramFirst = 0, paramLast = 0, paramLevel = 0;
         errors = errors.errors;
+        console.log(errors);
         for(i = 0; i < errors.length; i++){
           if(errors[i].msg == 'empty'){
             emptyCount = emptyCount + 1;
@@ -221,8 +222,9 @@ const settings_controller = {
             }else if(paramLevel == 1){
               var full_name = req.session.curr_user.first_name + " " + last_name;
               /* Update the user's account */
-              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {last_name:last_name}}, async function(result){
+              await db.findOneAndUpdate(User, {username:req.session.curr_user.username}, {$set: {last_name:last_name, full_name:full_name}}, async function(result){
                 if(result){
+                  console.log(result);
                   req.session.curr_user = result;
                   updatesTeamsMatches(req, result);
                   /* Set the email content */

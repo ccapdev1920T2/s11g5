@@ -16,6 +16,7 @@ var MatchSchema = new mongoose.Schema({
       email: {type: String},
       full_name: {type: String},
       level: {type: String},
+      status: {type: String}
     },
     second: {
       _id: {type: mongoose.ObjectId},
@@ -23,6 +24,7 @@ var MatchSchema = new mongoose.Schema({
       email: {type: String},
       full_name: {type: String},
       level: {type: String},
+      status: {type: String}
     },
     third: {
       _id: {type: mongoose.ObjectId},
@@ -30,6 +32,7 @@ var MatchSchema = new mongoose.Schema({
       email: {type: String},
       full_name: {type: String},
       level: {type: String},
+      status: {type: String}
     }
   },
   opp: {
@@ -41,6 +44,7 @@ var MatchSchema = new mongoose.Schema({
       email: {type: String},
       full_name: {type: String},
       level: {type: String},
+      status: {type: String}
     },
     second: {
       _id: {type: mongoose.ObjectId},
@@ -48,6 +52,7 @@ var MatchSchema = new mongoose.Schema({
       email: {type: String},
       full_name: {type: String},
       level: {type: String},
+      status: {type: String}
     },
     third: {
       _id: {type: mongoose.ObjectId},
@@ -55,6 +60,7 @@ var MatchSchema = new mongoose.Schema({
       email: {type: String},
       full_name: {type: String},
       level: {type: String},
+      status: {type: String}
     }
   },
   adjudicator: {

@@ -356,7 +356,6 @@ const team_controller = {
 
   /* Load the information of a team */
   teamInfo: async function(req, res){
-    reset(req);
     if(req.session.curr_user){
       var errors = validationResult(req);
       if (!errors.isEmpty()){
