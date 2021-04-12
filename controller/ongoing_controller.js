@@ -583,10 +583,15 @@ const ongoing_controller = {
                         oppTeam = matchTeams[i];
                     }
                     var curr_user;
-                    if(req.session.curr_user)
+                    if(req.session.curr_user){
                       curr_user = req.session.curr_user._id;
+                      req.session.curr_user.status = 'Active';
+                    }else{
+                      curr_user = 0;
+                      req.session.guest_user.status = 'Active';
+                    }
                     await db.updateMany(User, {username:{$in:[result.adjudicator.username, govTeam.first.username, govTeam.second.username, govTeam.third.username, oppTeam.first.username, oppTeam.second.username, oppTeam.third.username]}}, {$set:{'status':'Active'}});
-                    await db.updateOne(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':'Active'}});
+                    await db.updateMany(Team, {teamname:{$in:[govTeam.teamname,oppTeam.teamname]}}, {$set:{'status':'Active'}});
                     /* If the user is the adjudicator, proceed to the grade a round page */
                     if(result.adjudicator._id == curr_user){
                       req.session.gradeID = roundID;
