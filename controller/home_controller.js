@@ -520,8 +520,10 @@ const home_controller = {
             await db.findOne(Team, whole_query, function(result){
               var match = 0, team;
               if(result){
-                match = 1;
-                team = result;
+                if(result.status == foundUser.status){
+                  match = 1;
+                  team = result;
+                }
               }else if(foundUser.status != 'Active'){
                 match = 2;
                 team = {
