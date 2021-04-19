@@ -51,7 +51,6 @@ async function func(){
   };
   await mongoose.connect(uri, options, function(error) {
     if(error) throw error;
-    console.log('Connected to:\t'+uri);
   });
 }
 
