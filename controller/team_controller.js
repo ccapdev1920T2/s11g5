@@ -981,9 +981,9 @@ const team_controller = {
                   await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"first":{username:'No User', full_name:'No User'}}});
                   /* Update the ongoing matches involving the team */
-                  var matchGovQuery = {$and: [{"gov._id":teamID}, {'status':'Ongoing'}]};
+                  var matchGovQuery = {$and: [{"gov._id":teamID}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
                   await db.updateMany(Match, matchGovQuery, {$set:{"gov.first":{username:'No User', full_name:'No User'}}});
-                  var matchOppQuery = {$and: [{"opp._id":teamID}, {'status':'Ongoing'}]};
+                  var matchOppQuery = {$and: [{"opp._id":teamID}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
                   await db.updateMany(Match, matchOppQuery, {$set:{"opp.first":{username:'No User', full_name:'No User'}}});
                 }else if(result.second._id == current_id){
                   var leaveUpdate = {
@@ -994,9 +994,9 @@ const team_controller = {
                   await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"second":{username:'No User', full_name:'No User'}}});
                   /* Update the ongoing matches involving the team */
-                  var matchGovQuery = {$and: [{"gov._id":teamID}, {'status':'Ongoing'}]};
+                  var matchGovQuery = {$and: [{"gov._id":teamID}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
                   await db.updateMany(Match, matchGovQuery, {$set:{"gov.second":{username:'No User', full_name:'No User'}}});
-                  var matchOppQuery = {$and: [{"opp._id":teamID}, {'status':'Ongoing'}]};
+                  var matchOppQuery = {$and: [{"opp._id":teamID}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
                   await db.updateMany(Match, matchOppQuery, {$set:{"opp.second":{username:'No User', full_name:'No User'}}});
                 }else if(result.third._id == current_id){
                   var leaveUpdate = {
@@ -1007,9 +1007,9 @@ const team_controller = {
                   await updateUpdates(result.first, result.second, result.third, leaveUpdate);
                   await db.updateOne(Team, {_id:teamID}, {$set:{"third":{username:'No User', full_name:'No User'}}});
                   /* Update the ongoing matches involving the team */
-                  var matchGovQuery = {$and: [{"gov._id":teamID}, {'status':'Ongoing'}]};
+                  var matchGovQuery = {$and: [{"gov._id":teamID}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
                   await db.updateMany(Match, matchGovQuery, {$set:{"gov.third":{username:'No User', full_name:'No User'}}});
-                  var matchOppQuery = {$and: [{"opp._id":teamID}, {'status':'Ongoing'}]};
+                  var matchOppQuery = {$and: [{"opp._id":teamID}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
                   await db.updateMany(Match, matchOppQuery, {$set:{"opp.third":{username:'No User', full_name:'No User'}}});
                 }
                 var wholeQuery = {$and: [{$or: [{"gov._id":teamID}, {"opp._id":teamID}]}, {'status':'Ongoing'}, {'creator._id':current_id}]};
@@ -1243,6 +1243,10 @@ const team_controller = {
                     /* Delete the team */
                     if(deleteMatch.length > 0)
                       await db.deleteMany(Match, wholeQuery);
+                    var createGovQuery = {$and: [{"gov._id":teamID}, {'status':{$in:['Creating', 'Editing']}}, {'creator._id':{$in:[result.first._id, result.second._id, result.third._id]}}]};
+                    var createOppQuery = {$and: [{"opp._id":teamID}, {'status':{$in:['Creating', 'Editing']}}, {'creator._id':{$in:[result.first._id, result.second._id, result.third._id]}}]};
+                    await db.updateMany(Match, createGovQuery, {$unset:{'gov':''}});
+                    await db.updateMany(Match, createOppQuery, {$unset:{'opp':''}});
                     await db.deleteOne(Team, {teamname:name});
                     await db.findOne(User, {_id:req.session.curr_user._id}, async function(result){
                       req.session.curr_user = result;
@@ -1932,10 +1936,10 @@ async function updateTeam(req, res, current, teamname, team){
     await updateTeamname(current._id, teamname, second.username);
     await updateTeamname(current._id, teamname, third.username);
     /* Update the ongoing matches involving the team */
-    var matchGovQuery = {$and: [{"gov._id":current._id}, {'status':'Ongoing'}]};
-    await db.updateMany(Match, matchGovQuery, {$set:{"gov.first":{username:'No User', full_name:'No User'}}});
-    var matchOppQuery = {$and: [{"opp._id":current._id}, {'status':'Ongoing'}]};
-    await db.updateMany(Match, matchOppQuery, {$set:{"opp.first":{username:'No User', full_name:'No User'}}});
+    var matchGovQuery = {$and: [{"gov._id":current._id}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
+    await db.updateMany(Match, matchGovQuery, {$set:{'gov.teamname':teamname, 'gov.first':first, 'gov.second':second, 'gov.third':third}});
+    var matchOppQuery = {$and: [{"opp._id":current._id}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
+    await db.updateMany(Match, matchOppQuery, {$set:{'opp.teamname':teamname, 'opp.first':first, 'opp.second':second, 'opp.third':third}});
   }else{ /* If only the members were changed, create an update regarding so */
     await db.updateOne(Team, {teamname:current.teamname}, {$set: {first:first, second:second, third:third}});
     update_teamname = current.teamname;
@@ -1945,10 +1949,10 @@ async function updateTeam(req, res, current, teamname, team){
       update: update_teamname + " was edited by " + req.session.curr_user.full_name + " (" + req.session.curr_user.username + "). [Edited Members]"
     };
     /* Update the ongoing matches involving the team */
-    var matchGovQuery = {$and: [{"gov._id":current._id}, {'status':'Ongoing'}]};
-    await db.updateMany(Match, matchGovQuery, {$set:{"gov.first":{username:'No User', full_name:'No User'}}});
-    var matchOppQuery = {$and: [{"opp._id":current._id}, {'status':'Ongoing'}]};
-    await db.updateMany(Match, matchOppQuery, {$set:{"opp.first":{username:'No User', full_name:'No User'}}});
+    var matchGovQuery = {$and: [{"gov._id":current._id}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
+    await db.updateMany(Match, matchGovQuery, {$set:{'gov.first':first, 'gov.second':second, 'gov.third':third}});
+    var matchOppQuery = {$and: [{"opp._id":current._id}, {'status':{$in:['Ongoing', 'Creating', 'Editing']}}]};
+    await db.updateMany(Match, matchOppQuery, {$set:{'opp.first':first, 'opp.second':second, 'opp.third':third}});
   }
   /* Update the users with the created update */
   await updateUpdates(first, second, third, editUpdate);

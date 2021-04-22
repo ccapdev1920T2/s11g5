@@ -58,6 +58,7 @@ block content
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.govFirst == 1)
                               input.form-control#firstgov(style='border: 1px solid #d66' type="number" min="1" max="100" name='firstgov')
+                              input#firstgovName(type=hidden value=pagedetails.match.gov.first.full_name style="display:none;")
                               if(pagedetails.gradeFields.govFirst == 1)
                                 .text-center.small#invalid_firstgov(style="color: #d66") Invalid Score
                             else
@@ -65,11 +66,13 @@ block content
                               .text-center.small#invalid_firstgov(style="color: #d66")
                       else
                         input#firstgov(type=hidden name='firstgov' value=0 style="display:none;")
+                        input#firstgovName(type=hidden value=pagedetails.match.gov.first.full_name style="display:none;")
                       if(pagedetails.match.gov.second.full_name != 'No User')
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.govSecond == 1)
                               input.form-control#secondgov(style='border: 1px solid #d66' type="number" min="1" max="100" name='secondgov')
+                              input#secondgovName(type=hidden value=pagedetails.match.gov.second.full_name style="display:none;")
                               if(pagedetails.gradeFields.govSecond == 1)
                                 .text-center.small#invalid_secondgov(style="color: #d66") Invalid Score
                             else
@@ -77,11 +80,13 @@ block content
                               .text-center.small#invalid_secondgov(style="color: #d66")
                       else
                         input#secondgov(type=hidden name='secondgov' value=0 style="display:none;")
+                        input#secondgovName(type=hidden value=pagedetails.match.gov.second.full_name style="display:none;")
                       if(pagedetails.match.gov.third.full_name != 'No User')
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.govThird == 1)
                               input.form-control#thirdgov(style='border: 1px solid #d66' type="number" min="1" max="100" name='thirdgov')
+                              input#thirdgovName(type=hidden value=pagedetails.match.gov.third.full_name style="display:none;")
                               if(pagedetails.gradeFields.govThird == 1)
                                 .text-center.small#invalid_thirdgov(style="color: #d66") Invalid Score
                             else
@@ -89,6 +94,7 @@ block content
                               .text-center.small#invalid_thirdgov(style="color: #d66")
                       else
                         input#thirdgov(type=hidden name='thirdgov' value=0 style="display:none;")
+                        input#thirdgovName(type=hidden value=pagedetails.match.gov.third.full_name style="display:none;")
                     br
                   li.list-group-item
                     br
@@ -133,37 +139,43 @@ block content
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.oppFirst == 1)
                               input.form-control#firstopp(style='border: 1px solid #d66' type="number" min="1" max="100" name='firstopp')
+                              input#firstoppName(type=hidden value=pagedetails.match.opp.first.full_name style="display:none;")
                               if(pagedetails.gradeFields.oppFirst == 1)
                                 .text-center.small#invalid_firstopp(style="color: #d66") Invalid Score
                             else
                               input.form-control#firstopp(type="number" min="1" max="100" name='firstopp')
                               .text-center.small#invalid_firstopp(style="color: #d66")
                       else
-                        input#firstopp(type=hidden name='firstopp' value=0  style="display:none;")
+                        input#firstopp(type=hidden name='firstopp' value=0 style="display:none;")
+                        input#firstoppName(type=hidden value=pagedetails.match.opp.first.full_name style="display:none;")
                       if(pagedetails.match.opp.second.full_name != 'No User')
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.oppSecond == 1)
                               input.form-control#secondopp(style='border: 1px solid #d66' type="number" min="1" max="100" name='secondopp')
+                              input#secondoppName(type=hidden value=pagedetails.match.opp.second.full_name style="display:none;")
                               if(pagedetails.gradeFields.oppSecond == 1)
                                 .text-center.small#invalid_secondopp(style="color: #d66") Invalid Score
                             else
                               input.form-control#secondopp(type="number" min="1" max="100" name='secondopp')
                               .text-center.small#invalid_secondopp(style="color: #d66")
                       else
-                        input#secondopp(type=hidden name='secondopp' value=0  style="display:none;")
+                        input#secondopp(type=hidden name='secondopp' value=0 style="display:none;")
+                        input#secondoppName(type=hidden value=pagedetails.match.opp.second.full_name style="display:none;")
                       if(pagedetails.match.opp.third.full_name != 'No User')
                         .col
                           .form-group
                             if(pagedetails.gradeFields.all == 1 || pagedetails.gradeFields.oppThird == 1)
                               input.form-control#thirdopp(style='border: 1px solid #d66' type="number" min="1" max="100" name='thirdopp')
+                              input#thirdoppName(type=hidden value=pagedetails.match.opp.third.full_name style="display:none;")
                               if(pagedetails.gradeFields.oppThird == 1)
                                 .text-center.small#invalid_thirdopp(style="color: #d66") Invalid Score
                             else
                               input.form-control#thirdopp(type="number" min="1" max="100" name='thirdopp')
                               .text-center.small#invalid_thirdopp(style="color: #d66")
                       else
-                        input#thirdopp(type=hidden name='thirdopp' value=0  style="display:none;")
+                        input#thirdopp(type=hidden name='thirdopp' value=0 style="display:none;")
+                        input#thirdoppName(type=hidden value=pagedetails.match.opp.third.full_name style="display:none;")
                     br
                   li.list-group-item
                     br

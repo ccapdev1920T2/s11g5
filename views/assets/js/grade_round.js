@@ -2,42 +2,48 @@ $(document).ready(function () {
   $('#submit_grades').prop('disabled', true);
 
   function checkAll(){
-    var firstgov = $('#firstgov').val();
-    var secondgov = $('#secondgov').val();
-    var thirdgov = $('#thirdgov').val();
-    var firstopp = $('#firstopp').val();
-    var secondopp = $('#secondopp').val();
-    var thirdopp = $('#thirdopp').val();
-    var comment = $('#comment').val();
     const sentenceFormat = /^[a-zA-Z0-9]([a-zA-Z0-9\s\-\.\!\?\,\']?)+$/;
+    var firstgov = $('#firstgov').val();
+    var firstgovName = $('#firstgovName').val();
+    var secondgov = $('#secondgov').val();
+    var secondgovName = $('#secondgovName').val();
+    var thirdgov = $('#thirdgov').val();
+    var thirdgovName = $('#thirdgovName').val();
+    var firstopp = $('#firstopp').val();
+    var firstoppName = $('#firstoppName').val();
+    var secondopp = $('#secondopp').val();
+    var secondoppName = $('#secondoppName').val();
+    var thirdopp = $('#thirdopp').val();
+    var thirdoppName = $('#thirdoppName').val();
+    var comment = $('#comment').val();
 
     if(!validator.isEmpty(firstgov) && !validator.isEmpty(secondgov) && !validator.isEmpty(thirdgov) && !validator.isEmpty(firstopp) && !validator.isEmpty(secondopp) && !validator.isEmpty(thirdopp) && !validator.isEmpty(comment)){
-      if(!validator.isNumeric(firstgov) || validator.contains(firstgov, ".") || firstgov > 100 || firstgov < 1){
+      if(!validator.isNumeric(firstgov) || validator.contains(firstgov, ".") || ((firstgov > 100 || firstgov < 1) && !validator.equals(firstgovName, 'No User'))){
         $('#firstgov').css('border', '1px solid #d66');
         $('#invalid_firstgov').text('Invalid Score');
         $('#submit_grades').prop('disabled', true);
       }else{
-        if(!validator.isNumeric(secondgov) || validator.contains(secondgov, ".") || secondgov > 100 || secondgov < 1){
+        if(!validator.isNumeric(secondgov) || validator.contains(secondgov, ".") || ((secondgov > 100 || secondgov < 1) && !validator.equals(secondgovName, 'No User'))){
           $('#secondgov').css('border', '1px solid #d66');
           $('#invalid_secondgov').text('Invalid Score');
           $('#submit_grades').prop('disabled', true);
         }else{
-          if(!validator.isNumeric(thirdgov) || validator.contains(thirdgov, ".") || thirdgov > 100 || thirdgov < 1){
+          if(!validator.isNumeric(thirdgov) || validator.contains(thirdgov, ".") || ((thirdgov > 100 || thirdgov < 1) && !validator.equals(thirdgovName, 'No User'))){
             $('#thirdgov').css('border', '1px solid #d66');
             $('#invalid_thirdgov').text('Invalid Score');
             $('#submit_grades').prop('disabled', true);
           }else{
-            if(!validator.isNumeric(firstopp) || validator.contains(firstopp, ".") || firstopp > 100 || firstopp < 1){
+            if(!validator.isNumeric(firstopp) || validator.contains(firstopp, ".") || ((firstopp > 100 || firstopp < 1) && !validator.equals(firstoppName, 'No User'))){
               $('#firstopp').css('border', '1px solid #d66');
               $('#invalid_firstopp').text('Invalid Score');
               $('#submit_grades').prop('disabled', true);
             }else{
-              if(!validator.isNumeric(secondopp) || validator.contains(secondopp, ".") || secondopp > 100 || secondopp < 1){
+              if(!validator.isNumeric(secondopp) || validator.contains(secondopp, ".") || ((secondopp > 100 || secondopp < 1) && !validator.equals(secondoppName, 'No User'))){
                 $('#secondopp').css('border', '1px solid #d66');
                 $('#invalid_secondopp').text('Invalid Score');
                 $('#submit_grades').prop('disabled', true);
               }else{
-                if(!validator.isNumeric(thirdopp) || validator.contains(thirdopp, ".") || thirdopp > 100 || thirdopp < 1){
+                if(!validator.isNumeric(thirdopp) || validator.contains(thirdopp, ".") || ((thirdopp > 100 || thirdopp < 1) && !validator.equals(thirdoppName, 'No User'))){
                   $('#thirdopp').css('border', '1px solid #d66');
                   $('#invalid_thirdopp').text('Invalid Score');
                   $('#submit_grades').prop('disabled', true);

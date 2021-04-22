@@ -22,7 +22,7 @@ $(document).ready(function () {
     const sentenceFormat = /^[a-zA-Z0-9]([a-zA-Z0-9\s\-\.\!\?\,\']?)+$/;
     if(!validator.isEmpty($('#gov').val())){
       gov = $('#gov').val();
-    }else if(!validator.equals($('#edit_gov').val(), 'Enter Goverment Team Name...')){
+    }else if(!validator.equals($('#edit_gov').val(), 'Enter Government Team Name...')){
       gov = $('#edit_gov').val();
     }else{
       gov = $('#gov').val();
@@ -130,16 +130,31 @@ $(document).ready(function () {
         $('#round_next').prop('disabled', true);
         $('#adj_next').prop('disabled', true);
       }else{
-        $('#round_next').prop('disabled', false);
-        var curr_ad = $('#edit_adj').val();
-        if(!validator.isEmpty(curr_ad)){
-          if(validator.matches(curr_ad, "No User")){
-            $('#adj_next').prop('disabled', true);
+        var gov_team = $('#edit_gov').val();
+        var opp_team = $('#edit_opp').val();
+        if(gov_team != null && opp_team != null){
+          console.log(gov_team);
+          console.log(opp_team);
+          console.log(!validator.equals(gov_team, 'Enter Government Team Name...'));
+          console.log(!validator.equals(opp_team, 'Enter Opposition Team Name...'));
+          if(!validator.equals(gov_team, 'Enter Government Team Name...') && !validator.equals(opp_team, 'Enter Opposition Team Name...')){
+            $('#round_next').prop('disabled', false);
           }else{
-            $('#adj_next').prop('disabled', false);
+            $('#round_next').prop('disabled', true);
           }
-        }else{
-          $('#adj_next').prop('disabled', true);
+        }
+
+        var curr_ad = $('#edit_adj').val();
+        if(curr_ad != null){
+          if(!validator.isEmpty(curr_ad)){
+            if(validator.matches(curr_ad, "No User")){
+              $('#adj_next').prop('disabled', true);
+            }else{
+              $('#adj_next').prop('disabled', false);
+            }
+          }else{
+            $('#adj_next').prop('disabled', true);
+          }
         }
       }
     }else{

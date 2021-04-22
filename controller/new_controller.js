@@ -56,7 +56,7 @@ const new_controller = {
             motion: 'Enter Motion...',
             creatorRole: 'Choose Your Role',
             status: 'Creating',
-            gov: {teamname: 'Enter Goverment Team Name...'},
+            gov: {teamname: 'Enter Government Team Name...'},
             opp: {teamname: 'Enter Opposition Team Name...'}
           }
           var render = 'app/create_round/startRound';
@@ -72,11 +72,18 @@ const new_controller = {
           await db.findOne(Match, {roundID:req.session.roundID}, async function(round){
             if(round){ /* If round is found, proceed */
               if(round.creator.username == req.session.curr_user.username){
+                var final_round = round;
+                if(round.gov.teamname == null){
+                  final_round.gov = {teamname:'Enter Government Team Name...'};
+                }
+                if(round.opp.teamname == null){
+                  final_round.opp = {teamname:'Enter Opposition Team Name...'};
+                }
                 var render = 'app/create_round/startRound';
                 var pagedetails = {
                   pagename: 'Start a New Round',
                   curr_user: req.session.curr_user,
-                  match: round,
+                  match: final_round,
                   fields: req.session.fields
                 };
                 renderPage(req, res, render, pagedetails);
@@ -97,7 +104,7 @@ const new_controller = {
           motion: 'Enter Motion...',
           creatorRole: 'Choose Your Role',
           status: 'Creating',
-          gov: {teamname: 'Enter Goverment Team Name...'},
+          gov: {teamname: 'Enter Government Team Name...'},
           opp: {teamname: 'Enter Opposition Team Name...'}
         }
         var render = 'app/create_round/startRound';
@@ -536,11 +543,18 @@ const new_controller = {
                 if(!req.session.fields){
                   req.session.fields = {all: 0, role: 0, motion: 0, gov: 0, opp: 0, ad:0};
                 }
+                var final_round = result;
+                if(result.gov.teamname == null){
+                  final_round.gov = {teamname:'Enter Government Team Name...'};
+                }
+                if(result.opp.teamname == null){
+                  final_round.opp = {teamname:'Enter Opposition Team Name...'};
+                }
                 var render = 'app/create_round/startRound';
                 var pagedetails = {
                   pagename: 'Start a New Round',
                   curr_user: req.session.curr_user,
-                  match: result,
+                  match: final_round,
                   fields: req.session.fields
                 };
                 renderPage(req, res, render, pagedetails);
