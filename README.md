@@ -30,7 +30,7 @@ The app uses cookies to store your session, and will automatically redirect you 
 ### Dummy Accounts
 There are a few *dummy accounts* created. You can use a dummy account with the following credentials:
 
-**username**: john_doe_123
+**username**: john_doe
 
 __password__: p@ssword
 
@@ -54,29 +54,29 @@ Users can form teams with either registered users or guest users. In Tabcore, th
 
 
 ## Dependencies
-- bcrypt
-- body-parser
-- connect-flash
-- connect-mongostore
-- cookie-parser
-- express
-- express-session
-- express-validator
+- [bcrypt](https://www.npmjs.com/package/bcrypt)
+- [body-parser](https://www.npmjs.com/package/body-parser)
+- [connect-flash](https://www.npmjs.com/package/connect-flash)
+- [connect-mongostore](https://www.npmjs.com/package/connect-mongostore)
+- [cookie-parser](https://www.npmjs.com/package/cookie-parser)
+- [express](https://www.npmjs.com/package/express)
+- [express-session](https://www.npmjs.com/package/express-session)
+- [express-validator](https://www.npmjs.com/package/express-validator)
 - http
-- mongo-sanitize
-- mongodb
-- mongoose
-- morgan
-- nodemailer
-- passport
-- passport-local
-- passport-local-mongoose
-- pug
-- socket.io
-- validator
+- [mongo-sanitize](https://www.npmjs.com/package/mongo-sanitize)
+- [mongodb](https://www.npmjs.com/package/mongodb)
+- [mongoose](https://www.npmjs.com/package/mongoose)
+- [morgan](https://www.npmjs.com/package/morgan)
+- [nodemailer](https://www.npmjs.com/package/nodemailer)
+- [passport](https://www.npmjs.com/package/passport)
+- [passport-local](https://www.npmjs.com/package/passport-local)
+- [passport-local-mongoose](https://www.npmjs.com/package/passport-local-mongoose)
+- [pug](https://www.npmjs.com/package/pug)
+- [socket.io](https://www.npmjs.com/package/socket.io)
+- [validator](https://www.npmjs.com/package/validator)
 
 
 ## Authors
-* Bernice Betito
-* Marc Gonzales
-* Sean Pe
+* Bernice Betito - Developer
+* Marc Gonzales - Tester
+* Sean Pe - Designer
