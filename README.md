@@ -17,7 +17,7 @@ http://localhost:3000
 ### Online
 To access the app online, visit
 
-[title](https://www.tabcore.herokuapp.com)
+[tabcore.herokuapp.com](https://www.tabcore.herokuapp.com)
 
 
 ## Sessions
