@@ -22,7 +22,7 @@ To access the app online, visit
 
 ## Sessions
 
-The app uses cookies to store your session, and will automatically redirect you to the dashboard if you haven't logged out yet and will redirect to the index page if you try to access pages while not being logged in.
+The app uses cookies to store your session, and will automatically redirect you to the dashboard if you haven't logged out yet and will redirect to the index page if you try to access pages while not logged in.
 
 
 ## Accounts
@@ -62,7 +62,7 @@ Users can form teams with either registered users or guest users. In Tabcore, th
 - [express](https://www.npmjs.com/package/express)
 - [express-session](https://www.npmjs.com/package/express-session)
 - [express-validator](https://www.npmjs.com/package/express-validator)
-- http
+- [http](https://nodejs.org/api/http.html)
 - [mongo-sanitize](https://www.npmjs.com/package/mongo-sanitize)
 - [mongodb](https://www.npmjs.com/package/mongodb)
 - [mongoose](https://www.npmjs.com/package/mongoose)
