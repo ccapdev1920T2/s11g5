@@ -340,8 +340,6 @@ const ongoing_controller = {
                             if(adj.status == 'Active' || adj.status == roundID){
                               if((govTeam.status == 'Active' || govTeam.status == roundID) && (govOne.status == 'Active' || govOne.status == roundID) && (govTwo.status == 'Active' || govTwo.status == roundID) && (govThree.status == 'Active' || govThree.status == roundID)){
                                 if((oppTeam.status == 'Active' || oppTeam.status == roundID) && (oppOne.status == 'Active' || oppOne.status == roundID) && (oppTwo.status == 'Active' || oppTwo.status == roundID) && (oppThree.status == 'Active' || oppThree.status == roundID)){
-                                  await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':roundID}});
-                                  await db.updateMany(User, {username:{$in:[adj.username, govOne.username, govTwo.username, govThree.username, oppOne.username, oppTwo.username, oppThree.username]}}, {$set:{'status':roundID}});
                                   var username;
                                   if(req.session.curr_user){
                                     username = req.session.curr_user.username;
@@ -353,23 +351,58 @@ const ongoing_controller = {
                                   }
                                   /* If user is in the round, proceed */
                                   if(!checkUsers(username, result.gov) || !checkUsers(username, result.opp) || username == result.adjudicator.username){
-                                    var render = 'app/ongoing_round/ongoingRound';
-                                    if(req.session.curr_user){
-                                      req.session.curr_user.status = roundID;
-                                      var pagedetails = {
-                                        pagename: 'On Going Round',
-                                        match: result,
-                                        curr_user:req.session.curr_user
-                                      };
-                                      renderPage(req, res, render, pagedetails);
+                                    if(checkUsers(result.gov.first.username, result.opp) && checkUsers(result.gov.second.username, result.opp) && checkUsers(result.gov.third.username, result.opp)){
+                                      if(checkUsers(result.opp.first.username, result.gov) && checkUsers(result.opp.second.username, result.gov) && checkUsers(result.opp.third.username, result.gov)){
+                                        if(checkUsers(result.adjudicator.username, result.gov) && checkUsers(result.adjudicator.username, result.opp)){
+                                          var render = 'app/ongoing_round/ongoingRound';
+                                          if(req.session.curr_user){
+                                            await db.updateMany(Team, {teamname:{$in:[result.gov.teamname,result.opp.teamname]}}, {$set:{'status':roundID}});
+                                            await db.updateMany(User, {username:{$in:[adj.username, govOne.username, govTwo.username, govThree.username, oppOne.username, oppTwo.username, oppThree.username]}}, {$set:{'status':roundID}});
+                                            req.session.curr_user.status = roundID;
+                                            var pagedetails = {
+                                              pagename: 'On Going Round',
+                                              match: result,
+                                              curr_user:req.session.curr_user
+                                            };
+                                            renderPage(req, res, render, pagedetails);
+                                          }else{
+                                            req.session.guest_user.status = roundID;
+                                            var pagedetails = {
+                                              pagename: 'On Going Round',
+                                              match: result,
+                                              curr_user:req.session.guest_user
+                                            };
+                                            res.render(render, {pagedetails:pagedetails});
+                                            res.end();
+                                          }
+                                        }else{
+                                          await db.updateOne(Match, {roundID:roundID}, {$set:{status:'Editing'}});
+                                          req.session.pagename = 'Join a Round';
+                                          req.session.header = 'Join a Round';
+                                          req.session.message = 'Error in Join a Round! Round information needs to be edited.';
+                                          req.session.link = '/dashboard';
+                                          req.session.back = 'Dashboard';
+                                          res.redirect('/message');
+                                          res.end();
+                                        }
+                                      }else{
+                                        await db.updateOne(Match, {roundID:roundID}, {$set:{status:'Editing'}});
+                                        req.session.pagename = 'Join a Round';
+                                        req.session.header = 'Join a Round';
+                                        req.session.message = 'Error in Join a Round! Round information needs to be edited.';
+                                        req.session.link = '/dashboard';
+                                        req.session.back = 'Dashboard';
+                                        res.redirect('/message');
+                                        res.end();
+                                      }
                                     }else{
-                                      req.session.guest_user.status = roundID;
-                                      var pagedetails = {
-                                        pagename: 'On Going Round',
-                                        match: result,
-                                        curr_user:req.session.guest_user
-                                      };
-                                      res.render(render, {pagedetails:pagedetails});
+                                      await db.updateOne(Match, {roundID:roundID}, {$set:{status:'Editing'}});
+                                      req.session.pagename = 'Join a Round';
+                                      req.session.header = 'Join a Round';
+                                      req.session.message = 'Error in Join a Round! Round information needs to be edited.';
+                                      req.session.link = '/dashboard';
+                                      req.session.back = 'Dashboard';
+                                      res.redirect('/message');
                                       res.end();
                                     }
                                   }else{
@@ -429,6 +462,7 @@ const ongoing_controller = {
                       }
                     });
                   }else{
+                    await db.updateOne(Match, {roundID:roundID}, {$set:{status:'Editing'}});
                     req.session.pagename = 'Join a Round';
                     req.session.header = 'Join a Round';
                     req.session.message = 'Error in Join a Round! Round information is not yet finalized.';
