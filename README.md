@@ -7,7 +7,7 @@
 - [models](https://github.com/ccapdev1920T2/s11g5/tree/master/models) - This folder contains files for database modeling and access.
 - [routes](https://github.com/ccapdev1920T2/s11g5/tree/master/routes) - This folder contains files which describes the response of the server for each HTTP method request to a specific path in the server.
 - [views](https://github.com/ccapdev1920T2/s11g5/tree/master/views) - This folder contains all hbs files to be rendered when requested from the server.
-- [views](https://github.com/ccapdev1920T2/s11g5/blob/master/index.js) - The main entry point of the web application.
+- [index.js](https://github.com/ccapdev1920T2/s11g5/blob/master/index.js) - The main entry point of the web application.
 
 ## Setting Up
 
@@ -27,8 +27,10 @@ npm install
 node index.js
 ```
 
-Once **index.js** is running, go on any browser and type in:
+4. Once the server is running, go on any browser and type in:
+```
 http://localhost:3000
+```
 
 ### Online
 To access the app online, visit
@@ -58,9 +60,81 @@ You can also *register* and *create your own account*. Do note that an **actual 
 You can also login as a __guest user__ using an email address but as a guest, you would only have _limited features_ to explore.
 
 
-## Main Features to Check Out
+## Tabcore Features
 
-### Debate Rounds / Matches
+### Sidebar
+1. Dashboard
+This is your profile page. You'll find some information such as the number of debates you've won and lost.
+
+2. Create a Round
+When you want to create your own round, this is where you head to.
+
+3. Join a Round
+If any of your teams are invited to join rounds, here is where you'll find them, as well as ongoing rounds.
+
+4. Grade a Round
+If you're an adjudicator for a round, you can head on over to this tab when the round ends in order to grade everyone.
+
+5. Round Stats
+For any of your concluded rounds, get the round ID and enter them in this tab so you can see the statistics of that round.
+
+6. Round History
+To see a list of your previous rounds, head on over to this tab to find all of them.
+
+7. Teams
+This is your Teams Dashboard. In here, you'll be able to find all of your teams and create and edit them.
+
+8. Profile Settings
+To change anything about your personal information, you can edit and save these changes under this tab.
+
+### Notification Tab
+1. Join Round
+If you receive any invites to debate rounds, they will appear here.
+
+2. Team Updates
+If there are any updates within your team such as change of team name or change of members, they will appear here.
+
+### User Menu
+1. Dashboard
+This is your profile page. You'll find some information such as the number of debates you've won and lost.
+
+2. Profile Settings
+To change anything about your personal information, you can edit and save these changes under this tab.
+
+3. Tutorial
+If you need a refresher on where everything is, you can take a look at a tutorial by clicking on Tutorial.
+
+4. Logout
+When you need to log out of your account, you can click on Logout.
+
+### Dashboard
+1. Create a Round
+When you want to create your own round, this is where you head to.
+
+2. Join a Round
+If any of your teams are invited to join rounds, here is where you'll find them, as well as ongoing rounds.
+
+3. Round Stats
+For any of your concluded rounds, get the round ID and enter them in this tab so you can see the statistics of that round.
+
+4. Round History
+To see a list of your previous rounds, head on over to this tab to find all of them.
+
+### Teams Dashboard
+1. Create a Team
+If you want to create a brand new team with other registered users, go ahead and click on the Create a Team.
+
+2. My Teams
+If you want to see a full list of all of the teams you\'re part of, you can head on over to My Teams.
+
+3. Team Updates
+If there are any updates within your team such as change of team name or change of members, they will appear here.
+
+4. Edit a Team
+If there are any changes that you would want to do to your team, you can edit your team and save these changes under Edit a Team.
+
+
+### Debate Rounds
 Users can participate as debaters in rounds that their team has been invited to or as an adjudicator wherein they will be judging, grading, and giving their comments regarding the speakers and the round itself. A concurrent timer is used, allowing the users to easily synchronize their debate.
 
 
