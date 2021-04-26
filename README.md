@@ -150,7 +150,6 @@ Users can participate as debaters in rounds that their team has been invited to 
 ### Teams
 Users can form teams with either registered users or guest users. In Tabcore, there are three (3) people in a team, a Leader, a Deputy Leader, and a Whip. Users could edit their teams in order to reassign a role or to remove and add a different user.
 
----
 
 ## Dependencies
 - [bcrypt](https://www.npmjs.com/package/bcrypt)
