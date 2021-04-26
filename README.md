@@ -1,4 +1,6 @@
 # Tabcore
+The following project is a web application that will provide competitive debaters a tool to easily manage their debate round. During a parliamentary debate match, debaters need to keep track of things such as their scores for the round, who is speaking during the round, the topic of the debate, as well as keep track of the time that they have spoken. This app will create a synchronized app so that debaters can more easily coordinate their debate matches.
+
 
 ## Contents
 

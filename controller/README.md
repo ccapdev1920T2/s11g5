@@ -1,4 +1,4 @@
-# Tabcore
+# Tabcore Controller
 
 ## Contents
 
