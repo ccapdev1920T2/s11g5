@@ -5,11 +5,15 @@
 ### Local
 To setup this app locally, run
 
-`npm install`
+```
+npm install
+```
 
 and then run
 
-`node index.js`
+```
+node index.js
+```
 
 Once **index.js** is running, go on any browser and type in:
 http://localhost:3000
