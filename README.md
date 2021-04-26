@@ -87,12 +87,14 @@ This is your Teams Dashboard. In here, you'll be able to find all of your teams 
 #### 8. Profile Settings
 To change anything about your personal information, you can edit and save these changes under this tab.
 
+
 ### Notification Tab
 #### 1. Join Round
 If you receive any invites to debate rounds, they will appear here.
 
 #### 2. Team Updates
 If there are any updates within your team such as change of team name or change of members, they will appear here.
+
 
 ### User Menu
 #### 1. Dashboard
@@ -107,6 +109,7 @@ If you need a refresher on where everything is, you can take a look at a tutoria
 #### 4. Logout
 When you need to log out of your account, you can click on Logout.
 
+
 ### Dashboard
 #### 1. Create a Round
 When you want to create your own round, this is where you head to.
@@ -119,6 +122,7 @@ For any of your concluded rounds, get the round ID and enter them in this tab so
 
 #### 4. Round History
 To see a list of your previous rounds, head on over to this tab to find all of them.
+
 
 ### Teams Dashboard
 #### 1. Create a Team
