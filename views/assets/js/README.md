@@ -4,7 +4,7 @@
 
 - [bs-init.js](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/js/bs-init.js) - jQuery / JavaScript code which creates a chart
 - [chart.min.js](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/js/chart.min.js) - chart visualization library
-- [create_round.js](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/js/create_round.js) - jQuery / JavaScript code for [views/app/create_round](https://github.com/ccapdev1920T2/s11g5/tree/master/views/app/create_round).
+- [create_round.js](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/js/create_round.js) - jQuery / JavaScript code for `[views/app/create_round](https://github.com/ccapdev1920T2/s11g5/tree/master/views/app/create_round)`
 - [create_teams.js](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/js/create_teams.js) - jQuery / JavaScript code for [views/app/teams/createTeam.pug](https://github.com/ccapdev1920T2/s11g5/tree/master/views/app/teams/createTeam.pug)
 - [edit_teams.js](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/js/edit_teams.js) - jQuery / JavaScript code for [views/app/teams/createTeam.pug](https://github.com/ccapdev1920T2/s11g5/tree/master/views/app/teams/editTeams.pug)
 - [fullscreen.js](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/js/fullscreen.js) - jQuery / JavaScript code which enables fullscreen mode
