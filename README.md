@@ -28,12 +28,22 @@ The app uses cookies to store your session, and will automatically redirect you 
 ## Accounts
 
 ### Dummy Accounts
-There are a few *dummy accounts* created. You can use a dummy account with the following credentials:
+There are a few *dummy accounts* created. You may use any of the following dummy accounts:
+
+**username**: bern_betito
+__password__: t@bcore123
+
+**username**: marcgone
+__password__: marcmarc
 
 **username**: john_doe
-
 __password__: p@ssword
 
+**username**: janeDoe123
+__password__: p@ssword
+
+**username**: shortCut
+__password__: marcmarc
 
 ### Register
 You can also *register* and *create your own account*. Do note that an **actual email address** is needed when registering.
