@@ -1,16 +1,28 @@
 # Tabcore
 
+## Contents
+
+- [controllers](https://github.com/ccapdev1920T2/s11g5/tree/master/controller) - This folder contains files which defines callback functions for client requests.
+- [helpers](https://github.com/ccapdev1920T2/s11g5/tree/master/helpers) - This folder contains files which contains helper functions.
+- [models](https://github.com/ccapdev1920T2/s11g5/tree/master/models) - This folder contains files for database modeling and access.
+- [routes](https://github.com/ccapdev1920T2/s11g5/tree/master/routes) - This folder contains files which describes the response of the server for each HTTP method request to a specific path in the server.
+- [views](https://github.com/ccapdev1920T2/s11g5/tree/master/views) - This folder contains all hbs files to be rendered when requested from the server.
+- [views](https://github.com/ccapdev1920T2/s11g5/blob/master/index.js) - The main entry point of the web application.
+
 ## Setting Up
 
 ### Local
-To setup this app locally, run
+1. To setup this app locally, clone this repository by either downloading [here](https://github.com/ccapdev1920T2/s11g5/archive/refs/heads/master.zip), or is git is downloaded, run the following command in the command prompt:
+```
+git clone https://github.com/ccapdev1920T2/s11g5
+```
 
+2. Once cloned, navigate to the project folder then run the following command in the command prompt in order to initialize and install all necessary modules used throughout the project:
 ```
 npm install
 ```
 
-and then run
-
+3. Once all necessary modules are initialized and installed, the server could now run with the following command:
 ```
 node index.js
 ```
@@ -22,11 +34,6 @@ http://localhost:3000
 To access the app online, visit
 
 [tabcore.herokuapp.com](https://www.tabcore.herokuapp.com)
-
-
-## Sessions
-
-The app uses cookies to store your session, and will automatically redirect you to the dashboard if you haven't logged out yet and will redirect to the index page if you try to access pages while not logged in.
 
 
 ## Accounts
