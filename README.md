@@ -5,11 +5,11 @@
 ### Local
 To setup this app locally, run
 
-**npm install**
+`npm install`
 
 and then run
 
-**node index.js**
+`node index.js`
 
 Once **index.js** is running, go on any browser and type in:
 http://localhost:3000
@@ -30,29 +30,13 @@ The app uses cookies to store your session, and will automatically redirect you 
 ### Dummy Accounts
 There are a few *dummy accounts* created. You may use any of the following dummy accounts:
 
-**username**: bern_betito
-
-__password__: t@bcore123
-
-
-**username**: marcgone
-
-__password__: marcmarc
-
-
-**username**: john_doe
-
-__password__: p@ssword
-
-
-**username**: janeDoe123
-
-__password__: p@ssword
-
-
-**username**: shortCut
-
-__password__: marcmarc
+| Username    | Password   |
+|-------------|------------|
+| bern_betito | t@bcore123 |
+| marcgone    | marcmarc   |
+| john_doe    | p@ssword   |
+| janeDoe123  | p@ssword   |
+| shortCut    | marcmarc   |
 
 
 ### Register
