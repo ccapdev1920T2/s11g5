@@ -63,6 +63,7 @@ You can also login as a __guest user__ using an email address but as a guest, yo
 ## Tabcore Features
 
 ### Sidebar
+![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/1.jpg)
 #### 1. Dashboard
 This is your profile page. You'll find some information such as the number of debates you've won and lost.
 
@@ -89,6 +90,7 @@ To change anything about your personal information, you can edit and save these 
 
 
 ### Notification Tab
+![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/updatesDash.jpg)
 #### 1. Join Round
 If you receive any invites to debate rounds, they will appear here.
 
@@ -97,6 +99,7 @@ If there are any updates within your team such as change of team name or change 
 
 
 ### User Menu
+![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/profileDash.jpg)
 #### 1. Dashboard
 This is your profile page. You'll find some information such as the number of debates you've won and lost.
 
@@ -111,6 +114,7 @@ When you need to log out of your account, you can click on Logout.
 
 
 ### Dashboard
+![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/dashOptions.jpg)
 #### 1. Create a Round
 When you want to create your own round, this is where you head to.
 
@@ -125,6 +129,7 @@ To see a list of your previous rounds, head on over to this tab to find all of t
 
 
 ### Teams Dashboard
+![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/teamsDash.jpg)
 #### 1. Create a Team
 If you want to create a brand new team with other registered users, go ahead and click on the Create a Team.
 
