@@ -63,7 +63,6 @@ You can also login as a __guest user__ using an email address but as a guest, yo
 ## Tabcore Features
 
 ### Sidebar
-![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/1.jpg)
 #### 1. Dashboard
 This is your profile page. You'll find some information such as the number of debates you've won and lost.
 
@@ -88,18 +87,18 @@ This is your Teams Dashboard. In here, you'll be able to find all of your teams 
 #### 8. Profile Settings
 To change anything about your personal information, you can edit and save these changes under this tab.
 
+---
 
 ### Notification Tab
-![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/updatesDash.jpg)
 #### 1. Join Round
 If you receive any invites to debate rounds, they will appear here.
 
 #### 2. Team Updates
 If there are any updates within your team such as change of team name or change of members, they will appear here.
 
+---
 
 ### User Menu
-![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/profileDash.jpg)
 #### 1. Dashboard
 This is your profile page. You'll find some information such as the number of debates you've won and lost.
 
@@ -112,9 +111,9 @@ If you need a refresher on where everything is, you can take a look at a tutoria
 #### 4. Logout
 When you need to log out of your account, you can click on Logout.
 
+---
 
 ### Dashboard
-![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/dashOptions.jpg)
 #### 1. Create a Round
 When you want to create your own round, this is where you head to.
 
@@ -127,9 +126,9 @@ For any of your concluded rounds, get the round ID and enter them in this tab so
 #### 4. Round History
 To see a list of your previous rounds, head on over to this tab to find all of them.
 
+---
 
 ### Teams Dashboard
-![alt text](https://github.com/ccapdev1920T2/s11g5/tree/master/views/assets/img/tutorial/teamsDash.jpg)
 #### 1. Create a Team
 If you want to create a brand new team with other registered users, go ahead and click on the Create a Team.
 
@@ -142,6 +141,7 @@ If there are any updates within your team such as change of team name or change 
 #### 4. Edit a Team
 If there are any changes that you would want to do to your team, you can edit your team and save these changes under Edit a Team.
 
+---
 
 ### Debate Rounds
 Users can participate as debaters in rounds that their team has been invited to or as an adjudicator wherein they will be judging, grading, and giving their comments regarding the speakers and the round itself. A concurrent timer is used, allowing the users to easily synchronize their debate.
@@ -150,6 +150,7 @@ Users can participate as debaters in rounds that their team has been invited to 
 ### Teams
 Users can form teams with either registered users or guest users. In Tabcore, there are three (3) people in a team, a Leader, a Deputy Leader, and a Whip. Users could edit their teams in order to reassign a role or to remove and add a different user.
 
+---
 
 ## Dependencies
 - [bcrypt](https://www.npmjs.com/package/bcrypt)
