@@ -63,74 +63,74 @@ You can also login as a __guest user__ using an email address but as a guest, yo
 ## Tabcore Features
 
 ### Sidebar
-1. Dashboard
+#### 1. Dashboard
 This is your profile page. You'll find some information such as the number of debates you've won and lost.
 
-2. Create a Round
+#### 2. Create a Round
 When you want to create your own round, this is where you head to.
 
-3. Join a Round
+#### 3. Join a Round
 If any of your teams are invited to join rounds, here is where you'll find them, as well as ongoing rounds.
 
-4. Grade a Round
+#### 4. Grade a Round
 If you're an adjudicator for a round, you can head on over to this tab when the round ends in order to grade everyone.
 
-5. Round Stats
+#### 5. Round Stats
 For any of your concluded rounds, get the round ID and enter them in this tab so you can see the statistics of that round.
 
-6. Round History
+#### 6. Round History
 To see a list of your previous rounds, head on over to this tab to find all of them.
 
-7. Teams
+#### 7. Teams
 This is your Teams Dashboard. In here, you'll be able to find all of your teams and create and edit them.
 
-8. Profile Settings
+#### 8. Profile Settings
 To change anything about your personal information, you can edit and save these changes under this tab.
 
 ### Notification Tab
-1. Join Round
+#### 1. Join Round
 If you receive any invites to debate rounds, they will appear here.
 
-2. Team Updates
+#### 2. Team Updates
 If there are any updates within your team such as change of team name or change of members, they will appear here.
 
 ### User Menu
-1. Dashboard
+#### 1. Dashboard
 This is your profile page. You'll find some information such as the number of debates you've won and lost.
 
-2. Profile Settings
+#### 2. Profile Settings
 To change anything about your personal information, you can edit and save these changes under this tab.
 
-3. Tutorial
+#### 3. Tutorial
 If you need a refresher on where everything is, you can take a look at a tutorial by clicking on Tutorial.
 
-4. Logout
+#### 4. Logout
 When you need to log out of your account, you can click on Logout.
 
 ### Dashboard
-1. Create a Round
+#### 1. Create a Round
 When you want to create your own round, this is where you head to.
 
-2. Join a Round
+#### 2. Join a Round
 If any of your teams are invited to join rounds, here is where you'll find them, as well as ongoing rounds.
 
-3. Round Stats
+#### 3. Round Stats
 For any of your concluded rounds, get the round ID and enter them in this tab so you can see the statistics of that round.
 
-4. Round History
+#### 4. Round History
 To see a list of your previous rounds, head on over to this tab to find all of them.
 
 ### Teams Dashboard
-1. Create a Team
+#### 1. Create a Team
 If you want to create a brand new team with other registered users, go ahead and click on the Create a Team.
 
-2. My Teams
+#### 2. My Teams
 If you want to see a full list of all of the teams you\'re part of, you can head on over to My Teams.
 
-3. Team Updates
+#### 3. Team Updates
 If there are any updates within your team such as change of team name or change of members, they will appear here.
 
-4. Edit a Team
+#### 4. Edit a Team
 If there are any changes that you would want to do to your team, you can edit your team and save these changes under Edit a Team.
 
 
