@@ -64,6 +64,40 @@ You can also login as a __guest user__ using an email address but as a guest, yo
 
 ## Tabcore Features
 
+![Dashboard](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/img/github/dashboard.png?raw=true)
+### Dashboard
+#### 1. Last Debate
+This will show when your last debate was, including the ones wherein you were an adjudicator
+
+#### 2. Wins
+This will show the number of debates that you have won
+
+#### 3. Loses
+This will show the number of debates that you have lost
+
+#### 4. Draws
+This will show the number of debates you participated in that ended in a draw
+
+#### 5. Ongoing Rounds
+This will show the current ongoing round that you or one of your teams has. Do note that if there is an ongoing round displayed here, you will not be able to join other debate rounds until this round finishes.
+
+#### 6. Win/Loss Ratio
+This will show a visualization of your wins, loses, and draws
+
+#### 7. Create a Round
+When you want to create your own round, this is where you head to.
+
+#### 8. Join a Round
+If any of your teams are invited to join rounds, here is where you'll find them, as well as ongoing rounds.
+
+#### 9. Round Stats
+For any of your concluded rounds, get the round ID and enter them in this tab so you can see the statistics of that round.
+
+#### 10. Round History
+To see a list of your previous rounds, head on over to this tab to find all of them.
+
+---
+
 ![Sidebar](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/img/github/sidebar.png?raw=true)
 ### Sidebar
 #### 1. Dashboard
@@ -115,22 +149,6 @@ If you need a refresher on where everything is, you can take a look at a tutoria
 
 #### 4. Logout
 When you need to log out of your account, you can click on Logout.
-
----
-
-![Dashboard](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/img/github/dashboard.png?raw=true)
-### Dashboard
-#### 1. Create a Round
-When you want to create your own round, this is where you head to.
-
-#### 2. Join a Round
-If any of your teams are invited to join rounds, here is where you'll find them, as well as ongoing rounds.
-
-#### 3. Round Stats
-For any of your concluded rounds, get the round ID and enter them in this tab so you can see the statistics of that round.
-
-#### 4. Round History
-To see a list of your previous rounds, head on over to this tab to find all of them.
 
 ---
 
