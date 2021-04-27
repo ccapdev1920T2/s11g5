@@ -64,6 +64,7 @@ You can also login as a __guest user__ using an email address but as a guest, yo
 
 ## Tabcore Features
 
+![sidebar](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/img/tutorial/1.jpg?raw=true)
 ### Sidebar
 #### 1. Dashboard
 This is your profile page. You'll find some information such as the number of debates you've won and lost.
