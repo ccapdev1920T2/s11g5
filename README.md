@@ -14,7 +14,7 @@ The following project is a web application that will provide competitive debater
 ## Setting Up
 
 ### Local
-1. To setup this app locally, clone this repository by either downloading [here](https://github.com/ccapdev1920T2/s11g5/archive/refs/heads/master.zip), or is git is downloaded, run the following command in the command prompt:
+1. To setup this app locally, clone this repository by either downloading [here](https://github.com/ccapdev1920T2/s11g5/archive/refs/heads/master.zip), or if git is downloaded, run the following command in the command prompt:
 ```
 git clone https://github.com/ccapdev1920T2/s11g5
 ```
