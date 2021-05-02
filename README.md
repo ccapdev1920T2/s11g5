@@ -67,7 +67,7 @@ You can also login as a __guest user__ using an email address but as a guest, yo
 ![Dashboard](https://github.com/ccapdev1920T2/s11g5/blob/master/views/assets/img/github/dashboard.png?raw=true)
 ### Dashboard
 #### 1. Last Debate
-This will show when your last debate was, including the ones wherein you were an adjudicator
+This will show when your last debate was, not including the ones wherein you were an adjudicator
 
 #### 2. Wins
 This will show the number of debates that you have won
