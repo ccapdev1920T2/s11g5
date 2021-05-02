@@ -650,10 +650,15 @@ const ongoing_controller = {
                     res.end();
                   }
                 });
+              }else if(result.status == 'Done'){
+                var redirect_link = '/roundroomStatistics?roundID='+roundID;
+                req.session.roundID = roundID;
+                res.redirect(redirect_link);
+                res.end();
               }else{
                 req.session.pagename = 'Grade a Round';
                 req.session.header = 'Grade a Round';
-                req.session.message = 'Error in Grade a Round! Round is still Ongoing.';
+                req.session.message = 'Error in Grade a Round! Round is not yet done.';
                 req.session.link = '/dashboard';
                 req.session.back = 'Dashboard';
                 res.redirect('/message');
